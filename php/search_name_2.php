@@ -1,6 +1,7 @@
 <?php
     include("../database/connection2.php");
-
+    session_start();
+    
     $search_lname = $_POST['search_lname'];
     $search_fname = $_POST['search_fname'];
     $search_mname = $_POST['search_mname'];
@@ -10,8 +11,8 @@
     $search_fname = filter_input(INPUT_POST, 'search_fname');
     $search_mname = filter_input(INPUT_POST, 'search_mname');
 
-
-
+    $hpatcode = $_SESSION['hospital_code'];
+    $hpatcode = (string) $hpatcode;
     $conditions = array();
 
     if (!empty($search_lname)) {
@@ -32,6 +33,9 @@
         $sql .= " WHERE " . implode(" AND ", $conditions);
     }
 
+    if($hpatcode != '1437'){
+        $sql .= " AND hpatcode=:hpatcode;";
+    }
     $stmt = $pdo->prepare($sql);
 
     if (!empty($search_lname)) {
@@ -49,18 +53,23 @@
         $stmt->bindParam(':search_mname', $search_mname_param, PDO::PARAM_STR);
     }
 
+    
+    if($hpatcode != '1437'){
+        $stmt->bindParam(':hpatcode', $hpatcode, PDO::PARAM_STR);   
+    }
+    
     $stmt->execute();
     $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // $finalJsonString = json_encode($data);
     // echo $finalJsonString;
-
+    
     if(count($data) >= 1){
         for($i = 0; $i < count($data); $i++){
             if ($i % 2 == 0) {
-                $bg_color = "#e6e6e6";
+                $bg_color = "#526c7a";
             } else {
-                $bg_color = "#ffffff";
+                $bg_color = "transparent";
             }
 
             echo '<div id="search-sub-div" class="search-sub-div" style="background: '. $bg_color .'">';

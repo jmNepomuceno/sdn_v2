@@ -57,7 +57,7 @@ $(document).ready(function(){
     }
 
     function handleUserInactivity() {
-        // console.log('inactive')
+        console.log('inactive')
         userIsActive = false;
         // Additional code to handle user inactivity if needed
         $.ajax({

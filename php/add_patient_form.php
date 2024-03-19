@@ -94,7 +94,7 @@
 
 
     
-    //////////////////////////////////////////////////
+    ////////////////////////////////////////////////
     //  , ofw_occupation, ofw_place_of_work, ofw_bldg, ofw_street, ofw_region, ofw_province, ofw_municipality, ofw_office_phone_no, ofw_mobile_phone_no
     // $sql = "INSERT INTO hperson (hpercode, hpatcode, ofw_employers_name, ofw_occupation, ofw_place_of_work, ofw_bldg, ofw_street, ofw_region, ofw_province, ofw_municipality, ofw_office_phone_no, ofw_mobile_phone_no)
     //         VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
@@ -117,92 +117,92 @@
 
     // $stmt->execute();
 
-    // $sql = "INSERT INTO hperson (hpercode, hpatcode, patlast, patfirst, patmiddle, patsuffix, patbdate, pat_age, patsex, patcstat, natcode, pat_occupation, pat_passport_no, relcode, hospital_code, phicnum,
-    //         pat_bldg, pat_street_block, pat_region, pat_province, pat_municipality, pat_barangay, pat_email, pat_homephone_no, pat_mobile_no,
-    //         pat_curr_bldg , pat_curr_street, pat_curr_region, pat_curr_province , pat_curr_municipality, pat_curr_barangay, pat_email_ca, pat_curr_homephone_no, pat_curr_mobile_no, 
-    //         pat_work_bldg, pat_work_street, pat_work_region, pat_work_province, pat_work_municipality, pat_work_barangay,pat_namework_place, pat_work_landline_no, pat_work_email_add, 
-    //         ofw_employers_name, ofw_occupation, ofw_place_of_work, ofw_bldg, ofw_street, ofw_region, ofw_province, ofw_municipality, ofw_country , ofw_office_phone_no, ofw_mobile_phone_no,
-    //         created_at)
-    //         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,  ?,?,?,?,?,?,?,?,?,  ?,?,?,?,?,?,?,?,?,  ?,?,?,?,?,?,?,?,?, ?,?,?,?,?,?,?,?,?,?,?, ?)";
+    $sql = "INSERT INTO hperson (hpercode, hpatcode, patlast, patfirst, patmiddle, patsuffix, patbdate, pat_age, patsex, patcstat, natcode, pat_occupation, pat_passport_no, relcode, hospital_code, phicnum,
+            pat_bldg, pat_street_block, pat_region, pat_province, pat_municipality, pat_barangay, pat_email, pat_homephone_no, pat_mobile_no,
+            pat_curr_bldg , pat_curr_street, pat_curr_region, pat_curr_province , pat_curr_municipality, pat_curr_barangay, pat_email_ca, pat_curr_homephone_no, pat_curr_mobile_no, 
+            pat_work_bldg, pat_work_street, pat_work_region, pat_work_province, pat_work_municipality, pat_work_barangay,pat_namework_place, pat_work_landline_no, pat_work_email_add, 
+            ofw_employers_name, ofw_occupation, ofw_place_of_work, ofw_bldg, ofw_street, ofw_region, ofw_province, ofw_municipality, ofw_country , ofw_office_phone_no, ofw_mobile_phone_no,
+            created_at)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,  ?,?,?,?,?,?,?,?,?,  ?,?,?,?,?,?,?,?,?,  ?,?,?,?,?,?,?,?,?, ?,?,?,?,?,?,?,?,?,?,?, ?)";
 
-    // $stmt = $pdo->prepare($sql);
+    $stmt = $pdo->prepare($sql);
 
-    // $stmt->bindParam(1, $hpercode, PDO::PARAM_STR);
-    // $stmt->bindParam(2, $hpatcode, PDO::PARAM_STR);
-    // $stmt->bindParam(3, $patlast, PDO::PARAM_STR);
-    // $stmt->bindParam(4, $patfirst, PDO::PARAM_STR);
-    // $stmt->bindParam(5, $patmiddle, PDO::PARAM_STR);
-    // $stmt->bindParam(6, $patsuffix, PDO::PARAM_STR);
-    // $stmt->bindParam(7, $pat_bdate, PDO::PARAM_STR);
-    // $stmt->bindParam(8, $pat_age, PDO::PARAM_STR);
-    // $stmt->bindParam(9, $patsex, PDO::PARAM_STR);
-    // $stmt->bindParam(10, $patcstat, PDO::PARAM_STR);
+    $stmt->bindParam(1, $hpercode, PDO::PARAM_STR);
+    $stmt->bindParam(2, $hpatcode, PDO::PARAM_STR);
+    $stmt->bindParam(3, $patlast, PDO::PARAM_STR);
+    $stmt->bindParam(4, $patfirst, PDO::PARAM_STR);
+    $stmt->bindParam(5, $patmiddle, PDO::PARAM_STR);
+    $stmt->bindParam(6, $patsuffix, PDO::PARAM_STR);
+    $stmt->bindParam(7, $pat_bdate, PDO::PARAM_STR);
+    $stmt->bindParam(8, $pat_age, PDO::PARAM_STR);
+    $stmt->bindParam(9, $patsex, PDO::PARAM_STR);
+    $stmt->bindParam(10, $patcstat, PDO::PARAM_STR);
 
-    // $stmt->bindParam(11, $natcode, PDO::PARAM_STR);
-    // $stmt->bindParam(12, $pat_occupation, PDO::PARAM_STR);
-    // $stmt->bindParam(13, $pat_passport_no, PDO::PARAM_STR);
-    // $stmt->bindParam(14, $relcode, PDO::PARAM_STR);
-    // $stmt->bindParam(15, $hospital_code, PDO::PARAM_STR);
-    // $stmt->bindParam(16, $phicnum, PDO::PARAM_STR);
+    $stmt->bindParam(11, $natcode, PDO::PARAM_STR);
+    $stmt->bindParam(12, $pat_occupation, PDO::PARAM_STR);
+    $stmt->bindParam(13, $pat_passport_no, PDO::PARAM_STR);
+    $stmt->bindParam(14, $relcode, PDO::PARAM_STR);
+    $stmt->bindParam(15, $hospital_code, PDO::PARAM_STR);
+    $stmt->bindParam(16, $phicnum, PDO::PARAM_STR);
 
-    // $stmt->bindParam(17, $pat_bldg_pa, PDO::PARAM_STR);
-    // $stmt->bindParam(18, $hperson_street_block_pa, PDO::PARAM_STR);
-    // $stmt->bindParam(19, $pat_region_pa, PDO::PARAM_STR);
-    // $stmt->bindParam(20, $pat_province_pa, PDO::PARAM_STR);
-    // $stmt->bindParam(21, $pat_municipality_pa, PDO::PARAM_STR);
-    // $stmt->bindParam(22, $pat_barangay_pa, PDO::PARAM_STR);
-    // $stmt->bindParam(23, $pat_email_pa, PDO::PARAM_STR);
-    // $stmt->bindParam(24, $pat_homephone_no_pa, PDO::PARAM_INT);
-    // $stmt->bindParam(25, $pat_mobile_no_pa, PDO::PARAM_INT);
+    $stmt->bindParam(17, $pat_bldg_pa, PDO::PARAM_STR);
+    $stmt->bindParam(18, $hperson_street_block_pa, PDO::PARAM_STR);
+    $stmt->bindParam(19, $pat_region_pa, PDO::PARAM_STR);
+    $stmt->bindParam(20, $pat_province_pa, PDO::PARAM_STR);
+    $stmt->bindParam(21, $pat_municipality_pa, PDO::PARAM_STR);
+    $stmt->bindParam(22, $pat_barangay_pa, PDO::PARAM_STR);
+    $stmt->bindParam(23, $pat_email_pa, PDO::PARAM_STR);
+    $stmt->bindParam(24, $pat_homephone_no_pa, PDO::PARAM_INT);
+    $stmt->bindParam(25, $pat_mobile_no_pa, PDO::PARAM_INT);
 
-    // $stmt->bindParam(26, $pat_bldg_ca, PDO::PARAM_STR);
-    // $stmt->bindParam(27, $hperson_street_block_ca, PDO::PARAM_STR);
-    // $stmt->bindParam(28, $pat_region_ca, PDO::PARAM_STR);
-    // $stmt->bindParam(29, $pat_province_ca, PDO::PARAM_STR);
-    // $stmt->bindParam(30, $pat_municipality_ca, PDO::PARAM_STR);
-    // $stmt->bindParam(31, $pat_barangay_ca, PDO::PARAM_STR);
-    // $stmt->bindParam(32, $pat_email_ca, PDO::PARAM_STR);
-    // $stmt->bindParam(33, $pat_homephone_no_ca, PDO::PARAM_STR);
-    // $stmt->bindParam(34, $pat_mobile_no_ca, PDO::PARAM_INT);
+    $stmt->bindParam(26, $pat_bldg_ca, PDO::PARAM_STR);
+    $stmt->bindParam(27, $hperson_street_block_ca, PDO::PARAM_STR);
+    $stmt->bindParam(28, $pat_region_ca, PDO::PARAM_STR);
+    $stmt->bindParam(29, $pat_province_ca, PDO::PARAM_STR);
+    $stmt->bindParam(30, $pat_municipality_ca, PDO::PARAM_STR);
+    $stmt->bindParam(31, $pat_barangay_ca, PDO::PARAM_STR);
+    $stmt->bindParam(32, $pat_email_ca, PDO::PARAM_STR);
+    $stmt->bindParam(33, $pat_homephone_no_ca, PDO::PARAM_STR);
+    $stmt->bindParam(34, $pat_mobile_no_ca, PDO::PARAM_INT);
 
-    // $stmt->bindParam(35, $pat_bldg_cwa, PDO::PARAM_STR);
-    // $stmt->bindParam(36, $hperson_street_block_pa_cwa, PDO::PARAM_STR);
-    // $stmt->bindParam(37, $pat_region_cwa, PDO::PARAM_STR);
-    // $stmt->bindParam(38, $pat_province_cwa, PDO::PARAM_STR);
-    // $stmt->bindParam(39, $pat_municipality_cwa, PDO::PARAM_STR);
-    // $stmt->bindParam(40, $pat_barangay_cwa, PDO::PARAM_STR);
-    // $stmt->bindParam(41, $pat_namework_place, PDO::PARAM_STR);
-    // $stmt->bindParam(42, $pat_landline_no, PDO::PARAM_INT);
-    // $stmt->bindParam(43, $pat_email_ca, PDO::PARAM_STR);
+    $stmt->bindParam(35, $pat_bldg_cwa, PDO::PARAM_STR);
+    $stmt->bindParam(36, $hperson_street_block_pa_cwa, PDO::PARAM_STR);
+    $stmt->bindParam(37, $pat_region_cwa, PDO::PARAM_STR);
+    $stmt->bindParam(38, $pat_province_cwa, PDO::PARAM_STR);
+    $stmt->bindParam(39, $pat_municipality_cwa, PDO::PARAM_STR);
+    $stmt->bindParam(40, $pat_barangay_cwa, PDO::PARAM_STR);
+    $stmt->bindParam(41, $pat_namework_place, PDO::PARAM_STR);
+    $stmt->bindParam(42, $pat_landline_no, PDO::PARAM_INT);
+    $stmt->bindParam(43, $pat_email_ca, PDO::PARAM_STR);
 
-    // $stmt->bindParam(44, $pat_emp_name, PDO::PARAM_STR);
-    // $stmt->bindParam(45, $pat_occupation_ofw, PDO::PARAM_STR);
-    // $stmt->bindParam(46, $pat_place_work, PDO::PARAM_STR);
-    // $stmt->bindParam(47, $pat_bldg_ofw, PDO::PARAM_STR);
-    // $stmt->bindParam(48, $hperson_street_block_ofw, PDO::PARAM_STR);
-    // $stmt->bindParam(49, $pat_region_ofw, PDO::PARAM_STR);
-    // $stmt->bindParam(50, $pat_province_ofw, PDO::PARAM_STR);
-    // $stmt->bindParam(51, $pat_city_ofw, PDO::PARAM_INT);
-    // $stmt->bindParam(52, $pat_country_ofw, PDO::PARAM_INT);
-    // $stmt->bindParam(53, $pat_office_mobile_no_ofw, PDO::PARAM_STR);
-    // $stmt->bindParam(54, $pat_mobile_no_ofw, PDO::PARAM_STR);
-    // $stmt->bindParam(55, $created_at, PDO::PARAM_STR);
+    $stmt->bindParam(44, $pat_emp_name, PDO::PARAM_STR);
+    $stmt->bindParam(45, $pat_occupation_ofw, PDO::PARAM_STR);
+    $stmt->bindParam(46, $pat_place_work, PDO::PARAM_STR);
+    $stmt->bindParam(47, $pat_bldg_ofw, PDO::PARAM_STR);
+    $stmt->bindParam(48, $hperson_street_block_ofw, PDO::PARAM_STR);
+    $stmt->bindParam(49, $pat_region_ofw, PDO::PARAM_STR);
+    $stmt->bindParam(50, $pat_province_ofw, PDO::PARAM_STR);
+    $stmt->bindParam(51, $pat_city_ofw, PDO::PARAM_INT);
+    $stmt->bindParam(52, $pat_country_ofw, PDO::PARAM_INT);
+    $stmt->bindParam(53, $pat_office_mobile_no_ofw, PDO::PARAM_STR);
+    $stmt->bindParam(54, $pat_mobile_no_ofw, PDO::PARAM_STR);
+    $stmt->bindParam(55, $created_at, PDO::PARAM_STR);
 
-    // $stmt->execute();
+    $stmt->execute();
     
-    // $act_type = 'pat_form';
-    // $pat_name = $patlast . ', ' . $patfirst . ' ' . $patmiddle;
-    // $action = 'Register Patient: ';
-    // $sql = "INSERT INTO history_log (hpercode, hospital_code, date, activity_type, action, pat_name, username) VALUES (?,?,?,?,?,?,?)";
-    // $stmt = $pdo->prepare($sql);
+    $act_type = 'pat_form';
+    $pat_name = $patlast . ', ' . $patfirst . ' ' . $patmiddle;
+    $action = 'Register Patient: ';
+    $sql = "INSERT INTO history_log (hpercode, hospital_code, date, activity_type, action, pat_name, username) VALUES (?,?,?,?,?,?,?)";
+    $stmt = $pdo->prepare($sql);
 
-    // $stmt->bindParam(1, $hpercode, PDO::PARAM_STR);
-    // $stmt->bindParam(2, $_SESSION['hospital_code'], PDO::PARAM_INT);
-    // $stmt->bindParam(3, $created_at, PDO::PARAM_STR);
-    // $stmt->bindParam(4, $act_type, PDO::PARAM_STR);
-    // $stmt->bindParam(5, $action, PDO::PARAM_STR);
-    // $stmt->bindParam(6, $pat_name, PDO::PARAM_STR);
-    // $stmt->bindParam(7, $_SESSION['user_name'], PDO::PARAM_STR);
+    $stmt->bindParam(1, $hpercode, PDO::PARAM_STR);
+    $stmt->bindParam(2, $_SESSION['hospital_code'], PDO::PARAM_INT);
+    $stmt->bindParam(3, $created_at, PDO::PARAM_STR);
+    $stmt->bindParam(4, $act_type, PDO::PARAM_STR);
+    $stmt->bindParam(5, $action, PDO::PARAM_STR);
+    $stmt->bindParam(6, $pat_name, PDO::PARAM_STR);
+    $stmt->bindParam(7, $_SESSION['user_name'], PDO::PARAM_STR);
 
-    // $stmt->execute();
+    $stmt->execute();
 ?>

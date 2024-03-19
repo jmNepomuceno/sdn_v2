@@ -137,7 +137,7 @@ $(document).ready(function(){
                     $('#modal-icon').addClass('fa-circle-check')
                     $('#modal-body').text('Successfully Referred')
 
-                    $('#yes-modal-btn').addClass('hidden')
+                    $('#yes-modal-btn').css('display' , 'none')
                     $('#ok-modal-btn').text('OK')
                     // $('#myModal').modal('show');
                     

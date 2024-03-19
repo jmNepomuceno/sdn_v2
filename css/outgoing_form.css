@@ -193,7 +193,7 @@
 }
 
 .incoming-container .incoming-table #incoming-tbody .tr-incoming #dt-turnaround{
-    height: 61px;
+    height: 70px;
     display:flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -204,6 +204,7 @@
     /* transition-delay: 150ms; */
     transition-duration: 300ms;
     transition-timing-function: ease;
+    /* border:1px solid black; */
 }
 
 .incoming-container .incoming-table #incoming-tbody .tr-incoming #dt-turnaround i{
@@ -218,7 +219,7 @@
     background: #d1dbe0;
     cursor: pointer;
     color:gray;
-    
+    opacity:0.4;
 }
 
 .incoming-container .incoming-table #incoming-tbody .tr-incoming #dt-turnaround i:hover{
@@ -236,11 +237,11 @@
 
 .incoming-container .incoming-table #incoming-tbody .tr-incoming #dt-turnaround label,
 .incoming-container .incoming-table #incoming-tbody .tr-incoming #dt-turnaround label .breakdown-div label{
-    font-size: 0.85rem; 
+    font-size: 0.9rem; 
     /* line-height: 1rem;  */
     width: 95%;
     border-bottom: 1px solid #bfbfbf; 
-    /* margin-top: 0.25rem; */
+    margin-top: 0.25rem;
 }
 
 .incoming-container .incoming-table #incoming-tbody .tr-incoming #dt-turnaround label:nth-child(1){
@@ -275,6 +276,8 @@
 .incoming-container .incoming-table #incoming-tbody .tr-incoming #dt-status div i:hover{
     color:white;
 }
+
+
 
 .custom-modal {
     max-width: 800px; /* Adjust the width as needed */
@@ -528,11 +531,6 @@
     margin-right:1%;
 }
 
-#pendingModal .modal-content .interdept-div .int-dept-btn-div button{
-    opacity:0.3;
-    pointer-events: none;
-}
-
 #pendingModal .modal-content .interdept-div-v2 .int-dept-btn-div-v2 button{
     width: 100px;
 }
@@ -544,7 +542,7 @@
 }
 
 #pendingModal .modal-content .interdept-div-v2 #v2-stat #span-time{
-    color:black;
+    color:green;
 }
 
 #pendingModal .modal-content .interdept-div-v2 #v2-stat #span-dept{

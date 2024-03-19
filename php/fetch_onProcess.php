@@ -17,4 +17,6 @@
         $stmt->execute();
     }
     
+
+    $_SESSION['running_timer'] = $_POST['timer'];
 ?>

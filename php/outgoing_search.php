@@ -1,4 +1,4 @@
-<?php
+<?php 
     session_start();
     include("../database/connection2.php");
 
@@ -10,13 +10,6 @@
     $agency = $_POST['agency'];
     $status = $_POST['status'];
     // $status = 'Pending';
-
-
-    // referred_by='". $agency ."'
-    // $sql = "SELECT * FROM incoming_referrals WHERE (reference_num LIKE '%". $agency ."%' OR patlast LIKE '%". $last_name ."%' OR patfirst LIKE '%". $first_name ."%' OR patmiddle LIKE '%". $middle_name ."%' OR type LIKE '%". $case_type ."%' OR referred_by LIKE '%". $agency ."%' OR status LIKE '%". $status ."%') AND refer_to='". $_SESSION["hospital_name"] ."'";
-
-    // $sql = "SELECT * FROM incoming_referrals WHERE (type = '" . $case_type . "' OR referred_by = '" . $agency . "') AND refer_to = '" . $_SESSION["hospital_name"] . "'";
-    //SELECT * FROM incoming_referrals WHERE type = 'ER' AND referred_by = 'Referred: Limay Medical Center' AND status = 'All' AND refer_to = 'Bataan General Hospital and Medical Center'
 
     $sql = "SELECT * FROM incoming_referrals WHERE ";
 
@@ -58,7 +51,7 @@
     }
 
     if ($others === false) {
-        if($status === 'All'){
+        if($status === 'All' || $status === 'default'){
             $conditions[] = "(status='Pending' OR status='On-Process' OR status='Deferred' OR status='Approved' OR status='Cancelled'
             OR status='Arrived' OR status='Checked' OR status='Admitted' OR status='Discharged' OR status='For Follow Up' OR status='Referred Back')";
         }
@@ -80,16 +73,112 @@
         $sql .= implode(" AND ", $conditions);
     } else {
         $sql .= "1";  // Always true condition if no input values provided.
-    } 
+    }
     
-    $sql .= " AND referred_by ='". $_SESSION['hospital_name'] ."'";
-
+    $sql .= " AND referred_by = '" . $_SESSION["hospital_name"] . "'";
+    // echo $sql;
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
-    $data = $stmt->fetchAll(PDO::FETCH_ASSOC);  
+    $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    // $jsonString = json_encode($data);
+    // echo $jsonString;
 
-    // echo count($data);
+    $index = 0;
+    $previous = 0;
+    $loop = 0;
+    // Loop through the data and generate table rows
 
-    $jsonString = json_encode($data);
-    echo $jsonString;
+
+    foreach ($data as $row) {
+        $type_color;
+        if($row['type'] == 'OPD'){
+            $type_color = '#d77707';
+        }else if($row['type'] == 'OB'){
+            $type_color = '#22c45e';
+        }else if($row['type'] == 'ER'){
+            $type_color = '#0368a1';
+        }else if($row['type'] == 'PCR' || $row['type'] == 'Toxicology'){
+            $type_color = '#cf3136';
+        }
+
+        if($previous == 0){
+            $index += 1;
+        }else{
+            if($row['reference_num'] == $previous){
+                $index += 1;
+            }else{
+                $index = 1;
+            }  
+        }
+        
+        $style_tr = '';
+ 
+        // $waiting_time = "--:--:--";
+        $date1 = new DateTime($row['date_time']);
+        $waiting_time_bd = "";
+        if($row['reception_time'] != null){
+            $date2 = new DateTime($row['reception_time']);
+            $waiting_time = $date1->diff($date2);
+            $waiting_time_bd .= sprintf('%02d:%02d:%02d', $waiting_time->h, $waiting_time->i, $waiting_time->s);
+
+        }else{
+            $waiting_time_bd = "00:00:00";
+        }
+
+        if($row['reception_time'] == ""){
+            $row['reception_time'] = "00:00:00";
+        }
+
+        echo '<tr class="tr-incoming" style="'. $style_tr .' border-bottom:1px solid #bfbfbf;">
+                <td id="dt-refer-no"> ' . $row['reference_num'] . ' - '.$index.' </td>
+                <td id="dt-patname">' . $row['patlast'] , ", " , $row['patfirst'] , " " , $row['patmiddle']  . '</td>
+                <td id="dt-type" style="background:' . $type_color . ' ">' . $row['type'] . '</td>
+                <td id="dt-phone-no">
+                    <label> Referred: ' . $row['referred_by'] . '  </label>
+                    <label> Landline: ' . $row['landline_no'] . ' </label>
+                    <label> Mobile: ' . $row['mobile_no'] . ' </label>
+                </td>
+                <td id="dt-turnaround"> 
+                    <i class="accordion-btn fa-solid fa-plus"></i>
+
+                    <label class="referred-time-lbl"> Referred: ' . $row['date_time'] . ' </label>
+                    <label class="queue-time-lbl"> Queue Time: ' . $waiting_time_bd . ' </label>
+                    <label class="reception-time-lbl"> Reception: '. $row['reception_time'] .'</label>
+                    
+                    <div class="breakdown-div">
+                        <label class="processed-time-lbl"> Processed: 00:00:00  </label>  
+                        <label> Approval: 0000-00-00 00:00:00  </label>  
+                        <label> Deferral: 0000-00-00 00:00:00  </label>  
+                        <label> Cancelled: 0000-00-00 00:00:00  </label>  
+                        <label> Arrived: 0000-00-00 00:00:00  </label>  
+                        <label> Checked: 0000-00-00 00:00:00  </label>  
+                        <label> Admitted: 0000-00-00 00:00:00  </label>  
+                        <label> Discharged: 0000-00-00 00:00:00  </label>  
+                        <label> Follow up: 0000-00-00 00:00:00  </label>  
+                        <label> Ref. Back: 0000-00-00 00:00:00  </label>  
+                    </div>
+                </td>
+                <td id="dt-stopwatch">
+                    <div id="stopwatch-sub-div">
+                        Processing: <span class="stopwatch">00:00:00</span>
+                    </div>
+                </td>
+                
+                <td id="dt-status">
+                    <div> 
+                        
+                        <label class="pat-status-incoming">'. $row['status'] .'</label>
+                        <i class="pencil-btn fa-solid fa-pencil"></i>
+                        <input class="hpercode" type="hidden" name="hpercode" value= ' . $row['hpercode'] . '>
+
+                    </div>
+                </td>
+            </tr>';
+
+
+        $previous = $row['reference_num'];
+        $loop += 1;
+    }
+
 ?>

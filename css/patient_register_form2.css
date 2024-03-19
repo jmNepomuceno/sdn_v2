@@ -311,16 +311,18 @@
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid white;
     background: #e6e6e6;
-    margin-top:5px;
+    margin-top:10px;
     cursor: pointer;
+    color:white;
+    opacity: 0.8;
 }
 
 
 
 #patient-reg-form-div #check-if-registered-div #search-result-div #search-sub-div:hover{
-    background-color: red;
+    opacity: 1;
 }
 
 #patient-reg-form-div #check-if-registered-div #search-result-div #search-sub-div #upper-part-sub-div{

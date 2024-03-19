@@ -157,29 +157,30 @@
                     </div>
                 </div>
 
-
-                    <div id="main-side-bar-2">
-                        <div id="main-side-bar-2-subdiv">
-                            <i class="fa-solid fa-retweet"></i>
-                            <h3>Online Referral </h3>
-                        </div>
-
-                        <div id="sub-side-bar-2">
-                            <div id="outgoing-sub-div-id">
-                                <i class="fa-solid fa-inbox"></i>
-                                <h3>Outgoing</h3>
-                            </div>
-                            <div id="incoming-sub-div-id">
-                                <!-- <h3 class="m-16 text-white">Incoming</h3> -->
-                                <i class="fa-solid fa-inbox"></i>
-                                <h3>Incoming</h3>
-                            </div>
-                            <!-- <div id="pcr-request-id">
-                                <i class="fa-solid fa-inbox"></i>
-                                <h3 class="m-3 text-white">PCR Request List</h3>
-                            </div> -->
-                        </div>
+                <div id="main-side-bar-2">
+                    <div id="main-side-bar-2-subdiv">
+                        <i class="fa-solid fa-retweet"></i>
+                        <h3>Online Referral </h3>
                     </div>
+
+                    <div id="sub-side-bar-2">
+                        <div id="outgoing-sub-div-id">
+                            <i class="fa-solid fa-inbox"></i>
+                            <h3>Outgoing</h3>
+                        </div>
+                        <div id="incoming-sub-div-id">
+                            <!-- <h3 class="m-16 text-white">Incoming</h3> -->
+                            <i class="fa-solid fa-inbox"></i>
+                            <h3>Incoming</h3>
+                        </div>
+                        <!-- <div id="pcr-request-id">
+                            <i class="fa-solid fa-inbox"></i>
+                            <h3 class="m-3 text-white">PCR Request List</h3>
+                        </div> -->
+                    </div>
+                </div>
+
+               
             </aside>
 
             

@@ -1,45 +1,6 @@
 <?php
     session_start();
     include('../database/connection2.php');
-
-    $timer_running = false;
-    $post_value_reload = '';
-
-
-    $sql = "SELECT * FROM incoming_referrals WHERE progress_timer IS NOT NULL AND refer_to = '" . $_SESSION["hospital_name"] . "'";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute();
-    $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    if(count($data) > 0){
-        $_SESSION['post_value_reload'] = 'true';
-        $post_value_reload = $_SESSION['post_value_reload'];
-    }
-
-
-    $sql = "SELECT * FROM incoming_referrals WHERE logout_date!='null' AND refer_to = '" . $_SESSION["hospital_name"] . "' ";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute();
-    $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    // echo '<pre>'; print_r($data); echo '</pre>';
-
-    $logout_data = json_encode($data);
-    // $login_data = $_SESSION['login_time'];
-
-
-    // echo json_encode($data);
-    // echo $_SESSION['login_time'];
-
-    // $logout_data = 3;
-    // $login_data = 3;
-    // $_SESSION["sub_what"]
-
-    $sql = "SELECT * FROM incoming_referrals WHERE refer_to='Bataan General Hospital and Medical Center' AND hpercode='BGHMC-0049'";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute();
-    $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    // echo '<pre>'; print_r($data); echo '</pre>';
 ?>
 
 <!DOCTYPE html>
@@ -60,19 +21,9 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     
 
-    <link rel="stylesheet" href="../css/incoming_form.css">
+    <link rel="stylesheet" href="../css/outgoing_form.css">
 </head>
 <body>
-    <!-- <button id="pending-stop-btn" class="border-2 border-black">Stop</button> -->
-    
-    <input id="timer-running-input" type="hidden" name="timer-running-input" value= <?php echo $timer_running ?>>
-    <input id="post-value-reload-input" type="hidden" name="post-value-reload-input" value= <?php echo $post_value_reload ?>>
-    <input id="post-value-reload-history-input" type="hidden" name="post-value-reload-history-input" value= <?php echo $_SESSION["sub_what"] ?>>
-
-    <input id="running-timer-input" type="hidden" name="running-timer-input" value= <?php echo $_SESSION["running_timer"] ?>>
-
-    <!-- <input id="timer-running-input" type="hidden" name="timer-running-input" value="false"> -->
-
     <div class="incoming-container">
         <div class="search-main-div">
             <div class="refer-no-div">
@@ -167,7 +118,7 @@
                         // SQL query to fetch data from your table
                         // echo  "here";
                         try{
-                            $sql = "SELECT * FROM incoming_referrals WHERE (status='Pending' OR status='On-Process') AND refer_to='". $_SESSION["hospital_name"] ."' ORDER BY date_time ASC";
+                            $sql = "SELECT * FROM incoming_referrals WHERE (status='Pending' OR status='On-Process') AND referred_by='". $_SESSION['hospital_name'] ."' ORDER BY date_time ASC";
                             $stmt = $pdo->prepare($sql);
                             $stmt->execute();
                             $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -201,12 +152,6 @@
                                     }  
                                 }
                                 
-                                // $style_tr = 'background:#33444d; color:white;';
-                                $style_tr = '';
-                                if($loop != 0 &&  $row['status'] === 'Pending'){
-                                    $style_tr = 'opacity:0.5; pointer-events:none;';
-                                }
-
                                 // $waiting_time = "--:--:--";
                                 $date1 = new DateTime($row['date_time']);
                                 $waiting_time_bd = "";
@@ -228,12 +173,12 @@
                                     $row['reception_time'] = "00:00:00";
                                 }
 
-                                echo '<tr class="tr-incoming" style="'. $style_tr .'">
+                                echo '<tr class="tr-incoming">
                                         <td id="dt-refer-no"> ' . $row['reference_num'] . ' - '.$index.' </td>
                                         <td id="dt-patname">' . $row['patlast'] , ", " , $row['patfirst'] , " " , $row['patmiddle']  . '</td>
                                         <td id="dt-type" style="background:' . $type_color . ' ">' . $row['type'] . '</td>
                                         <td id="dt-phone-no">
-                                            <label> Referred: ' . $row['referred_by'] . '  </label>
+                                            <label> Referred To: ' . $row['refer_to'] . '  </label>
                                             <label> Landline: ' . $row['landline_no'] . ' </label>
                                             <label> Mobile: ' . $row['mobile_no'] . ' </label>
                                         </td>
@@ -242,7 +187,7 @@
 
                                             <label class="referred-time-lbl"> Referred: ' . $row['date_time'] . ' </label>
                                             <label class="queue-time-lbl"> Queue Time: ' . $waiting_time_bd . ' </label>
-                                            <label class="reception-time-lbl"> Reception: '. $row['reception_time'] .'</label>
+                                            <label class="reception-time-lbl"> Reception: '. $row['reception_time'] .'</label> 
                                             
                                             <div class="breakdown-div">
                                                 <label class="processed-time-lbl"> Processed: 00:00:00  </label>  
@@ -308,46 +253,6 @@
                         <label  id="pat-status-form">Pending</label>
                     </div>
                                 
-                    <div id='approval-form'>
-                        <label id="approval-title-div">Approval Form</label>
-                            
-                        <div class="approval-main-content">
-
-                            <label id="case-cate-title">Case Category</label>
-                            <select id="approve-classification-select">
-                                <option value="">Select</option>
-                                <option value="Primary">Primary</option>
-                                <option value="Secondary">Secondary</option>
-                                <option value="Tertiary">Tertiary</option>
-                            </select>
-
-                            <label id="admin-action-title">Emergency Room Administrator Action</label>
-                            <textarea id="eraa"></textarea>
-
-                            <div id="pre-text">
-                                <label class="pre-emp-text">+ May transfer patient once stable.</label>
-                                <label class="pre-emp-text">+ Please attach imaging and laboratory results to the referral letter.</label>
-                                <label class="pre-emp-text">+ Hook to oxygen support and maintain saturation at >95%.</label>
-                                <label class="pre-emp-text">+ Start venoclysis with appropriate intravenous fluids.</label>
-                                <label class="pre-emp-text">+ Insert nasogastric tube(NGT).</label>
-                                <label class="pre-emp-text">+ Insert indwelling foley catheter(IFC).</label>
-                                <label class="pre-emp-text">+ Thank you for your referral.</label>
-                            </div>
-
-                            <!-- <label class="ml-[2%] font-semibold">Action</label>
-                            <select id="approved-action-select" class="border border-slate-800 w-[95%] ml-[2%] rounded-sm outline-none">
-                                <option value="">Pending</option>
-                                <option value="Approve">Approve</option>
-                                <option value="Defer">Defer</option>
-                            </select> -->
-                        </div> 
-
-                        <div id="approval-form-btns">
-                            <button id="inter-dept-referral-btn"> Interdepartamental Referral </button>
-                            <button id="imme-approval-btn"> Immediate Approval </button>
-                        </div>
-                    </div>
-
                     <div class="interdept-div">
                         <div id="inter-dept-stat-form-div" class="status-form-div">
                             <label id="status-bg-div">Inter-Department Referral </label>
@@ -355,10 +260,12 @@
                         <label for="" id="inter-dept-lbl">Department: </label>
                         <select id="inter-depts-select" style="cursor:pointer;">
                             <option value="">Select</option>
-                            <option value="surgery"> Surgery </option>
-                            <option value="ob"> OB </option>
-                            <option value="im"> Internal Medicine </option>
-                            <option value="fm"> Fam Med </option>
+                            <option value=""> Surgery </option>
+                            <option value=""> OB </option>
+                            <option value=""> Internal Medicine </option>
+                            <option value=""> Fam Med </option>
+                            <option value=""> asdf </option>
+                            <option value=""> asdf </option>
                         </select>
                         <div class="int-dept-btn-div">
                             <button id="int-dept-btn-forward">Send / Forward</button>
@@ -370,7 +277,7 @@
                             <label id="status-bg-div">Interdepartment: Surgery - Status </label>
                         </div>
                         <!-- <label for="" id="v2-stat"> <span id="span-dept">Surgery</span> - Processing - <span id="span-time">00:07:09</span></label> -->
-                        <label for="" id="v2-stat"> Surgery - Pending - <span id="span-time">00:00:00</span></label>
+                        <label for="" id="v2-stat"> Surgery - Processing - <span id="span-time">00:07:09</span></label>
 
                         <div class="int-dept-btn-div-v2">
                             <button id="review-btn">Review</button>
@@ -478,7 +385,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <script type="text/javascript"  charset="utf8" src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
 
-    <script src="../js_2/incoming_form2.js?v= <?php echo time(); ?>"></script>
+    <script src="../js_2/outgoing_form2.js?v= <?php echo time(); ?>"></script>
 
     <script>
     // $(document).ready(function () {

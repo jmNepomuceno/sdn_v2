@@ -121,6 +121,7 @@ $(document).ready(function(){
 
             zero_inputs = 0;
             if(zero_inputs >= 1){
+                console.log('here')
                 $('#modal-body').text('Please fill out the required fields.')
                 $('#ok-modal-btn').text('OK')
                 $('#modal-title').text('Warning')
@@ -295,25 +296,25 @@ $(document).ready(function(){
                 //16
                 // hpercode : (Math.floor(Math.random() * 1000) + 1).toString(),
                 hpatcode : $('#hpatcode-input').val(),
-                patlast : "Test 0305",
-                patfirst : "Test 0305",
-                patmiddle : "Test 0305",
+                patlast : "Test 0319",
+                patfirst : "Test 0319",
+                patmiddle : "Test 0319",
                 patsuffix : "N/A",
                 pat_bdate : '03/05/2000',
                 pat_age : 23,
                 patsex : 'Male',
-                patcstat :"Test 0305", //accepts null = yes
-                relcode : "Test 0305",
+                patcstat :"Test 0319", //accepts null = yes
+                relcode : "Test 0319",
                 
-                pat_occupation: "Test 0305",
-                natcode : "Test 0305",
+                pat_occupation: "Test 0319",
+                natcode : "Test 0319",
                 pat_passport_no : "N/A",
                 hospital_code : $('#hpatcode-input').val(),
                 phicnum : 34252522535,
     
                 //PERMANENT ADDRESS
-                pat_bldg_pa : "Test 0305",
-                hperson_street_block_pa: "Test 0305",
+                pat_bldg_pa : "Test 0319",
+                hperson_street_block_pa: "Test 0319",
                 pat_region_pa : '3',
                 pat_province_pa : "308",
                 pat_municipality_pa : '30804',
@@ -323,8 +324,8 @@ $(document).ready(function(){
                 pat_mobile_no_pa : '09823425253',
     
                 //CURRENT ADDRESS
-                pat_bldg_ca : "Test 0305",
-                hperson_street_block_ca: "Test 0305",
+                pat_bldg_ca : "Test 0319",
+                hperson_street_block_ca: "Test 0319",
                 pat_region_ca : '3',
                 pat_province_ca : "308",
                 pat_municipality_ca : '30804',

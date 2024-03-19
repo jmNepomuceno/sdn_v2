@@ -108,6 +108,9 @@
 
     echo '<ul class="referred-details-ul">';
         echo '<li><label>Referring Agency:</label><span id="refer-agency"> '. $response[0]['referred_by'].'</span></li>';
+        if($_POST['from'] === 'outgoing'){
+            echo '<li><label>Referring To:</label><span id="refer-agency"> '. $response[0]['refer_to'].'</span></li>';
+        }
         echo '<li><label>Reason for Referral:</label><span id="refer-reason"> '. $response[0]['reason'].'</span></li><br>';
 
         echo '<li><label>Name:</label><span id="pending-name" > '. $response[0]['patlast'] . ", " . $response[0]['patfirst'] . " " . $response[0]['patmiddle'].' </span></li>';

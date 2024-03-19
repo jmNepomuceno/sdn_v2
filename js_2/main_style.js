@@ -9,11 +9,14 @@ $(document).ready(function(){
         })
     }
 
+    // BGHMC adheres to all satutatory mandatory and regulatory requirements to ensure standard implementation
     // loadContent('../php_2/default_view2.php')
-    //loadContent('../php_2/patient_register_form2.php')
+    // loadContent('../php_2/patient_register_form2.php')
     // loadContent('php/opd_referral_form.php?type=OB&code=BGHMC-0001')
-    loadContent('../php_2/incoming_form2.php')
+    // loadContent('../php_2/incoming_form2.php')
+    // loadContent('../php_2/outgoing_form2.php')
     // loadContent('php/outgoing_form.php')
+    loadContent('../php_2/interdept.php')
 
 
     // Function to parse query parameters from URL
@@ -95,16 +98,16 @@ $(document).ready(function(){
                             }
                         }
 
-                        if(i % 2 === 0){
+                        if(i % 2 === 0){ 
                             document.getElementById('notif-sub-div').innerHTML += '\
-                            <div class="h-[30px] w-[90%] border border-black flex flex-row justify-evenly items-center mt-1 bg-transparent text-white opacity-30 hover:opacity-100">\
+                            <div>\
                             <h4 class="font-bold text-lg">' + type_counts + '</h4>\
                                 <h4 class="font-bold text-lg">' + type_var + '</h4>\
                             </div>\
                         ';
                         }else{
                             document.getElementById('notif-sub-div').innerHTML += '\
-                            <div class="h-[30px] w-[90%] border border-black flex flex-row justify-evenly items-center mt-1 bg-white opacity-30 hover:opacity-100">\
+                            <div>\
                             <h4 class="font-bold text-lg">' + type_counts + '</h4>\
                                 <h4 class="font-bold text-lg">' + type_var + '</h4>\
                             </div>\
@@ -148,10 +151,10 @@ $(document).ready(function(){
 
         $('#yes-modal-btn-main').text('Yes');
         $("#yes-modal-btn-main").css("display", "flex")
+
     })
 
     $('#yes-modal-btn-main').on('click' , function(event){
-        console.log('here')
         document.querySelector('#nav-drop-account-div').classList.toggle('hidden');
 
         let currentDate = new Date();
@@ -166,15 +169,15 @@ $(document).ready(function(){
 
         let final_date = year + "/" + month + "/" + day + " " + hours + ":" + minutes + ":" + seconds
         $.ajax({
-            url: '../php/save_process_time.php',
+            url: '../php_2/save_process_time.php',
             data : {
                 what: 'save',
                 date : final_date,
                 sub_what: 'logout'
-            },
+            },                        
             method: "POST",
             success: function(response) {
-                // response = JSON.parse(response);  
+                // response = JSON.parse(response);
                 console.log(response , " here")
                 window.location.href = "http://192.168.42.222:8035/index.php" 
             }
@@ -323,65 +326,19 @@ $(document).ready(function(){
     $('#outgoing-sub-div-id').on('click' , function(event){
         event.preventDefault();
 
-        loadContent('php/outgoing_form.php')
-        current_page = "outgoing_page"
-        $('#current-page-input').val(current_page)
-
-        $('#outgoing-sub-div-id').removeClass('opacity-30')
-        $('#outgoing-sub-div-id').addClass('opacity-100')
-        $('#outgoing-sub-div-id').addClass('bg-[#0a0e0f]')
-
-        // reset other side bar buttons
-        $('#incoming-sub-div-id').addClass('opacity-30')
-        $('#incoming-sub-div-id').removeClass('opacity-100')
-        $('#incoming-sub-div-id').removeClass('bg-[#0a0e0f]')
-
-        $('#patient-reg-form-sub-side-bar').addClass('opacity-30')
-        $('#patient-reg-form-sub-side-bar').removeClass('opacity-100')
-        $('#patient-reg-form-sub-side-bar').removeClass('bg-[#0a0e0f]')
+        loadContent('../php_2/outgoing_form2.php')
     })
 
     $('#incoming-sub-div-id').on('click' , function(event){
         event.preventDefault();
 
-        loadContent('php/incoming_form.php')
-        current_page = "incoming_page"
-        $('#current-page-input').val(current_page)
-
-        $('#incoming-sub-div-id').removeClass('opacity-30')
-        $('#incoming-sub-div-id').addClass('opacity-100')
-        $('#incoming-sub-div-id').addClass('bg-[#0a0e0f]')
-
-        // reset other side bar buttons
-        $('#outgoing-sub-div-id').addClass('opacity-30')
-        $('#outgoing-sub-div-id').removeClass('opacity-100')
-        $('#outgoing-sub-div-id').removeClass('bg-[#0a0e0f]')
-
-        $('#patient-reg-form-sub-side-bar').addClass('opacity-30')
-        $('#patient-reg-form-sub-side-bar').removeClass('opacity-100')
-        $('#patient-reg-form-sub-side-bar').removeClass('bg-[#0a0e0f]')
+        loadContent('../php_2/incoming_form2.php')
     })
 
     $('#patient-reg-form-sub-side-bar').on('click' , function(event){
         event.preventDefault();
 
-        loadContent('php/patient_register_form.php')
-        current_page = "patient_register_page"
-        $('#current-page-input').val(current_page)
-
-
-        $('#patient-reg-form-sub-side-bar').removeClass('opacity-30')
-        $('#patient-reg-form-sub-side-bar').addClass('opacity-100')
-        $('#patient-reg-form-sub-side-bar').addClass('bg-[#0a0e0f]')
-
-        // reset other side bar buttons
-        $('#outgoing-sub-div-id').addClass('opacity-30')
-        $('#outgoing-sub-div-id').removeClass('opacity-100')
-        $('#outgoing-sub-div-id').removeClass('bg-[#0a0e0f]')
-
-        $('#incoming-sub-div-id').addClass('opacity-30')
-        $('#incoming-sub-div-id').removeClass('opacity-100')
-        $('#incoming-sub-div-id').removeClass('bg-[#0a0e0f]')
+        loadContent('../php_2/patient_register_form2.php')
     })
 
     $('#pcr-request-id').on('click' , function(event){
@@ -405,13 +362,22 @@ $(document).ready(function(){
 
     $('#navbar-icon').on('click' , function(event){
         let  width = ((($("#side-bar-div").width() / $("#side-bar-div").parent().width()) * 100).toFixed(1)) + "%";
+        console.log('asdf')
 
         if(width === "13.5%"){
             $('#side-bar-div').css("width", "0")
             $('#bgh-name').text('')
+            $('#main-side-bar-1-subdiv').css("display", "none")
+            $('#main-side-bar-2-subdiv').css("display", "none")
+
+            $('#main-div .aside-main-div #container').css("width", "100%")
         }else{
             $('#side-bar-div').css("width", "13.5%")
             $('#bgh-name').text('Bataan General Hospital and Medical Center')
+            $('#main-side-bar-1-subdiv').css("display", "flex")
+            $('#main-side-bar-2-subdiv').css("display", "flex")
+
+            $('#main-div .aside-main-div #container').css("width", "86.5%")
         }
     })
 })

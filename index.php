@@ -52,6 +52,10 @@
                     $_SESSION['post_value_reload'] = 'false';
                     $_SESSION["sub_what"] = "";
 
+                    $_SESSION['running_timer'] = "";
+                    $_SESSION['fifo_hpercode'] = "asdf";
+                    $_SESSION['running_hpercode'] = "";
+
                     // Get the current date and time
                     $timezone = new DateTimeZone('Asia/Manila'); // Replace 'Your/Timezone' with your actual time zone
                     $currentDateTime = new DateTime("",$timezone);
@@ -99,7 +103,7 @@
 
                     $stmt->execute();
 
-                    header('Location: ./main.php');
+                    header('Location: ./php_2/main2.php');
                 }else{
                     echo '<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
                             <script type="text/javascript">
@@ -140,6 +144,9 @@
             $_SESSION['post_value_reload'] = 'false';
             $_SESSION["sub_what"] = "";
             
+            $_SESSION['running_timer'] = "";
+            $_SESSION['fifo_hpercode'] = "asdf";
+            $_SESSION['running_hpercode'] = "";
             // Get the current date and time
             $timezone = new DateTimeZone('Asia/Manila'); // Replace 'Your/Timezone' with your actual time zone
             $currentDateTime = new DateTime("",$timezone);
@@ -191,7 +198,7 @@
 
             $stmt->execute();
 
-            header('Location: ./main.php');
+            header('Location: ./php_2/main2.php');
         } 
         else if($sdn_username != 'admin' || $sdn_password != 'admin'){
             echo '<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -281,7 +288,7 @@
                     <div id="password-div">
                         <i class="username-icon fa-solid fa-user"></i>
                         <input type="password" name="sdn_password" id="password-inp" placeholder="Password" required autocomplete="off">
-                    </div>
+                    </div>`
 
                     <button id="login-btn">Login</button>
                 </form>
