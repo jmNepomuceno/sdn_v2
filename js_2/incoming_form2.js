@@ -31,6 +31,83 @@ $(document).ready(function(){
         // console.log('active')
     }
 
+    // reusable functions
+    function updateInterdeptFunc(){
+        let data = {
+            hpercode : document.querySelectorAll('.hpercode')[global_index].value
+        }
+        //
+        $('#span-time').text("")
+        $('#span-status').text("Loading...")
+        $('#span-dept').text("")
+        $.ajax({
+            url: '../php_2/fetch_update_interdept.php',
+            method: "POST", 
+            data:data,
+            success: function(response){
+                clearInterval(running_timer_interval_update)
+                response = JSON.parse(response);   
+                console.log(response)
+                // FIRST FUCKING FLOW = manual update click ng user
+
+                // update_seconds = 0
+                // clearInterval(intervalUpdateInterdept)
+
+                // $('#span-time').text(response[1].curr_time)
+                // $('#span-status').text(response[0].status_interdept)
+
+                // intervalUpdateInterdept = setInterval(function() {
+                //     update_seconds += 1
+                //     $('#v2-update-stat').text(`Updated ${update_seconds} second(s) ago...`)
+                // }, 1000); 
+
+                // *********************************************************************************************
+                var timeParts = response[1].curr_time.split(":");
+                var hours = parseInt(timeParts[0]);
+                var minutes = parseInt(timeParts[1]);
+                var seconds = parseInt(timeParts[2]);
+
+                running_timer_interval_update = setInterval(function() {
+                    seconds++;
+        
+                    if (seconds === 60) {
+                        seconds = 0;
+                        minutes++;
+                    }
+        
+                    if (minutes === 60) {
+                        minutes = 0;
+                        hours++;
+                    }
+        
+                    const formattedTime = pad(hours) + ':' + pad(minutes) + ':' + pad(seconds);
+                    $('#span-time').text(formattedTime)
+                    $('#v2-update-stat').text(`Last update: ${response[0]['currentDateTime']}`)
+                    $('#span-status').text(response[0].status_interdept)
+
+                    // here
+                    $('.interdept-div').css('display','none')
+                    $('#cancel-btn').css('display','block')
+                    $('.approval-main-content').css('display','none')
+                    clearInterval(running_timer_interval)
+                    
+                    // check if the status of the thingy is approve or deferred
+                    // $.ajax({
+                    //     url: '../php_2/fetch_update_interdept.php',
+                    //     method: "POST", 
+                    //     data:data,
+                    //     success: function(response){
+                            
+                            
+                    //         // document.querySelectorAll('.pat-status-incoming')[global_index].textContent = 'Pending - ' + $('#inter-depts-select').val().toUpperCase();;
+                    //     }
+                    // })
+
+                }, 1000); 
+            }
+        })
+    }
+
     function handleUserInactivity() {
         // console.log('inactive')
         userIsActive = false;
@@ -41,6 +118,7 @@ $(document).ready(function(){
                 from_where : 'incoming'
             },
             success: function(response) {
+                // console.log(response)
 
                 dataTable.clear();
                 dataTable.rows.add($(response)).draw();
@@ -71,7 +149,7 @@ $(document).ready(function(){
 
     document.addEventListener('mousemove', handleUserActivity);
 
-    const inactivityInterval = 115000; 
+    const inactivityInterval = 1000; 
 
     function startInactivityTimer() {
         inactivityTimer = setInterval(() => {
@@ -124,6 +202,8 @@ $(document).ready(function(){
                             $('#approval-form').css('display','none')
                             $('.interdept-div-v2').css('display','flex')
                             $('#cancel-btn').css('display','block')
+
+                            updateInterdeptFunc()
                         }
                     }
                 })
@@ -437,7 +517,7 @@ $(document).ready(function(){
                 $('.approval-main-content').css('display','none')
                 clearInterval(running_timer_interval)
                 
-                document.querySelectorAll('.pat-status-incoming')[global_index].textContent = 'Pending - ' + $('#inter-depts-select').val().toUpperCase();;
+                document.querySelectorAll('.pat-status-incoming')[global_index].textContent = 'Pending - ' + $('#inter-depts-select').val().toUpperCase();
             }
         })
     })
@@ -571,74 +651,5 @@ $(document).ready(function(){
         }
     });
 
-    $('#review-btn').on('click' , function(event){
-        let data = {
-            hpercode : document.querySelectorAll('.hpercode')[global_index].value
-        }
-        console.log(data)
 
-        $.ajax({
-            url: '../php_2/fetch_update_interdept.php',
-            method: "POST", 
-            data:data,
-            success: function(response){
-                clearInterval(running_timer_interval_update)
-                response = JSON.parse(response);   
-                console.log(response)
-                // FIRST FUCKING FLOW = manual update click ng user
-
-                // update_seconds = 0
-                // clearInterval(intervalUpdateInterdept)
-
-                // $('#span-time').text(response[1].curr_time)
-                // $('#span-status').text(response[0].status_interdept)
-
-                // intervalUpdateInterdept = setInterval(function() {
-                //     update_seconds += 1
-                //     $('#v2-update-stat').text(`Updated ${update_seconds} second(s) ago...`)
-                // }, 1000); 
-
-                // *********************************************************************************************
-                var timeParts = response[1].curr_time.split(":");
-                var hours = parseInt(timeParts[0]);
-                var minutes = parseInt(timeParts[1]);
-                var seconds = parseInt(timeParts[2]);
-
-                running_timer_interval_update = setInterval(function() {
-                    seconds++;
-        
-                    if (seconds === 60) {
-                        seconds = 0;
-                        minutes++;
-                    }
-        
-                    if (minutes === 60) {
-                        minutes = 0;
-                        hours++;
-                    }
-        
-                    const formattedTime = pad(hours) + ':' + pad(minutes) + ':' + pad(seconds);
-                    $('#span-time').text(formattedTime)
-                    $('#v2-update-stat').text(`Last update: ${response[0]['currentDateTime']}`)
-                    $('#span-status').text(response[0].status_interdept)
-
-                    // check if the status of the thingy is approve or deferred
-                    $.ajax({
-                        url: '../php_2/fetch_update_interdept.php',
-                        method: "POST", 
-                        data:data,
-                        success: function(response){
-                            $('.interdept-div').css('display','none')
-                            $('#cancel-btn').css('display','block')
-                            $('.approval-main-content').css('display','none')
-                            clearInterval(running_timer_interval)
-                            
-                            document.querySelectorAll('.pat-status-incoming')[global_index].textContent = 'Pending - ' + $('#inter-depts-select').val().toUpperCase();;
-                        }
-                    })
-
-                }, 1000); 
-            }
-        })
-    })
 })

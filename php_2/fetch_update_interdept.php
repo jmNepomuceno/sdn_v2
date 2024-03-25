@@ -18,7 +18,6 @@
     $stmt->execute();
     $data_2 = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    
     $sql = "UPDATE incoming_referrals SET last_update=:currentDateTime WHERE hpercode=:hpercode";
     $stmt = $pdo->prepare($sql);
     $stmt->bindParam(':currentDateTime', $currentDateTime, PDO::PARAM_STR);

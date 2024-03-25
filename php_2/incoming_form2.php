@@ -385,7 +385,6 @@
                         <label id="v2-update-stat">Updated 0 second(s) ago...</label>
                         <div class="int-dept-btn-div-v2">
                             <button id="cancel-btn">Cancel</button>
-                            <button id="review-btn">Update</button>
                         </div>
                     </div>
 

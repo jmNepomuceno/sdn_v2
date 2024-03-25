@@ -81,6 +81,15 @@
                     $row['reception_time'] = "00:00:00";
                 }
 
+                // if already send to interdept
+                if($row['status_interdept'] != "" || $row['status_interdept'] != null){
+                    $sql = "SELECT department FROM incoming_interdept WHERE hpercode='". $row['hpercode'] ."' ";
+                    $stmt = $pdo->prepare($sql);
+                    $stmt->execute();
+                    $data = $stmt->fetch(PDO::FETCH_ASSOC);
+                    $row['status'] = $row['status_interdept'] . " - " . strtoupper($data['department']);;
+ 
+                }
                 echo '<tr class="tr-incoming" style="'. $style_tr .'">
                         <td id="dt-refer-no"> ' . $row['reference_num'] . ' - '.$index.' </td>
                         <td id="dt-patname">' . $row['patlast'] , ", " , $row['patfirst'] , " " , $row['patmiddle']  . '</td>

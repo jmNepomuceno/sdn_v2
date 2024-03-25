@@ -543,3 +543,13 @@ $.ajax({
         )
 
 )
+
+631
+fetch_update_interdept.php
+stat_interdept == approve{
+    echo approve
+}
+
+incoming_pat.js
+review_id.textContent('Confirm Approval')
+cancel_id.css('display', 'none')
