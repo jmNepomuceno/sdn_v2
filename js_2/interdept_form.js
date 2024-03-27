@@ -12,8 +12,57 @@ $(document).ready(function(){
 
     let global_index = 0, global_paging = 1, global_timer = "", global_breakdown_index = 0;
     const myModal = new bootstrap.Modal(document.getElementById('pendingModal'));
-    // const defaultMyModal = new bootstrap.Modal(document.getElementById('myModal-incoming'));
+    const defaultMyModal = new bootstrap.Modal(document.getElementById('myModal-incoming'));
     // myModal.show()
+
+    let userIsActive = true;
+
+    function handleUserActivity() {
+        userIsActive = true;
+        // console.log('active')
+    }
+
+    function handleUserInactivity() {
+        // console.log('inactive')
+        userIsActive = false;
+        $.ajax({
+            url: '../php/fetch_interval.php',
+            method: "POST",
+            data : {
+                from_where : 'incoming_interdept'
+            },
+            success: function(response) {
+                // console.log(response)
+
+                // dataTable.clear();
+                // dataTable.rows.add($(response)).draw();
+
+                const pencil_elements = document.querySelectorAll('.pencil-btn');
+                    pencil_elements.forEach(function(element, index) {
+                    element.addEventListener('click', function() {
+                        console.log('den')
+                        ajax_method(index)
+                    });
+                });
+            }
+        });
+    }
+
+    document.addEventListener('mousemove', handleUserActivity);
+
+    const inactivityInterval = 1000; 
+
+    function startInactivityTimer() {
+        inactivityTimer = setInterval(() => {
+            if (!userIsActive) {
+                handleUserInactivity();
+            }
+            userIsActive = false;
+            
+        }, inactivityInterval);
+    }
+
+    startInactivityTimer();
 
     const ajax_method = (index, event) => {
         global_index = index
@@ -21,7 +70,7 @@ $(document).ready(function(){
             hpercode: document.querySelectorAll('.hpercode')[index].value,
             from:'incoming'
         }
-        console.log(data)
+        // console.log(data)
         $.ajax({
             url: '../php/process_pending.php',
             method: "POST", 
@@ -67,7 +116,6 @@ $(document).ready(function(){
         pencil_elements.forEach(function(element, index) {
         element.addEventListener('click', function() {
             console.log('den')
-            myModal.show();
 
             ajax_method(index)
 
@@ -169,6 +217,7 @@ $(document).ready(function(){
                 document.querySelectorAll('.pat-status-incoming')[index].textContent = 'On-Process';
             }
 
+        
             if(interval_db === 5){
                 $.ajax({
                     url: '../php_2/session_timer.php',
@@ -180,14 +229,64 @@ $(document).ready(function(){
                     },
                     success: function(response){
                         // response = JSON.parse(response);   
-                        console.log('olms')
+                        // console.log('olms')
+                        // console.log(response)
                     }
                 })
                 interval_db = 0;
+            }else{
+                $.ajax({
+                    url: '../php_2/session_timer.php',
+                    method: "POST", 
+                    data:{
+                        formattedTime: formattedTime,
+                        hpercode: document.querySelectorAll('.hpercode')[0].value,
+                        from:'incoming'
+                    },
+                    success: function(response){
+                        // response = JSON.parse(response);   
+                        // console.log('olms')
+                        // console.log(response)
+                    }
+                })
             }
             
             interval_db += 1;
         }, 1000); 
     }
+
+    $('.pre-emp-text').on('click' , function(event){
+        var originalString = event.target.textContent;
+        // Using substring
+        var stringWithoutPlus = originalString.substring(2);
+
+        // Or using slice
+        // var stringWithoutPlus = originalString.slice(2);
+        $('#eraa').val($('#eraa').val() + " " + stringWithoutPlus  + " ")
+    })
+
+    // inter-approval-btn
+    $('#inter-approval-btn').on('click' , function(event){
+        defaultMyModal.show()
+    })
+
+    // yes-modal-btn-incoming
+    $('#yes-modal-btn-incoming').on('click' , function(event){
+        clearInterval(running_timer_interval)
+        let data = {
+            hpercode: document.querySelectorAll('.hpercode')[0].value,
+            final_time : global_timer
+        }
+        console.log(data)
+        $.ajax({
+            url: '../php_2/approve_pending_interdept.php',
+            method: "POST", 
+            data:data,
+            success: function(response){
+                // response = JSON.parse(response);   
+                // console.log(response)
+            }
+        })
+    })
 
 })

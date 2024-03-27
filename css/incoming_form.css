@@ -535,6 +535,11 @@
     margin-right:1%;
 }
 
+#pendingModal .modal-content .interdept-div-v2 .int-dept-btn-div-v2 #final-approve-btn{
+    width:200px;
+    display:none;
+}
+
 #pendingModal .modal-content .interdept-div .int-dept-btn-div button{
     opacity:0.3;
     pointer-events: none;

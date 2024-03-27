@@ -148,6 +148,7 @@
             $_SESSION['fifo_hpercode'] = "asdf";
             $_SESSION['running_hpercode'] = "";
             $_SESSION['update_current_date'] = "";
+            $_SESSION['patient_status'] = "";
             // Get the current date and time
             $timezone = new DateTimeZone('Asia/Manila'); // Replace 'Your/Timezone' with your actual time zone
             $currentDateTime = new DateTime("",$timezone);

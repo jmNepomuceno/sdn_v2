@@ -553,3 +553,13 @@ stat_interdept == approve{
 incoming_pat.js
 review_id.textContent('Confirm Approval')
 cancel_id.css('display', 'none')
+
+0: {status_interdept: 'Approved', currentDateTime: '2024-03-25 14:24:47'}
+1: {curr_time: '00:29:30', department: 'surgery'}
+
+later-ru
+<label>
+    Username: <input type="text" id="username">
+</label>
+<label for="username">Username:</label>
+<input type="text" id="username">

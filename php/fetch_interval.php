@@ -31,6 +31,7 @@
             $index = 0;
             $previous = 0;
             $loop = 0;
+            $i = 0;
             // Loop through the data and generate table rows
             foreach ($data as $row) {
                 $type_color;
@@ -77,7 +78,7 @@
                     $waiting_time_bd = "00:00:00";
                 }
 
-                if($row['reception_time'] == ""){
+                if($row['reception_time'] == "" ){
                     $row['reception_time'] = "00:00:00";
                 }
 
@@ -90,6 +91,12 @@
                     $row['status'] = $row['status_interdept'] . " - " . strtoupper($data['department']);;
  
                 }
+
+                $stopwatch = "00:00:00";
+                if($i == 0 && $_SESSION['running_timer'] != ""){
+                    $stopwatch = $_SESSION['running_timer'];
+                }
+                
                 echo '<tr class="tr-incoming" style="'. $style_tr .'">
                         <td id="dt-refer-no"> ' . $row['reference_num'] . ' - '.$index.' </td>
                         <td id="dt-patname">' . $row['patlast'] , ", " , $row['patfirst'] , " " , $row['patmiddle']  . '</td>
@@ -121,7 +128,7 @@
                         </td>
                         <td id="dt-stopwatch">
                             <div id="stopwatch-sub-div">
-                                Processing: <span class="stopwatch">00:00:00</span>
+                                Processing: <span class="stopwatch">'.$stopwatch .'</span>
                             </div>
                         </td>
                         
@@ -138,6 +145,7 @@
 
                 $previous = $row['reference_num'];
                 $loop += 1;
+                $i += 1;
             }
         }catch(PDOException $e){
             echo $notif_value;
@@ -315,6 +323,69 @@
         }catch(PDOException $e){
             echo $notif_value;
         }
+    }else if($_POST['from_where'] == 'incoming_interdept'){
+        $sql = "SELECT * FROM incoming_interdept WHERE department='surgery' ORDER BY recept_time ASC";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+        $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        // echo json_encode($data);
+        $index = 0;
+        $previous = 0;
+        $loop = 0;
+        $i=0;
+        // Loop through the data and generate table rows
+        foreach ($data as $row) {
+            if($previous == 0){
+                $index += 1;
+            }else{
+                if($data[0]['reference_num'] == $previous){
+                    $index += 1;
+                }else{
+                    $index = 1;
+                }  
+            }
+
+            $sql = "SELECT reference_num, patlast, patfirst, patmiddle, status_interdept FROM incoming_referrals WHERE hpercode='". $row['hpercode'] ."' ";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute();
+            $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+
+            $stopwatch = "00:00:00";
+            if($i == 0 && $_SESSION['running_timer'] != ""){
+                $stopwatch = $_SESSION['running_timer'];
+            }
+            echo $stopwatch;
+            // echo '<tr class="tr-incoming-interdept">
+            //         <td id="dt-refer-no"> ' . $data[0]['reference_num'] . ' - '.$index.' </td>
+            //         <td id="dt-patname">' . $data[0]['patlast'] , ", " , $data[0]['patfirst'] , " " , $data[0]['patmiddle']  . '</td>
+            //         <td id="dt-turnaround"> 
+            //             '.$row['recept_time'].'
+            //         </td>
+            //         <td id="dt-stopwatch">
+            //             <div id="stopwatch-sub-div">
+            //                 Processing: <span class="stopwatch">'.$stopwatch.'</span>
+            //             </div>
+            //         </td>
+                    
+            //         <td id="dt-status">
+            //             <div> 
+                            
+            //                 <label class="pat-status-incoming">'.$data[0]['status_interdept'].'</label>
+            //                 <i class="pencil-btn fa-solid fa-pencil"></i>
+            //                 <input class="hpercode" type="hidden" name="hpercode" value= ' . $row['hpercode'] . '>
+
+            //             </div>
+            //         </td>
+            //     </tr>';
+
+            $previous = $data[0]['reference_num'];
+            $loop += 1;
+            $i += 1;
+        }
+
+        // Close the database connection
+        $pdo = null;
     }
 
 

@@ -15,7 +15,7 @@ $(document).ready(function(){
     // myModal.show()
 
     let global_index = 0, global_paging = 1, global_timer = "", global_breakdown_index = 0;
-    let intervalUpdateInterdept = "", update_seconds = 0;
+    let final_time_total = "", update_seconds = 0;
     let length_curr_table = document.querySelectorAll('.hpercode').length;
     let toggle_accordion_obj = {}
     for(let i = 0; i < length_curr_table; i++){
@@ -26,10 +26,6 @@ $(document).ready(function(){
     let inactivityTimer;
     let running_timer_interval = "", running_timer_interval_update;
     let userIsActive = true;
-    function handleUserActivity() {
-        userIsActive = true;
-        // console.log('active')
-    }
 
     // reusable functions
     function updateInterdeptFunc(){
@@ -48,64 +44,94 @@ $(document).ready(function(){
                 clearInterval(running_timer_interval_update)
                 response = JSON.parse(response);   
                 console.log(response)
-                // FIRST FUCKING FLOW = manual update click ng user
 
-                // update_seconds = 0
-                // clearInterval(intervalUpdateInterdept)
+                if(response[0]['status_interdept'] === "On-Process"){
+                    const timeString = "00:59:48";
 
-                // $('#span-time').text(response[1].curr_time)
-                // $('#span-status').text(response[0].status_interdept)
+                    // Split the time string into an array using the ":" delimiter
+                    const timeParts = timeString.split(":");
 
-                // intervalUpdateInterdept = setInterval(function() {
-                //     update_seconds += 1
-                //     $('#v2-update-stat').text(`Updated ${update_seconds} second(s) ago...`)
-                // }, 1000); 
+                    var hours = parseInt(timeParts[0]);
+                    var minutes = parseInt(timeParts[1]);
+                    var seconds = parseInt(timeParts[2]);
 
-                // *********************************************************************************************
-                var timeParts = response[1].curr_time.split(":");
-                var hours = parseInt(timeParts[0]);
-                var minutes = parseInt(timeParts[1]);
-                var seconds = parseInt(timeParts[2]);
+                    running_timer_interval_update = setInterval(function() {
+                        seconds++;
+            
+                        if (seconds === 60) {
+                            seconds = 0;
+                            minutes++;
+                        }
+            
+                        if (minutes === 60) {
+                            minutes = 0;
+                            hours++;
+                        }
+            
+                        const formattedTime = pad(hours) + ':' + pad(minutes) + ':' + pad(seconds);
+                        $('#v2-update-stat').text(`Last update: ${response[0]['currentDateTime']}`)
 
-                running_timer_interval_update = setInterval(function() {
-                    seconds++;
-        
-                    if (seconds === 60) {
-                        seconds = 0;
-                        minutes++;
-                    }
-        
-                    if (minutes === 60) {
-                        minutes = 0;
-                        hours++;
-                    }
-        
-                    const formattedTime = pad(hours) + ':' + pad(minutes) + ':' + pad(seconds);
-                    $('#span-time').text(formattedTime)
-                    $('#v2-update-stat').text(`Last update: ${response[0]['currentDateTime']}`)
-                    $('#span-status').text(response[0].status_interdept)
+                        // <label for="" id="v2-stat"> <span id="span-dept">Surgery</span> - <span id="span-status">Pending</span> - <span id="span-time">00:00:00</span></span></label>
+                        $('#span-dept').text(response[1].department.charAt(0).toUpperCase() + response[1].department.slice(1) + " | ") 
+                        $('#span-status').text(response[0].status_interdept + " | ") 
+                        $('#span-time').text(formattedTime)
 
-                    // here
-                    $('.interdept-div').css('display','none')
-                    $('#cancel-btn').css('display','block')
-                    $('.approval-main-content').css('display','none')
-                    clearInterval(running_timer_interval)
+                        // here
+                        $('.interdept-div').css('display','none')
+                        $('#cancel-btn').css('display','block')
+                        $('.approval-main-content').css('display','none')
+                        clearInterval(running_timer_interval)
+
+                        // check if the status of the thingy is approve or deferred
+                        // $.ajax({
+                        //     url: '../php_2/fetch_update_interdept.php',
+                        //     method: "POST", 
+                        //     data:data,
+                        //     success: function(response){
+                                
+                                
+                        //         // document.querySelectorAll('.pat-status-incoming')[global_index].textContent = 'Pending - ' + $('#inter-depts-select').val().toUpperCase();;
+                        //     }
+                        // })
+
+                    }, 1000); 
+                }
+                else if(response[0]['status_interdept'] === "Approved"){
+                    $('#v2-update-stat').text(`Last update: ${response[1]['final_progress_date']}`)
+
+                    // <label for="" id="v2-stat"> <span id="span-dept">Surgery</span> - <span id="span-status">Pending</span> - <span id="span-time">00:00:00</span></span></label>
+                    $('#span-dept').text(response[1].department.charAt(0).toUpperCase() + response[1].department.slice(1) + " | ") 
+                    $('#span-status').text(response[0].status_interdept + " | ") 
+                    $('#span-time').text(response[1]['final_progress_time'])
+                    console.log(response[0]['sent_interdept_time'] ,  response[1]['final_progress_time'])
                     
-                    // check if the status of the thingy is approve or deferred
-                    // $.ajax({
-                    //     url: '../php_2/fetch_update_interdept.php',
-                    //     method: "POST", 
-                    //     data:data,
-                    //     success: function(response){
-                            
-                            
-                    //         // document.querySelectorAll('.pat-status-incoming')[global_index].textContent = 'Pending - ' + $('#inter-depts-select').val().toUpperCase();;
-                    //     }
-                    // })
-
-                }, 1000); 
+                    const [hours1, minutes1, seconds1] = response[0]['sent_interdept_time'].split(':').map(Number);
+                    const [hours2, minutes2, seconds2] = response[1]['final_progress_time'].split(':').map(Number);
+                    
+                    // Create Date objects in UTC with the provided hours, minutes, and seconds
+                    const date1 = new Date(Date.UTC(1970, 0, 1, hours1, minutes1, seconds1));
+                    const date2 = new Date(Date.UTC(1970, 0, 1, hours2, minutes2, seconds2));
+                    
+                    const totalMilliseconds = date1.getTime() + date2.getTime();
+                    
+                    // Create a new Date object in UTC with the total milliseconds
+                    const newDate = new Date(totalMilliseconds);
+                    
+                    // Format the result in UTC time "HH:mm:ss"
+                    const result = `${String(newDate.getUTCHours()).padStart(2, '0')}:${String(newDate.getUTCMinutes()).padStart(2, '0')}:${String(newDate.getUTCSeconds()).padStart(2, '0')}`;
+                    
+                    console.log(result);
+                    final_time_total = result
+                    $('#final-approve-btn').css('display','block')
+                }
+                
             }
         })
+    }
+
+    function handleUserActivity() {
+        userIsActive = true;
+        // console.log('active')
     }
 
     function handleUserInactivity() {
@@ -149,7 +175,7 @@ $(document).ready(function(){
 
     document.addEventListener('mousemove', handleUserActivity);
 
-    const inactivityInterval = 1000; 
+    const inactivityInterval = 115000; 
 
     function startInactivityTimer() {
         inactivityTimer = setInterval(() => {
@@ -197,11 +223,13 @@ $(document).ready(function(){
                     method: "POST", 
                     data:data,
                     success: function(response){
-                        console.log(response)
-                        if(response === '1'){
+                        response = JSON.parse(response);    
+                        console.log(typeof response[0])
+                        if(response[0]){
                             $('#approval-form').css('display','none')
                             $('.interdept-div-v2').css('display','flex')
                             $('#cancel-btn').css('display','block')
+                            
 
                             updateInterdeptFunc()
                         }
@@ -266,24 +294,28 @@ $(document).ready(function(){
 
     // if theres a timer running before the reload
     if($('#running-timer-input').val() !== "" && $('#running-timer-input').val() !== "00:00:00"){
-        console.log('den')
-        const parts = $('#running-timer-input').val().split(':');
-        // Extract hours, minutes, and seconds
-        let hours = 0;
-        let minutes = 0;
-        let seconds = 0;
-        
-        if (parts.length === 3) {
-            hours = parseInt(parts[0], 10);
-            minutes = parseInt(parts[1], 10);
-            seconds = parseInt(parts[2], 10);
-        } else if (parts.length === 2) {
-            minutes = parseInt(parts[0], 10);
-            seconds = parseInt(parts[1], 10);
-        } else if (parts.length === 1) {
-            seconds = parseInt(parts[0], 10);
+        console.log('den' , $('#pat-curr-stat-input').val())
+
+        if($('#pat-curr-stat-input').val() === ""){
+            OfflineAudioCompletionEvent()   
+            const parts = $('#running-timer-input').val().split(':');
+            // Extract hours, minutes, and seconds
+            let hours = 0;
+            let minutes = 0;
+            let seconds = 0;
+            
+            if (parts.length === 3) {
+                hours = parseInt(parts[0], 10);
+                minutes = parseInt(parts[1], 10);
+                seconds = parseInt(parts[2], 10);
+            } else if (parts.length === 2) {
+                minutes = parseInt(parts[0], 10);
+                seconds = parseInt(parts[1], 10);
+            } else if (parts.length === 1) {
+                seconds = parseInt(parts[0], 10);
+            }
+            runTimer(0, seconds, minutes, hours)
         }
-        runTimer(0, seconds, minutes, hours)
     }
 
     function runTimer(index, sec, min, hrs){
@@ -306,12 +338,10 @@ $(document).ready(function(){
 
             const formattedTime = pad(hours) + ':' + pad(minutes) + ':' + pad(seconds);
             global_timer = formattedTime
-            // Display the time in the HTML element
             if(global_paging === 1){
                 document.querySelectorAll('.stopwatch')[index].textContent = formattedTime;
                 document.querySelectorAll('.pat-status-incoming')[index].textContent = 'On-Process';
             }
-
             $.ajax({
                 url: '../php_2/session_timer.php',
                 method: "POST", 
@@ -319,6 +349,10 @@ $(document).ready(function(){
                     formattedTime: formattedTime,
                     hpercode: document.querySelectorAll('.hpercode')[0].value,
                     from : 'incoming'
+                },
+                success: function(response){
+                    // Display the time in the HTML element
+                    
                 }
             })
 
@@ -650,6 +684,44 @@ $(document).ready(function(){
             
         }
     });
+ 
+    $('#cancel-btn').on('click', function(event) {
+        defaultMyModal.show()
+        $('#modal-title-incoming').text('Confirmation')
+        $('#modal-body-incoming').text('Are you sure you want to cancel this referral?')
+        clearInterval(running_timer_interval_update)
+    });
 
+    $('#final-approve-btn').on('click', function(event) {
+        const data = {
+            global_single_hpercode : document.querySelectorAll('.hpercode')[global_index].value,
+            timer : final_time_total,
+            approve_details : $('#eraa').val(), 
+            case_category : $('#approve-classification-select').val(),
+            action : "Approve"
+        }
+
+        console.log(data);
+
+        $.ajax({
+            url: '../php/approved_pending.php',
+            method: "POST",
+            data : data,
+            success: function(response){
+                // response = JSON.parse(response);    
+                // console.log(response)
+
+                const pencil_elements = document.querySelectorAll('.pencil-btn');
+                pencil_elements.forEach(function(element, index) {
+                    element.addEventListener('click', function() {
+                        console.log('den')
+                        ajax_method(index)
+                    });
+                });
+            }
+         })
+
+
+    });
 
 })

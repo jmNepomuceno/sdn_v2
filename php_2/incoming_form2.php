@@ -35,11 +35,43 @@
     // $login_data = 3;
     // $_SESSION["sub_what"]
 
-    $sql = "SELECT * FROM incoming_referrals WHERE refer_to='Bataan General Hospital and Medical Center' AND hpercode='BGHMC-0049'";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute();
-    $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    // echo '<pre>'; print_r($data); echo '</pre>';
+    if($_SESSION['running_hpercode'] != null || $_SESSION['running_hpercode'] != ""){
+        $sql = "SELECT status_interdept FROM incoming_referrals WHERE hpercode='". $_SESSION['running_hpercode'] ."'";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+        $status_interdept = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        $sql = "SELECT department FROM incoming_interdept WHERE hpercode='". $_SESSION['running_hpercode'] ."'";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+        $department = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // idk for refresh only?
+        $current_pat_status =$status_interdept['status_interdept'] . ' - ' .  strtoupper($department['department']);
+    }
+
+    // *******************************************************************************
+    // database showcase
+    // $sql = "SELECT * FROM incoming_referrals WHERE refer_to='Bataan General Hospital and Medical Center' AND hpercode='BGHMC-0049'";
+    // $stmt = $pdo->prepare($sql);
+    // $stmt->execute();
+    // $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // // echo '<pre>'; print_r($data); echo '</pre>';
+
+    // $sql = "SELECT * FROM incoming_referrals WHERE hpercode='BGHMC-0049'";
+    // $stmt = $pdo->prepare($sql);
+    // $stmt->execute();
+    // $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // refresh value of the data in database 
+    
+    // $sql = "UPDATE incoming_referrals SET status_interdept='', sent_interdept_time='', last_update='', status='Pending' WHERE hpercode='BGHMC-0049' ";
+    // $stmt = $pdo->prepare($sql);
+    // $stmt->execute();
+
+    // $sql = "DELETE FROM incoming_interdept WHERE hpercode='BGHMC-0049' ";
+    // $stmt = $pdo->prepare($sql);
+    // $stmt->execute();
 ?>
 
 <!DOCTYPE html>
@@ -70,8 +102,12 @@
     <input id="post-value-reload-history-input" type="hidden" name="post-value-reload-history-input" value= <?php echo $_SESSION["sub_what"] ?>>
 
     <input id="running-timer-input" type="hidden" name="running-timer-input" value= <?php echo $_SESSION["running_timer"] ?>>
-
-    <!-- <input id="timer-running-input" type="hidden" name="timer-running-input" value="false"> -->
+    <!-- $current_pat_status -->
+    <?php
+        if(isset($_SESSION['running_hpercode']) && ($_SESSION['running_hpercode'] != null || $_SESSION['running_hpercode'] != "")) {
+            echo '<input id="pat-curr-stat-input" type="hidden" name="pat-curr-stat-input" value="' . $current_pat_status . '">';
+        }
+    ?>
 
     <div class="incoming-container">
         <div class="search-main-div">
@@ -239,6 +275,30 @@
                                 // processed time = progress time ng admin + progress time ng dept
                                 // maiiwan yung timer na naka print, once na send na sa interdept
                                 
+                                $sql = "SELECT final_progress_time FROM incoming_interdept WHERE hpercode='BGHMC-0049'";
+                                $stmt = $pdo->prepare($sql);
+                                $stmt->execute();
+                                $interdept_time = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                
+                                $total_time = "00:00:00";
+                                if($interdept_time[0]['final_progress_time'] != "" && $row['sent_interdept_time'] != ""){
+                                    list($hours1, $minutes1, $seconds1) = array_map('intval', explode(':', $interdept_time[0]['final_progress_time']));
+                                    list($hours2, $minutes2, $seconds2) = array_map('intval', explode(':', $row['sent_interdept_time']));
+
+                                    // Create DateTime objects in UTC with the provided hours, minutes, and seconds
+                                    $date1 = new DateTime('1970-01-01 ' . $hours1 . ':' . $minutes1 . ':' . $seconds1, new DateTimeZone('UTC'));
+                                    $date2 = new DateTime('1970-01-01 ' . $hours2 . ':' . $minutes2 . ':' . $seconds2, new DateTimeZone('UTC'));
+
+                                    // Calculate the total milliseconds
+                                    $totalMilliseconds = $date1->getTimestamp() * 1000 + $date2->getTimestamp() * 1000;
+
+                                    // Create a new DateTime object in UTC with the total milliseconds
+                                    $newDate = new DateTime('@' . ($totalMilliseconds / 1000), new DateTimeZone('UTC'));
+
+                                    // Format the result in UTC time "HH:mm:ss"
+                                    $total_time = $newDate->format('H:i:s');
+                                }
+
                                 echo '<tr class="tr-incoming" style="'. $style_tr .'">
                                         <td id="dt-refer-no"> ' . $row['reference_num'] . ' - '.$index.' </td>
                                         <td id="dt-patname">' . $row['patlast'] , ", " , $row['patfirst'] , " " , $row['patmiddle']  . '</td>
@@ -252,11 +312,12 @@
                                             <i class="accordion-btn fa-solid fa-plus"></i>
 
                                             <label class="referred-time-lbl"> Referred: ' . $row['date_time'] . ' </label>
-                                            <label class="queue-time-lbl"> Queue Time: ' . $waiting_time_bd . ' </label>
                                             <label class="reception-time-lbl"> Reception: '. $row['reception_time'] .'</label>
+                                            <label class="sdn-proc-time-lbl"> SDN Processed: '. $row['sent_interdept_time'] .'</label>
                                             
                                             <div class="breakdown-div">
-                                                <label class="processed-time-lbl"> Processed: 00:00:00  </label>  
+                                                <label class="interdept-proc-time-lbl"> Interdept Processed: '.$interdept_time[0]['final_progress_time'].'</label>
+                                                <label class="processed-time-lbl"> Total Processed: '.$total_time.'  </label>  
                                                 <label> Approval: 0000-00-00 00:00:00  </label>  
                                                 <label> Deferral: 0000-00-00 00:00:00  </label>  
                                                 <label> Cancelled: 0000-00-00 00:00:00  </label>  
@@ -381,10 +442,11 @@
                             <label id="status-bg-div">Interdepartment: Surgery - Status </label>
                         </div>
                         <!-- <label for="" id="v2-stat"> <span id="span-dept">Surgery</span> - Processing - <span id="span-time">00:07:09</span></label> -->
-                        <label for="" id="v2-stat"> <span id="span-dept">Surgery</span> - <span id="span-status">Pending</span> - <span id="span-time">00:00:00</span></span></label>
+                        <label for="" id="v2-stat"> <span id="span-dept">Surgery</span>  <span id="span-status">Pending</span> <span id="span-time">00:00:00</span></span></label>
                         <label id="v2-update-stat">Updated 0 second(s) ago...</label>
                         <div class="int-dept-btn-div-v2">
                             <button id="cancel-btn">Cancel</button>
+                            <button id="final-approve-btn">Proceed to Approval</button>
                         </div>
                     </div>
 

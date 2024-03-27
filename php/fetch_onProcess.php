@@ -9,12 +9,12 @@
     
     $hpercode = $_POST['hpercode'];
     if($hpercode !== "none"){
-        $reception_time = date('Y-m-d H:i:s');
-        $sql = "UPDATE incoming_referrals SET reception_time=:reception_time WHERE hpercode=:hpercode ";
-        $stmt = $pdo->prepare($sql);
-        $stmt->bindParam(':reception_time', $reception_time, PDO::PARAM_STR);
-        $stmt->bindParam(':hpercode', $hpercode, PDO::PARAM_STR);
-        $stmt->execute();
+        // $reception_time = date('Y-m-d H:i:s');
+        // $sql = "UPDATE incoming_referrals SET reception_time=:reception_time WHERE hpercode=:hpercode ";
+        // $stmt = $pdo->prepare($sql);
+        // $stmt->bindParam(':reception_time', $reception_time, PDO::PARAM_STR);
+        // $stmt->bindParam(':hpercode', $hpercode, PDO::PARAM_STR);
+        // $stmt->execute();
     }
     
 

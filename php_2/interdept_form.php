@@ -1,7 +1,18 @@
 <?php 
     session_start();
     include('../database/connection2.php');
-    
+
+    $sql = 'SELECT * FROM incoming_interdept';
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // $sql = 'UPDATE final_progress_time, final_progress_date FROM incoming_interdept';
+    // $stmt = $pdo->prepare($sql);
+    // $stmt->execute();
+
+    // echo '<pre>'; print_r($data); echo '</pre>';
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -113,7 +124,7 @@
                                             }  
                                         }
 
-                                        $sql = "SELECT reference_num, patlast, patfirst, patmiddle FROM incoming_referrals WHERE hpercode='". $row['hpercode'] ."' ";
+                                        $sql = "SELECT reference_num, patlast, patfirst, patmiddle, status_interdept FROM incoming_referrals WHERE hpercode='". $row['hpercode'] ."' ";
                                         $stmt = $pdo->prepare($sql);
                                         $stmt->execute();
                                         $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -133,7 +144,7 @@
                                                 <td id="dt-status">
                                                     <div> 
                                                         
-                                                        <label class="pat-status-incoming">Pending</label>
+                                                        <label class="pat-status-incoming">'.$data[0]['status_interdept'].'</label>
                                                         <i class="pencil-btn fa-solid fa-pencil"></i>
                                                         <input class="hpercode" type="hidden" name="hpercode" value= ' . $row['hpercode'] . '>
 
@@ -172,15 +183,46 @@
                         <label id="status-bg-div">Status: </label>
                         <label  id="pat-status-form">Pending</label>
                     </div>
-                                
+                    
+                    <div id='approval-form'>
+                        <div id="inter-dept-stat-form-div" class="status-form-div">
+                            <label id="status-bg-div">Approval Form </label>
+                        </div>
+                            
+                        <div class="approval-main-content">
+
+                            <label id="case-cate-title">Case Category</label>
+                            <select id="approve-classification-select">
+                                <option value="">Select</option>
+                                <option value="Primary">Primary</option>
+                                <option value="Secondary">Secondary</option>
+                                <option value="Tertiary">Tertiary</option>
+                            </select>
+
+                            <label id="admin-action-title">Emergency Room Administrator Action</label>
+                            <textarea id="eraa"></textarea>
+
+                            <div id="pre-text">
+                                <label class="pre-emp-text">+ May transfer patient once stable.</label>
+                                <label class="pre-emp-text">+ Please attach imaging and laboratory results to the referral letter.</label>
+                                <label class="pre-emp-text">+ Hook to oxygen support and maintain saturation at >95%.</label>
+                                <label class="pre-emp-text">+ Start venoclysis with appropriate intravenous fluids.</label>
+                                <label class="pre-emp-text">+ Insert nasogastric tube(NGT).</label>
+                                <label class="pre-emp-text">+ Insert indwelling foley catheter(IFC).</label>
+                                <label class="pre-emp-text">+ Thank you for your referral.</label>
+                            </div>
+
+                        </div> 
+                    </div>
+
                     <div class="referral-details">
                         <div id="inter-dept-stat-form-div" class="status-form-div">
                             <label id="status-bg-div">Referral Details </label>
                         </div>
                         <div class="ul-div"></div>
                         <div id="approval-form-btns">
-                            <button id="inter-dept-referral-btn"> Reject </button>
-                            <button id="imme-approval-btn"> Approve </button>
+                            <button id="inter-dept-reject-btn"> Reject </button>
+                            <button id="inter-approval-btn"> Approve </button>
                         </div>
                         <!-- timer stops -->
                         <!-- <ul class="list-none flex flex-col space-y-2">
@@ -241,6 +283,31 @@
                     <button id="yes-modal-btn-incoming" type="button" class="hidden bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2" data-bs-dismiss="modal">Yes</button>
                  -->
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModal-incoming" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header flex flex-row justify-between items-center">
+                <div class="flex flex-row justify-between items-center">
+                    <h5 id="modal-title-incoming" class="modal-title-incoming" id="exampleModalLabel">Confirmation</h5>
+                    <i id="modal-icon" class="fa-solid fa-triangle-exclamation ml-2"></i>
+                    <!-- <i class="fa-solid fa-circle-check"></i> -->
+                </div>
+                <button type="button" class="close text-3xl" data-bs-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="modal-body-incoming" class="modal-body-incoming ml-2">
+                Are you sure you want to approve this patient?
+            </div>
+            <div class="modal-footer">
+                <button id="ok-modal-btn-incoming" type="button" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2" data-bs-dismiss="modal">No</button>
+                <button id="yes-modal-btn-incoming" type="button" class="hidden bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2" data-bs-dismiss="modal">Yes</button>
+            </div>
             </div>
         </div>
     </div>

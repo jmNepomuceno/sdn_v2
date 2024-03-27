@@ -63,6 +63,7 @@
     }
     
     if($what === 'continue'){
+        // progress_timer = the column that holds the timer when logout
         $sql = "SELECT hpercode,status,progress_timer,logout_date FROM incoming_referrals WHERE progress_timer!='' AND refer_to = '" . $_SESSION["hospital_name"] . "'";
         $stmt = $pdo->prepare($sql);
         $stmt->execute();
