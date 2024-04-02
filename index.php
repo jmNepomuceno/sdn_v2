@@ -145,8 +145,9 @@
             $_SESSION["sub_what"] = "";
             
             $_SESSION['running_timer'] = "";
-            $_SESSION['fifo_hpercode'] = "asdf";
             $_SESSION['running_hpercode'] = "";
+            $_SESSION['running_index'] = "";
+            $_SESSION['fifo_hpercode'] = "asdf";
             $_SESSION['update_current_date'] = "";
             $_SESSION['patient_status'] = "";
             // Get the current date and time

@@ -104,7 +104,7 @@
                                 // SQL query to fetch data from your table
                                 // echo  "here";
                                 try{
-                                    $sql = "SELECT * FROM incoming_interdept WHERE department='surgery' ORDER BY recept_time ASC";
+                                    $sql = "SELECT * FROM incoming_interdept ORDER BY recept_time ASC";
                                     $stmt = $pdo->prepare($sql);
                                     $stmt->execute();
                                     $data = $stmt->fetchAll(PDO::FETCH_ASSOC);

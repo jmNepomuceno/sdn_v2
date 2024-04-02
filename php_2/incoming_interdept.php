@@ -24,4 +24,12 @@
     $stmt->bindParam(':hpercode', $hpercode, PDO::PARAM_STR);
     $stmt->bindParam(':pause_time', $pause_time, PDO::PARAM_STR);
     $stmt->execute();
+
+    $sql = "SELECT * FROM incoming_referrals WHERE (status='Pending' OR status='On-Process') AND refer_to='". $_SESSION["hospital_name"] ."' ORDER BY date_time ASC";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $response = json_encode($data);
+    echo $response;
 ?>

@@ -16,6 +16,7 @@ $(document).ready(function(){
 
     let global_index = 0, global_paging = 1, global_timer = "", global_breakdown_index = 0;
     let final_time_total = "", update_seconds = 0;
+    let next_referral_index_table;
     let length_curr_table = document.querySelectorAll('.hpercode').length;
     let toggle_accordion_obj = {}
     for(let i = 0; i < length_curr_table; i++){
@@ -32,10 +33,6 @@ $(document).ready(function(){
         let data = {
             hpercode : document.querySelectorAll('.hpercode')[global_index].value
         }
-        //
-        $('#span-time').text("")
-        $('#span-status').text("Loading...")
-        $('#span-dept').text("")
         $.ajax({
             url: '../php_2/fetch_update_interdept.php',
             method: "POST", 
@@ -45,8 +42,16 @@ $(document).ready(function(){
                 response = JSON.parse(response);   
                 console.log(response)
 
+                if(response[0]['status_interdept'] === "Pending"){
+                    $('#span-dept').text(response[1].department.toUpperCase() + " | ")
+                    $('#span-status').text(response[0].status_interdept + " | ")
+                    $('#span-time').text("00:00:00")
+
+                    $('#v2-update-stat').text(`Last update: ${response[0]['currentDateTime']}`)
+                }
+
                 if(response[0]['status_interdept'] === "On-Process"){
-                    const timeString = "00:59:48";
+                    const timeString = response[1].curr_time;
 
                     // Split the time string into an array using the ":" delimiter
                     const timeParts = timeString.split(":");
@@ -129,6 +134,28 @@ $(document).ready(function(){
         })
     }
 
+    function enabledNextReferral(){
+        // check the status of the referrals to get the index of the next referral to be enable
+        for(let i = 0; i < document.querySelectorAll('.pat-status-incoming').length; i++){
+            const str = document.querySelectorAll('.pat-status-incoming')[i].textContent.trim(); // Trim to remove leading and trailing whitespace
+
+            if (str && typeof str === 'string') {
+                const hasTwoSpaces = str.match(/^[^\s]*\s[^\s]*\s[^\s]*$/);; // Check if the string contains two consecutive spaces
+                if (hasTwoSpaces) {
+                    next_referral_index_table = i;
+                } 
+            }
+        }
+
+        if(next_referral_index_table >= 0){
+            document.querySelectorAll('.tr-incoming')[next_referral_index_table + 1].style.opacity = "1"
+            document.querySelectorAll('.tr-incoming')[next_referral_index_table + 1].style.pointerEvents = "auto"
+        }
+        
+    }
+
+    enabledNextReferral()
+
     function handleUserActivity() {
         userIsActive = true;
         // console.log('active')
@@ -144,6 +171,9 @@ $(document).ready(function(){
                 from_where : 'incoming'
             },
             success: function(response) {
+                console.log("fetch_interval")
+
+                // response = JSON.parse(response);    
                 // console.log(response)
 
                 dataTable.clear();
@@ -169,13 +199,15 @@ $(document).ready(function(){
                         global_breakdown_index = index;
                     });
                 });
+
+                enabledNextReferral()
             }
         });
     }
 
     document.addEventListener('mousemove', handleUserActivity);
 
-    const inactivityInterval = 115000; 
+    const inactivityInterval = 5000; 
 
     function startInactivityTimer() {
         inactivityTimer = setInterval(() => {
@@ -224,7 +256,7 @@ $(document).ready(function(){
                     data:data,
                     success: function(response){
                         response = JSON.parse(response);    
-                        console.log(typeof response[0])
+                        console.log(response)
                         if(response[0]){
                             $('#approval-form').css('display','none')
                             $('.interdept-div-v2').css('display','flex')
@@ -237,6 +269,7 @@ $(document).ready(function(){
                 })
 
                 myModal.show();
+
             }
         })
     }
@@ -294,10 +327,9 @@ $(document).ready(function(){
 
     // if theres a timer running before the reload
     if($('#running-timer-input').val() !== "" && $('#running-timer-input').val() !== "00:00:00"){
-        console.log('den' , $('#pat-curr-stat-input').val())
-
+        console.log('den' , $('#pat-curr-stat-input').val() === "")
+        console.log($('#running-index').val())
         if($('#pat-curr-stat-input').val() === ""){
-            OfflineAudioCompletionEvent()   
             const parts = $('#running-timer-input').val().split(':');
             // Extract hours, minutes, and seconds
             let hours = 0;
@@ -314,8 +346,9 @@ $(document).ready(function(){
             } else if (parts.length === 1) {
                 seconds = parseInt(parts[0], 10);
             }
-            runTimer(0, seconds, minutes, hours)
+            runTimer(parseInt($('#running-index').val()), seconds, minutes, hours)
         }
+
     }
 
     function runTimer(index, sec, min, hrs){
@@ -359,16 +392,26 @@ $(document).ready(function(){
         }, 1000); 
     }
 
-    window.addEventListener('beforeunload', function(event) {
+    window.addEventListener('beforeunload', function(e) {
+        // e.preventDefault()
+        // look only for the status that is On-Process
+        let curr_index = 0;
+        for(let i = 0; i < document.querySelectorAll('.pat-status-incoming').length; i++){
+            if(document.querySelectorAll('.pat-status-incoming')[i].textContent === "On-Process"){
+                curr_index = i;
+            }
+        }
+        console.log(curr_index)
         $.ajax({
             url: '../php/fetch_onProcess.php',
             method: "POST", 
             data:{
-                timer: document.querySelectorAll('.stopwatch')[0].textContent,
-                hpercode: document.querySelectorAll('.hpercode')[0].value
+                timer: document.querySelectorAll('.stopwatch')[curr_index].textContent,
+                hpercode: document.querySelectorAll('.hpercode')[curr_index].value,
+                index: curr_index
             },
             success: function(response){
-                response = JSON.parse(response);   
+                // response = JSON.parse(response);   
                 console.log(response)
 
                 // document.querySelector('.referral-details').innerHTML += response
@@ -531,9 +574,6 @@ $(document).ready(function(){
         defaultMyModal.show()
         $('.interdept-div-v2').css('display' , 'flex')
 
-        // window.location.href = 'http://192.168.42.222:8070/'
-
-
         let data = {
             dept : $('#inter-depts-select').val(),
             hpercode : document.querySelectorAll('.hpercode')[global_index].value,
@@ -546,12 +586,20 @@ $(document).ready(function(){
             method: "POST", 
             data:data,
             success: function(response){
+                response = JSON.parse(response);   
+                console.log(response)
+                
                 $('.interdept-div').css('display','none')
                 $('#cancel-btn').css('display','block')
                 $('.approval-main-content').css('display','none')
                 clearInterval(running_timer_interval)
                 
                 document.querySelectorAll('.pat-status-incoming')[global_index].textContent = 'Pending - ' + $('#inter-depts-select').val().toUpperCase();
+
+                // enable the second request on the table while waiting for the current request that is on interdepartment already
+                // document.querySelectorAll('.tr-incoming').
+                myModal.hide()
+                enabledNextReferral()
             }
         })
     })
@@ -644,6 +692,15 @@ $(document).ready(function(){
         // Or using slice
         // var stringWithoutPlus = originalString.slice(2);
         $('#eraa').val($('#eraa').val() + " " + stringWithoutPlus  + " ")
+
+
+        if ($('#approve-classification-select').val() !== '') {
+            $('#imme-approval-btn').css('opacity' , '1')
+            $('#imme-approval-btn').css('pointer-events' , 'auto')
+
+            $('#inter-dept-referral-btn').css('opacity' , '1')
+            $('#inter-dept-referral-btn').css('pointer-events' , 'auto')
+        }
     })
 
     // 
@@ -674,7 +731,7 @@ $(document).ready(function(){
     });
 
     $('#eraa').on('input', function(event) {
-        if ($('#approve-classification-select').val() !== '' && $('#eraa').val().length > 1) {
+        if ($('#approve-classification-select').val() !== '' && $('#eraa').val().length > 20) {
             $('#imme-approval-btn').css('opacity' , '1')
             $('#imme-approval-btn').css('pointer-events' , 'auto')
 
@@ -682,6 +739,16 @@ $(document).ready(function(){
             $('#inter-dept-referral-btn').css('pointer-events' , 'auto')
         }else{
             
+        }
+    });
+
+    $('#eraa').on('keydown', function(event) {
+        if (event.keyCode === 8 && $('#eraa').val().length < 20) {
+            $('#imme-approval-btn').css('opacity' , '0.3')
+            $('#imme-approval-btn').css('pointer-events' , 'none')
+
+            $('#inter-dept-referral-btn').css('opacity' , '0.3')
+            $('#inter-dept-referral-btn').css('pointer-events' , 'none')
         }
     });
  
@@ -720,8 +787,7 @@ $(document).ready(function(){
                 });
             }
          })
-
-
     });
+
 
 })

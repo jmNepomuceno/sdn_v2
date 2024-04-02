@@ -36,18 +36,22 @@
     // $_SESSION["sub_what"]
 
     if($_SESSION['running_hpercode'] != null || $_SESSION['running_hpercode'] != ""){
-        $sql = "SELECT status_interdept FROM incoming_referrals WHERE hpercode='". $_SESSION['running_hpercode'] ."'";
+        $sql = "SELECT status_interdept FROM incoming_referrals WHERE hpercode = :hpercode";
         $stmt = $pdo->prepare($sql);
-        $stmt->execute();
+        $stmt->execute([':hpercode' => $_SESSION['running_hpercode']]);
         $status_interdept = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        $sql = "SELECT department FROM incoming_interdept WHERE hpercode='". $_SESSION['running_hpercode'] ."'";
+        // Prepare and execute the second query
+        $sql = "SELECT department FROM incoming_interdept WHERE hpercode = :hpercode";
         $stmt = $pdo->prepare($sql);
-        $stmt->execute();
+        $stmt->execute([':hpercode' => $_SESSION['running_hpercode']]);
         $department = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        // idk for refresh only?
-        $current_pat_status =$status_interdept['status_interdept'] . ' - ' .  strtoupper($department['department']);
+        // Concatenate status and department if both are set
+        $current_pat_status = "";
+        if ($status_interdept && $department) {
+            $current_pat_status = $status_interdept['status_interdept'] . ' - ' . strtoupper($department['department']);
+        }
     }
 
     // *******************************************************************************
@@ -65,13 +69,27 @@
 
     // refresh value of the data in database 
     
-    // $sql = "UPDATE incoming_referrals SET status_interdept='', sent_interdept_time='', last_update='', status='Pending' WHERE hpercode='BGHMC-0049' ";
+    // $sql = "UPDATE incoming_referrals SET status_interdept=NULL, final_progressed_timer=NULL, sent_interdept_time=NULL, last_update=NULL, status='Pending', approved_time=NULL WHERE hpercode='BGHMC-0049' ";
     // $stmt = $pdo->prepare($sql);
     // $stmt->execute();
 
-    // $sql = "DELETE FROM incoming_interdept WHERE hpercode='BGHMC-0049' ";
+    // $sql = "DELETE FROM incoming_interdept";
+    // $stmt = $pdo->prepare($sql);
+    // $stmt->execute(); 
+
+    // $sql = "UPDATE incoming_referrals SET status_interdept=NULL, final_progressed_timer=NULL, sent_interdept_time=NULL, last_update=NULL, status='Pending', approved_time=NULL WHERE hpercode='BGHMC-0050' ";
     // $stmt = $pdo->prepare($sql);
     // $stmt->execute();
+
+    // $sql = "UPDATE incoming_referrals SET status_interdept=NULL, final_progressed_timer=NULL, sent_interdept_time=NULL, last_update=NULL, status='Pending', approved_time=NULL WHERE hpercode='BGHMC-0048' ";
+    // $stmt = $pdo->prepare($sql);
+    // $stmt->execute();
+
+    // $sql = "UPDATE incoming_referrals SET status_interdept=NULL, final_progressed_timer=NULL, sent_interdept_time=NULL, last_update=NULL, status='Pending', approved_time=NULL WHERE hpercode='BGHMC-0051' ";
+    // $stmt = $pdo->prepare($sql);
+    // $stmt->execute();
+
+    
 ?>
 
 <!DOCTYPE html>
@@ -106,6 +124,7 @@
     <?php
         if(isset($_SESSION['running_hpercode']) && ($_SESSION['running_hpercode'] != null || $_SESSION['running_hpercode'] != "")) {
             echo '<input id="pat-curr-stat-input" type="hidden" name="pat-curr-stat-input" value="' . $current_pat_status . '">';
+            echo '<input id="running-index" type="hidden" name="running-index" value="' .  $_SESSION["running_index"] . '">';
         }
     ?>
 
@@ -264,8 +283,8 @@
                                     $row['reception_time'] = "00:00:00";
                                 }
 
-                                if($row['status_interdept'] != ""){
-                                    $sql = "SELECT department FROM incoming_interdept WHERE hpercode='". $data[0]['hpercode'] ."'";
+                                if($row['status_interdept'] != "" && $row['status_interdept'] != null){
+                                    $sql = "SELECT department FROM incoming_interdept WHERE hpercode='". $row['hpercode'] ."'";
                                     $stmt = $pdo->prepare($sql);
                                     $stmt->execute();
                                     $data = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -281,22 +300,49 @@
                                 $interdept_time = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 
                                 $total_time = "00:00:00";
-                                if($interdept_time[0]['final_progress_time'] != "" && $row['sent_interdept_time'] != ""){
-                                    list($hours1, $minutes1, $seconds1) = array_map('intval', explode(':', $interdept_time[0]['final_progress_time']));
-                                    list($hours2, $minutes2, $seconds2) = array_map('intval', explode(':', $row['sent_interdept_time']));
+                                if($interdept_time){
+                                    if($interdept_time[0]['final_progress_time'] != "" && $row['sent_interdept_time'] != ""){
+                                        list($hours1, $minutes1, $seconds1) = array_map('intval', explode(':', $interdept_time[0]['final_progress_time']));
+                                        list($hours2, $minutes2, $seconds2) = array_map('intval', explode(':', $row['sent_interdept_time']));
 
-                                    // Create DateTime objects in UTC with the provided hours, minutes, and seconds
-                                    $date1 = new DateTime('1970-01-01 ' . $hours1 . ':' . $minutes1 . ':' . $seconds1, new DateTimeZone('UTC'));
-                                    $date2 = new DateTime('1970-01-01 ' . $hours2 . ':' . $minutes2 . ':' . $seconds2, new DateTimeZone('UTC'));
+                                        // Create DateTime objects in UTC with the provided hours, minutes, and seconds
+                                        $date1 = new DateTime('1970-01-01 ' . $hours1 . ':' . $minutes1 . ':' . $seconds1, new DateTimeZone('UTC'));
+                                        $date2 = new DateTime('1970-01-01 ' . $hours2 . ':' . $minutes2 . ':' . $seconds2, new DateTimeZone('UTC'));
 
-                                    // Calculate the total milliseconds
-                                    $totalMilliseconds = $date1->getTimestamp() * 1000 + $date2->getTimestamp() * 1000;
+                                        // Calculate the total milliseconds
+                                        $totalMilliseconds = $date1->getTimestamp() * 1000 + $date2->getTimestamp() * 1000;
 
-                                    // Create a new DateTime object in UTC with the total milliseconds
-                                    $newDate = new DateTime('@' . ($totalMilliseconds / 1000), new DateTimeZone('UTC'));
+                                        // Create a new DateTime object in UTC with the total milliseconds
+                                        $newDate = new DateTime('@' . ($totalMilliseconds / 1000), new DateTimeZone('UTC'));
 
-                                    // Format the result in UTC time "HH:mm:ss"
-                                    $total_time = $newDate->format('H:i:s');
+                                        // Format the result in UTC time "HH:mm:ss"
+                                        $total_time = $newDate->format('H:i:s');
+                                    }
+                                }else{
+                                    $interdept_time[0]['final_progress_time'] = "00:00:00";
+                                    $row['sent_interdept_time'] = "00:00:00";
+                                }
+
+
+                                if($row['approved_time'] == ""){
+                                    $row['approved_time'] = "0000-00-00 00:00:00";
+                                }
+
+                                if($interdept_time[0]['final_progress_time'] == ""){
+                                    $interdept_time[0]['final_progress_time'] = "00:00:00";
+                                }
+
+                                if($row['sent_interdept_time'] == ""){
+                                    $row['sent_interdept_time'] = "00:00:00";
+                                }
+
+                                $stopwatch = "00:00:00";
+                                if($row['sent_interdept_time'] == "00:00:00"){
+                                    if($_SESSION['running_timer'] != "" && $row['status'] == 'On-Process'){
+                                        $stopwatch  = $_SESSION['running_timer'];
+                                    }
+                                }else{
+                                    $stopwatch  = $row['sent_interdept_time'];
                                 }
 
                                 echo '<tr class="tr-incoming" style="'. $style_tr .'">
@@ -316,9 +362,9 @@
                                             <label class="sdn-proc-time-lbl"> SDN Processed: '. $row['sent_interdept_time'] .'</label>
                                             
                                             <div class="breakdown-div">
-                                                <label class="interdept-proc-time-lbl"> Interdept Processed: '.$interdept_time[0]['final_progress_time'].'</label>
+                                                <label class="interdept-proc-time-lbl"> Interdept Processed: '. $interdept_time[0]['final_progress_time'].'</label>
                                                 <label class="processed-time-lbl"> Total Processed: '.$total_time.'  </label>  
-                                                <label> Approval: 0000-00-00 00:00:00  </label>  
+                                                <label> Approval: '.$row['approved_time'] .'  </label>  
                                                 <label> Deferral: 0000-00-00 00:00:00  </label>  
                                                 <label> Cancelled: 0000-00-00 00:00:00  </label>  
                                                 <label> Arrived: 0000-00-00 00:00:00  </label>  
@@ -331,7 +377,7 @@
                                         </td>
                                         <td id="dt-stopwatch">
                                             <div id="stopwatch-sub-div">
-                                                Processing: <span class="stopwatch">00:00:00</span>
+                                                Processing: <span class="stopwatch">'.$stopwatch.'</span>
                                             </div>
                                         </td>
                                         

@@ -19,4 +19,13 @@
     
 
     $_SESSION['running_timer'] = $_POST['timer'];
+    $_SESSION['running_hpercode'] = $_POST['hpercode'];
+    $_SESSION['running_index'] = $_POST['index'];
+    echo $_SESSION['running_hpercode'];
+
+    /*
+    1. Save logout timer in interdept
+    2. Set and calculate the total turn around time of the process.
+    3. Enable the second request referral in SDN Module when the status of the current or first referral is already sent on the interdept.
+    */
 ?>
