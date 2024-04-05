@@ -69,25 +69,25 @@
 
     // refresh value of the data in database 
     
-    // $sql = "UPDATE incoming_referrals SET status_interdept=NULL, final_progressed_timer=NULL, sent_interdept_time=NULL, last_update=NULL, status='Pending', approved_time=NULL WHERE hpercode='BGHMC-0049' ";
-    // $stmt = $pdo->prepare($sql);
-    // $stmt->execute();
+    $sql = "UPDATE incoming_referrals SET status_interdept=NULL, final_progressed_timer=NULL, sent_interdept_time=NULL, last_update=NULL, status='Pending', approved_time=NULL WHERE hpercode='BGHMC-0049' ";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
 
-    // $sql = "DELETE FROM incoming_interdept";
-    // $stmt = $pdo->prepare($sql);
-    // $stmt->execute(); 
+    $sql = "DELETE FROM incoming_interdept";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute(); 
 
-    // $sql = "UPDATE incoming_referrals SET status_interdept=NULL, final_progressed_timer=NULL, sent_interdept_time=NULL, last_update=NULL, status='Pending', approved_time=NULL WHERE hpercode='BGHMC-0050' ";
-    // $stmt = $pdo->prepare($sql);
-    // $stmt->execute();
+    $sql = "UPDATE incoming_referrals SET status_interdept=NULL, final_progressed_timer=NULL, sent_interdept_time=NULL, last_update=NULL, status='Pending', approved_time=NULL WHERE hpercode='BGHMC-0050' ";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
 
-    // $sql = "UPDATE incoming_referrals SET status_interdept=NULL, final_progressed_timer=NULL, sent_interdept_time=NULL, last_update=NULL, status='Pending', approved_time=NULL WHERE hpercode='BGHMC-0048' ";
-    // $stmt = $pdo->prepare($sql);
-    // $stmt->execute();
+    $sql = "UPDATE incoming_referrals SET status_interdept=NULL, final_progressed_timer=NULL, sent_interdept_time=NULL, last_update=NULL, status='Pending', approved_time=NULL WHERE hpercode='BGHMC-0048' ";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
 
-    // $sql = "UPDATE incoming_referrals SET status_interdept=NULL, final_progressed_timer=NULL, sent_interdept_time=NULL, last_update=NULL, status='Pending', approved_time=NULL WHERE hpercode='BGHMC-0051' ";
-    // $stmt = $pdo->prepare($sql);
-    // $stmt->execute();
+    $sql = "UPDATE incoming_referrals SET status_interdept=NULL, final_progressed_timer=NULL, sent_interdept_time=NULL, last_update=NULL, status='Pending', approved_time=NULL WHERE hpercode='BGHMC-0051' ";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
 
     
 ?>
@@ -473,10 +473,16 @@
                         <label for="" id="inter-dept-lbl">Department: </label>
                         <select id="inter-depts-select" style="cursor:pointer;">
                             <option value="">Select</option>
-                            <option value="surgery"> Surgery </option>
-                            <option value="ob"> OB </option>
-                            <option value="im"> Internal Medicine </option>
-                            <option value="fm"> Fam Med </option>
+                            <option value="SURGERY"> Surgery </option>
+                            <option value="OB-GYNE"> OB-GYNE </option>
+                            <option value="IM"> Internal Medicine </option>
+                            <option value="FAMILY MEDICINE"> Family Medicine </option>
+                            <option value="ANESTHESIA"> Anesthesia </option>
+                            <option value="OTOLARYNGOLOGY"> Otolaryngology </option>
+                            <option value="PEDIATRICS"> Pediatrics </option>
+                            <option value="OPHTHALMOLOGY"> Ophthalmology </option>
+                            <option value="PHYSICAL REHAB"> Physical Rehab </option>
+                            <option value="IHOMP"> IHOMP </option>
                         </select>
                         <div class="int-dept-btn-div">
                             <button id="int-dept-btn-forward">Send / Forward</button>
@@ -596,13 +602,10 @@
     <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>  -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <script type="text/javascript"  charset="utf8" src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
-
+                        
     <script src="../js_2/incoming_form2.js?v= <?php echo time(); ?>"></script>
 
     <script>
-    // $(document).ready(function () {
-    //     $('#myDataTable').DataTable();
-    // });
         var jsonData = <?php echo $jsonData; ?>;
         // var logout_data =  echo $logout_data; ?>;
         var login_data = "<?php echo $_SESSION['login_time']; ?>";

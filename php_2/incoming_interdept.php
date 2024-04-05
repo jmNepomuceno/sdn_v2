@@ -9,7 +9,7 @@
     $hpercode = $_POST['hpercode'];
     $pause_time = $_POST['pause_time'];
 
-    $sql = "INSERT INTO incoming_interdept (department, hpercode, recept_time) VALUES (?,?,?)";
+    $sql = "INSERT INTO incoming_interdept (department, hpercode, recept_time, unRead) VALUES (?,?,?,1)";
     $stmt = $pdo->prepare($sql);
 
     $stmt->bindParam(1, $dept, PDO::PARAM_STR);

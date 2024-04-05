@@ -97,7 +97,6 @@
     width:25%;
     height: 100%;
     margin-left:55px;
-    /* border:1px solid black; */
 }
 
 #patient-reg-form-div #upper-part-div .important-btns .patient-form-btns{
@@ -107,6 +106,7 @@
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
+    border:1px solid black;
 }
 
 #patient-reg-form-div #upper-part-div .important-btns .patient-form-btns #classification-dropdown{

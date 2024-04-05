@@ -201,6 +201,18 @@ $(document).ready(function(){
                 });
 
                 enabledNextReferral()
+
+                // disable the timer when its showing and running, when the modal is open.
+                // clearInterval(running_timer_interval_update)
+                // console.log(document.querySelectorAll('.pat-status-incoming')[global_index].textContent)
+
+                const myString = document.querySelectorAll('.pat-status-incoming')[global_index].textContent;
+                const substring = "Approve";
+
+                if (myString.toLowerCase().includes(substring.toLowerCase())) {
+                    clearInterval(running_timer_interval_update)
+                    $('#span-status').text("Approved | ") 
+                }
             }
         });
     }
@@ -223,6 +235,7 @@ $(document).ready(function(){
 
     const ajax_method = (index, event) => {
         global_index = index
+        console.log(global_index)
         const data = {
             hpercode: document.querySelectorAll('.hpercode')[index].value,
             from:'incoming'
@@ -261,9 +274,12 @@ $(document).ready(function(){
                             $('#approval-form').css('display','none')
                             $('.interdept-div-v2').css('display','flex')
                             $('#cancel-btn').css('display','block')
-                            
-
+                
                             updateInterdeptFunc()
+                        }else{
+                            $('#approval-form').css('display','flex')
+                            $('.interdept-div-v2').css('display','none')
+                            $('#cancel-btn').css('display','none')
                         }
                     }
                 })
@@ -327,8 +343,8 @@ $(document).ready(function(){
 
     // if theres a timer running before the reload
     if($('#running-timer-input').val() !== "" && $('#running-timer-input').val() !== "00:00:00"){
-        console.log('den' , $('#pat-curr-stat-input').val() === "")
-        console.log($('#running-index').val())
+        // console.log('den' , $('#pat-curr-stat-input').val() === "")
+        // console.log($('#running-index').val())
         if($('#pat-curr-stat-input').val() === ""){
             const parts = $('#running-timer-input').val().split(':');
             // Extract hours, minutes, and seconds
@@ -442,8 +458,27 @@ $(document).ready(function(){
         console.log(valid_search)
 
         if(valid_search){
+            // find all status that is, sent already on the interdept or On-Process
+            let hpercode_arr = []
+            for(let i = 0; i < document.querySelectorAll('.pat-status-incoming').length; i++){
+                let pat_stat = document.querySelectorAll('.pat-status-incoming')
+
+                const str = pat_stat[i].textContent.trim(); // Trim to remove leading and trailing whitespace
+                if (str && typeof str === 'string') {
+                    const hasTwoSpaces = str.match(/^[^\s]*\s[^\s]*\s[^\s]*$/);; // Check if the string contains two consecutive spaces
+                    if (hasTwoSpaces) {
+                        hpercode_arr.push(document.querySelectorAll('.hpercode')[i].value)
+                    } 
+                }
+
+                if(pat_stat[i].textContent === 'On-Process'){
+                    hpercode_arr.push(document.querySelectorAll('.hpercode')[i].value)
+                }
+            }
+            console.log(hpercode_arr)
+
             let data = {
-                hpercode : document.querySelectorAll('.hpercode')[global_index].value,
+                hpercode_arr : hpercode_arr,
                 ref_no : $('#incoming-referral-no-search').val(),
                 last_name : $('#incoming-last-name-search').val(),
                 first_name : $('#incoming-first-name-search').val(),
@@ -460,6 +495,7 @@ $(document).ready(function(){
                 method: "POST", 
                 data:data,
                 success: function(response){
+                    // console.log(response)
 
                     dataTable.clear();
                     dataTable.rows.add($(response)).draw();
@@ -508,7 +544,7 @@ $(document).ready(function(){
             data : {what: 'continue'},
             success: function(response){
                 response = JSON.parse(response);  
-                console.log(response)
+                // console.log(response)
 
                 if(response.length > 0){
                     // Function to format time as HH:MM:SS
@@ -588,7 +624,7 @@ $(document).ready(function(){
             success: function(response){
                 response = JSON.parse(response);   
                 console.log(response)
-                
+
                 $('.interdept-div').css('display','none')
                 $('#cancel-btn').css('display','block')
                 $('.approval-main-content').css('display','none')
@@ -789,5 +825,8 @@ $(document).ready(function(){
          })
     });
 
+    // reviewhin mo yung code ng monitoring tool, pano na f-fetch yung user account and department.
+    // tas test ulit sa incoming if my open na bug/error
+    // gl hf :))
 
 })
