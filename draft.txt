@@ -563,3 +563,19 @@ later-ru
 </label>
 <label for="username">Username:</label>
 <input type="text" id="username">
+
+
+March 22 Friday = automata | 3hours | Online Lecture + Activity
+March 23 Saturday = HCI | 5hours | Online Lecture + Activity | Quiz
+March 23 Saturday = FreeElect | 5hours | Online Lecture + Activity
+March 23 Saturday = COA|3hours|Online Lecture + Asynchronous Act
+
+March 27 Wednesday = Automata | Online Lecture | 3hours | Review and Quiz
+March 30 Saturday Holy Week = Asynchronous | video recording of lectures and lesson and Async Activities
+
+
+//040824
+//https://chat.openai.com/c/ec84b2e5-a31c-4b7c-9559-08df6536ae9a
+
+040924
+automatic lagay ng seen_by and seen_date kapag nirektang click sa mismong sdn itnerdept referral

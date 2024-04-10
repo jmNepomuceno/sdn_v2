@@ -489,7 +489,9 @@
 }
 
 #pendingModal .modal-content .interdept-div-v2{
+    display:none;
     align-items: center;
+    height: 220px;
 }
 
 #pendingModal .modal-content .interdept-div #inter-dept-lbl{
@@ -509,6 +511,35 @@
     border-radius: 5px;
 }
 
+#pendingModal .modal-content .interdept-div-v2 .seen-div{
+    width:100%;
+    height: 40px;
+    margin-top:10px;
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#pendingModal .modal-content .interdept-div-v2 .seen-div label{
+    color:black;
+    font-weight: bold;
+}
+
+#pendingModal .modal-content .interdept-div-v2 .seen-div #seen-by-lbl{
+    margin-left: 30px;
+}
+
+#pendingModal .modal-content .interdept-div-v2 .seen-div #seen-date-lbl{
+    margin-right: 30px;
+}
+
+
+#pendingModal .modal-content .interdept-div-v2 .seen-div label span{
+    font-weight: normal;
+    font-style: italic;
+}
+
 #pendingModal .modal-content .interdept-div .int-dept-btn-div,
 #pendingModal .modal-content .interdept-div-v2 .int-dept-btn-div-v2{
     width:100%;
@@ -520,7 +551,7 @@
 }
 
 #pendingModal .modal-content .interdept-div-v2 .int-dept-btn-div-v2{
-    margin-top: 10px;
+    margin-top:0;
 }
 
 #pendingModal .modal-content .interdept-div .int-dept-btn-div button,

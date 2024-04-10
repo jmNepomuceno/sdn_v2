@@ -16,7 +16,6 @@
         $post_value_reload = $_SESSION['post_value_reload'];
     }
 
-
     $sql = "SELECT * FROM incoming_referrals WHERE logout_date!='null' AND refer_to = '" . $_SESSION["hospital_name"] . "' ";
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
@@ -26,7 +25,6 @@
 
     $logout_data = json_encode($data);
     // $login_data = $_SESSION['login_time'];
-
 
     // echo json_encode($data);
     // echo $_SESSION['login_time'];
@@ -89,7 +87,17 @@
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
 
-    
+    //*************************************************************************
+
+    // $sql = "SELECT * FROM incoming_interdept";
+    // $stmt = $pdo->prepare($sql);
+    // $stmt->execute();
+    // $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // echo '<pre>'; print_r($data); echo '</pre>';
+
+    // $sql = "UPDATE incoming_interdept SET unRead=1, referring_seenTime=null, referring_seenBy=null";
+    // $stmt = $pdo->prepare($sql);
+    // $stmt->execute();
 ?>
 
 <!DOCTYPE html>
@@ -494,10 +502,17 @@
                             <label id="status-bg-div">Interdepartment: Surgery - Status </label>
                         </div>
                         <!-- <label for="" id="v2-stat"> <span id="span-dept">Surgery</span> - Processing - <span id="span-time">00:07:09</span></label> -->
-                        <label for="" id="v2-stat"> <span id="span-dept">Surgery</span>  <span id="span-status">Pending</span> <span id="span-time">00:00:00</span></span></label>
+                        <label id="v2-stat"> <span id="span-dept">Surgery</span>  <span id="span-status">Pending</span> <span id="span-time">00:00:00</span></span></label>
                         <label id="v2-update-stat">Updated 0 second(s) ago...</label>
+                        
+                        <!-- set to null -->
+                        <div class="seen-div">
+                            <label id="seen-by-lbl">Seened by: <span>John Marvin Nepomuceno</span> </label>
+                            <label id="seen-date-lbl">Seened date: <span>04/08/24 11:11:11</span> </label>
+                        </div>
+
                         <div class="int-dept-btn-div-v2">
-                            <button id="cancel-btn">Cancel</button>
+                            <button id="cancel-btn" >Cancel</button>
                             <button id="final-approve-btn">Proceed to Approval</button>
                         </div>
                     </div>

@@ -58,6 +58,8 @@ $(document).ready(function(){
                 weight_input : parseInt($('#weight-input').val()),
                 pe_findings_input : $('#pe-findings-input').val(),
 
+                // pre-empt data
+                
                 // refer_to : $('#refer-to-select').val(),
                 // sensitive_case : 'true',
                 // parent_guardian : "N/A",

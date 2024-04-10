@@ -270,7 +270,8 @@ $(document).ready(function(){
                     success: function(response){
                         response = JSON.parse(response);    
                         console.log(response)
-                        if(response[0]){
+
+                        if(response.status_interdept){
                             $('#approval-form').css('display','none')
                             $('.interdept-div-v2').css('display','flex')
                             $('#cancel-btn').css('display','block')
@@ -281,6 +282,11 @@ $(document).ready(function(){
                             $('.interdept-div-v2').css('display','none')
                             $('#cancel-btn').css('display','none')
                         }
+
+                        // $('#seen-by-lbl span').text(associatedObject.referring_seenBy)
+                        // $('#seen-date-lbl span').text(associatedObject.referring_seenTime)
+
+                        $('#final-approve-btn').css('display','block')
                     }
                 })
 
