@@ -579,3 +579,27 @@ March 30 Saturday Holy Week = Asynchronous | video recording of lectures and les
 
 040924
 automatic lagay ng seen_by and seen_date kapag nirektang click sa mismong sdn itnerdept referral
+
+//04/12/24
+
+//04/13/24
+1. How do you start the session in php? // session_start() // session.start() // session-start() // session_start
+2. Is a technique used in web development to send and receive data from a server/php. It is the medium to 
+    used when we want to have a communication between JavaScript and PHP // XML // PHP // AJAX // METHOD
+3. What are the two methods that are mostly used on sending a request to the server/php. // GET AND POST // CREATE AND READ // GET AND PASTE // POST AND RECEIVE
+4. What do you call when you are going to send an AJAX from your javascript to your PHP file or server? // Response // Retreive // Request // Repost
+5. What do you call when you are going to received something from your server side or PHP , into your javascript? // Response // Retreive // Request // Repost
+6. From this Object or the data you are going to send to your php from your javascript, what is the 'Key' on this code?
+    $.ajax({
+        url: './php/approved_to_arrival.php',
+        method: "POST",
+        data : {
+            firstName : firstName,
+            lastName : lastName,
+        }
+    })
+
+7. Which storage is the best to used when storing a data on the webpage? // Local Storage // Session Storag
+8. CRUD stands for? // Concatenate, Rotate, Undo, Divide //  Create, Read, Update, and Delete // Compile, Run, Upload, Debug // Copy, Rename, Understand, Deploy
+9. How do you get the data from your AJAX request in to your PHP? Using which one: // %_GET // $_POST // $POST_ // $GET_
+10. 
