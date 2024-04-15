@@ -33,6 +33,7 @@ $(document).ready(function(){
         let data = {
             hpercode : document.querySelectorAll('.hpercode')[global_index].value
         }
+        console.log(data)
         $.ajax({
             url: '../php_2/fetch_update_interdept.php',
             method: "POST", 
@@ -52,54 +53,55 @@ $(document).ready(function(){
 
                 if(response[0]['status_interdept'] === "On-Process"){
                     const timeString = response[1].curr_time;
+                    if(timeString){
+                        // Split the time string into an array using the ":" delimiter
+                        const timeParts = timeString.split(":");
 
-                    // Split the time string into an array using the ":" delimiter
-                    const timeParts = timeString.split(":");
+                        var hours = parseInt(timeParts[0]);
+                        var minutes = parseInt(timeParts[1]);
+                        var seconds = parseInt(timeParts[2]);
 
-                    var hours = parseInt(timeParts[0]);
-                    var minutes = parseInt(timeParts[1]);
-                    var seconds = parseInt(timeParts[2]);
+                        running_timer_interval_update = setInterval(function() {
+                            seconds++;
+                
+                            if (seconds === 60) {
+                                seconds = 0;
+                                minutes++;
+                            }
+                
+                            if (minutes === 60) {
+                                minutes = 0;
+                                hours++;
+                            }
+                
+                            const formattedTime = pad(hours) + ':' + pad(minutes) + ':' + pad(seconds);
+                            $('#v2-update-stat').text(`Last update: ${response[0]['currentDateTime']}`)
 
-                    running_timer_interval_update = setInterval(function() {
-                        seconds++;
-            
-                        if (seconds === 60) {
-                            seconds = 0;
-                            minutes++;
-                        }
-            
-                        if (minutes === 60) {
-                            minutes = 0;
-                            hours++;
-                        }
-            
-                        const formattedTime = pad(hours) + ':' + pad(minutes) + ':' + pad(seconds);
-                        $('#v2-update-stat').text(`Last update: ${response[0]['currentDateTime']}`)
+                            // <label for="" id="v2-stat"> <span id="span-dept">Surgery</span> - <span id="span-status">Pending</span> - <span id="span-time">00:00:00</span></span></label>
+                            $('#span-dept').text(response[1].department.charAt(0).toUpperCase() + response[1].department.slice(1) + " | ") 
+                            $('#span-status').text(response[0].status_interdept + " | ") 
+                            $('#span-time').text(formattedTime)
 
-                        // <label for="" id="v2-stat"> <span id="span-dept">Surgery</span> - <span id="span-status">Pending</span> - <span id="span-time">00:00:00</span></span></label>
-                        $('#span-dept').text(response[1].department.charAt(0).toUpperCase() + response[1].department.slice(1) + " | ") 
-                        $('#span-status').text(response[0].status_interdept + " | ") 
-                        $('#span-time').text(formattedTime)
+                            // here
+                            $('.interdept-div').css('display','none')
+                            $('#cancel-btn').css('display','block')
+                            $('.approval-main-content').css('display','none')
+                            clearInterval(running_timer_interval)
 
-                        // here
-                        $('.interdept-div').css('display','none')
-                        $('#cancel-btn').css('display','block')
-                        $('.approval-main-content').css('display','none')
-                        clearInterval(running_timer_interval)
+                            // check if the status of the thingy is approve or deferred
+                            // $.ajax({
+                            //     url: '../php_2/fetch_update_interdept.php',
+                            //     method: "POST", 
+                            //     data:data,
+                            //     success: function(response){
+                                    
+                                    
+                            //         // document.querySelectorAll('.pat-status-incoming')[global_index].textContent = 'Pending - ' + $('#inter-depts-select').val().toUpperCase();;
+                            //     }
+                            // })
 
-                        // check if the status of the thingy is approve or deferred
-                        // $.ajax({
-                        //     url: '../php_2/fetch_update_interdept.php',
-                        //     method: "POST", 
-                        //     data:data,
-                        //     success: function(response){
-                                
-                                
-                        //         // document.querySelectorAll('.pat-status-incoming')[global_index].textContent = 'Pending - ' + $('#inter-depts-select').val().toUpperCase();;
-                        //     }
-                        // })
-
-                    }, 1000); 
+                        }, 1000); 
+                    }
                 }
                 else if(response[0]['status_interdept'] === "Approved"){
                     $('#v2-update-stat').text(`Last update: ${response[1]['final_progress_date']}`)
@@ -212,6 +214,8 @@ $(document).ready(function(){
                 if (myString.toLowerCase().includes(substring.toLowerCase())) {
                     clearInterval(running_timer_interval_update)
                     $('#span-status').text("Approved | ") 
+                    $('#final-approve-btn').css('display',  'block')
+
                 }
             }
         });
@@ -235,12 +239,11 @@ $(document).ready(function(){
 
     const ajax_method = (index, event) => {
         global_index = index
-        console.log(global_index)
         const data = {
             hpercode: document.querySelectorAll('.hpercode')[index].value,
             from:'incoming'
         }
-        console.log(data)
+        // console.log(data)
         $.ajax({
             url: '../php/process_pending.php',
             method: "POST", 
@@ -262,31 +265,38 @@ $(document).ready(function(){
                 }
 
                 // checking if the patient is already referred interdepartamentally
-                console.log(data)
+                // console.log(data)
+
                 $.ajax({
                     url: '../php_2/check_interdept_refer.php',
                     method: "POST", 
                     data:data,
                     success: function(response){
                         response = JSON.parse(response);    
-                        console.log(response)
+                        // console.log(response)
+                        console.log(typeof response.status_interdept)
 
                         if(response.status_interdept){
+                            console.log(279)
                             $('#approval-form').css('display','none')
                             $('.interdept-div-v2').css('display','flex')
                             $('#cancel-btn').css('display','block')
                 
                             updateInterdeptFunc()
                         }else{
+                            console.log(286)
                             $('#approval-form').css('display','flex')
+                            $('.approval-main-content').css('display','block')
                             $('.interdept-div-v2').css('display','none')
                             $('#cancel-btn').css('display','none')
                         }
 
-                        // $('#seen-by-lbl span').text(associatedObject.referring_seenBy)
-                        // $('#seen-date-lbl span').text(associatedObject.referring_seenTime)
-
-                        $('#final-approve-btn').css('display','block')
+                        $('#seen-by-lbl span').text(response.referring_seenBy)
+                        $('#seen-date-lbl span').text(response.referring_seenTime)
+                        
+                        if (document.querySelectorAll('.pat-status-incoming')[global_index].textContent.includes("Approve")) {
+                            $('#final-approve-btn').css('display','block')
+                        } 
                     }
                 })
 
@@ -299,7 +309,6 @@ $(document).ready(function(){
     const pencil_elements = document.querySelectorAll('.pencil-btn');
         pencil_elements.forEach(function(element, index) {
         element.addEventListener('click', function() {
-            console.log('den')
             //myModal.show();
             
             ajax_method(index)
@@ -349,9 +358,8 @@ $(document).ready(function(){
 
     // if theres a timer running before the reload
     if($('#running-timer-input').val() !== "" && $('#running-timer-input').val() !== "00:00:00"){
-        // console.log('den' , $('#pat-curr-stat-input').val() === "")
-        // console.log($('#running-index').val())
         if($('#pat-curr-stat-input').val() === ""){
+            console.log('here')
             const parts = $('#running-timer-input').val().split(':');
             // Extract hours, minutes, and seconds
             let hours = 0;
@@ -461,8 +469,6 @@ $(document).ready(function(){
             }
         }
 
-        console.log(valid_search)
-
         if(valid_search){
             // find all status that is, sent already on the interdept or On-Process
             let hpercode_arr = []
@@ -481,6 +487,7 @@ $(document).ready(function(){
                     hpercode_arr.push(document.querySelectorAll('.hpercode')[i].value)
                 }
             }
+
             console.log(hpercode_arr)
 
             let data = {
@@ -813,13 +820,26 @@ $(document).ready(function(){
         console.log(data);
 
         $.ajax({
-            url: '../php/approved_pending.php',
+            url: '../php_2/approved_pending.php',
             method: "POST",
             data : data,
             success: function(response){
                 // response = JSON.parse(response);    
                 // console.log(response)
 
+
+                
+                document.querySelectorAll('.pat-status-incoming')[global_index].textContent = 'Approved';
+                myModal.hide()
+                
+                dataTable.clear();
+                dataTable.rows.add($(response)).draw();
+                
+                length_curr_table = $('.tr-incoming').length
+                for(let i = 0; i < length_curr_table; i++){
+                    toggle_accordion_obj[i] = true
+                }
+                
                 const pencil_elements = document.querySelectorAll('.pencil-btn');
                 pencil_elements.forEach(function(element, index) {
                     element.addEventListener('click', function() {
@@ -830,9 +850,4 @@ $(document).ready(function(){
             }
          })
     });
-
-    // reviewhin mo yung code ng monitoring tool, pano na f-fetch yung user account and department.
-    // tas test ulit sa incoming if my open na bug/error
-    // gl hf :))
-
 })

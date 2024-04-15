@@ -2,11 +2,25 @@
     session_start();
     include('../database/connection2.php');
 
-    if ($_SESSION['user_name'] === 'admin'){
-        $user_name = 'Bataan General Hospital and Medical Center';
-    }else{
-        $user_name = $_SESSION['hospital_name'];
+    //if cache is cleared redirect to index page
+    if (!isset($_SESSION['user_name']) || empty($_SESSION['user_name'])) {
+        header("Location: ../index.php");
+        exit();
+    } else {
+        if ($_SESSION['user_name'] === 'admin'){
+            $user_name = 'Bataan General Hospital and Medical Center';
+        }else{
+            $user_name = $_SESSION['hospital_name'];
+        }
     }
+
+    // if ($_SESSION['user_name'] === 'admin'){
+    //     $user_name = 'Bataan General Hospital and Medical Center';
+    // }else{
+    //     $user_name = $_SESSION['hospital_name'];
+    // }
+
+
 ?>
 
 <!DOCTYPE html>
@@ -53,7 +67,7 @@
                     <!-- <div class="w-[33.3%] h-full   flex flex-row justify-end items-center -mr-1">
                         <h1 class="text-center w-full rounded-full p-1 bg-yellow-500 font-bold">6</h1>
                     </div> -->
-                    
+                                        
                         <div id="notif-div">
                             <h1 id="notif-circle"><span id="notif-span"></span></h1>
                             <i class="fa-solid fa-bell"></i> 
@@ -100,6 +114,7 @@
 
         <div id="nav-drop-account-div">
             <div id="nav-drop-acc-sub-div">
+                
                 <?php if($_SESSION["user_name"] == "admin") {?>
                     <div id="admin-module-btn" class="nav-drop-btns">
                         <h2 id="admin-module-id" class="nav-drop-btns-txt">Admin</h2>
@@ -173,19 +188,16 @@
                             <i class="fa-solid fa-inbox"></i>
                             <h3>Incoming</h3>
                         </div>
+                        
+                        <!-- bucas referral -->
                         <div id="interdept-sub-div-id">
                             <i class="fa-solid fa-inbox"></i>
-                            <h3 class="m-3 text-white">Interdept</h3>
+                            <h3>BUCAS (Incoming)</h3>
                         </div>
                     </div>
                 </div>
-
-               
             </aside>
 
-            
-            
-            
 
             <div id="container">
             

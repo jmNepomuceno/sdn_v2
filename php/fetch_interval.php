@@ -199,6 +199,8 @@
                         </td>
                     </tr>';
 
+
+                
                 $previous = $row['reference_num'];
                 $loop += 1;
                 $i += 1;

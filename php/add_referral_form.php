@@ -4,27 +4,15 @@
     include("../database/connection2.php");
     date_default_timezone_set('Asia/Manila');
 
-    // echo $_SESSION['hospital_code']; 
-    // echo $_SESSION['hospital_name']; 
-    // echo $_SESSION['hospital_email']; 
-    // echo $_SESSION['hospital_landline']; 
-    // echo $_SESSION['hospital_mobile']; 
-    // echo $_SESSION['hospital_name']; 
-
-    // echo $_SESSION['user_name']; 
-    // echo $_SESSION['user_password']; 
-    // echo $_SESSION['first_name']; 
-    // echo $_SESSION['last_name']; 
-    // echo $_SESSION['middle_name']; 
-    // echo $_POST['type'];
-
     $code = $_POST['code'];
 
+    // get some information from the hperson table
     $sql = "SELECT patlast, patfirst, patmiddle, patsuffix FROM hperson WHERE hpercode='". $code ."'";
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
     $data = $stmt->fetch(PDO::FETCH_ASSOC);
 
+    // date_time column = date and time of referral
     $dateTime = new DateTime();
     // Format the DateTime object as needed
     $formattedDateTime = $dateTime->format("Y-m-d H:i:s");
@@ -51,6 +39,7 @@
     $stmt_temp->execute();
     $data_municipality_desc = $stmt_temp->fetch(PDO::FETCH_ASSOC);
 
+    // constructing the reference number
     $inputString = $_POST['refer_to'];
     $words = explode(' ', $inputString);
     $firstLetters = array_map(function ($word) {
@@ -108,21 +97,6 @@
         $presentation_ob_inp = $_POST['presentation_ob_inp'];
         $others_ob_inp = $_POST['others_ob_inp'];
     }
-    
-
-    // echo $reference_num;
-    // echo $patlast;
-    // echo $patfirst;
-    // echo $patmiddle;
-    // echo $patsuffix;
-    // echo $type;
-    // echo $referred_by;
-    // echo $landline_no;
-    // echo $mobile_no;
-    // echo $referred_time;
-    // echo $status;
-
-    // echo "success";
 
     $sql = "";
    if($type === "OB"){
@@ -135,8 +109,6 @@
             VALUES (?,?,?,?,?,?,?,?,?,?,?,?, ?,?,?,?,?,?,?,?,?,?,?,?,?,?, ?)";
    }
 
-   
-    
     $stmt = $pdo->prepare($sql);
 
     $stmt->bindParam(1, $code, PDO::PARAM_STR);

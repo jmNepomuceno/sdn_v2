@@ -23,5 +23,7 @@
                 <p>If you wish to use the software for commercial or other purposes, please contact us at bgh_bataan2005@yahoo.com.ph.</p>
             </div>
         </div>
+
+    <!-- <script src="../js_2/main_style.js"></script> -->
 </body>
 </html>

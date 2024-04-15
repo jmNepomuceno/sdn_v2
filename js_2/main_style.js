@@ -14,6 +14,7 @@ $(document).ready(function(){
     // loadContent('../php_2/patient_register_form2.php')
     // loadContent('php/opd_referral_form.php?type=OB&code=BGHMC-0001')
     loadContent('../php_2/incoming_form2.php')
+    // loadContent('../php_2/bucas_queue.php')
     // loadContent('../php_2/outgoing_form2.php')
     // loadContent('php/outgoing_form.php')
     // loadContent('../php_2/interdept_form.php')
@@ -34,6 +35,8 @@ $(document).ready(function(){
 
     // Check if the loadContent parameter exists in the URL
     var loadContentParam = getQueryVariable('loadContent');
+
+    console.log('Loaded Content Param: ' + loadContentParam);
     if (loadContentParam) {
         loadContent(loadContentParam);
     }else{
@@ -69,6 +72,10 @@ $(document).ready(function(){
             success: function(response) {
                 response = JSON.parse(response);  
                 $('#notif-span').text(response.length);
+                if(response.length > 9){
+                    $('#notif-span').css('font-size' , '0.65rem');
+                }
+
                 if (parseInt(response.length) >= 1) {
                     if(current_page === 'incoming_page'){
                         stopSound()
@@ -101,14 +108,14 @@ $(document).ready(function(){
                         if(i % 2 === 0){ 
                             document.getElementById('notif-sub-div').innerHTML += '\
                             <div>\
-                            <h4 class="font-bold text-lg">' + type_counts + '</h4>\
+                                <h4 class="font-bold text-lg">' + type_counts + '</h4>\
                                 <h4 class="font-bold text-lg">' + type_var + '</h4>\
                             </div>\
                         ';
                         }else{
                             document.getElementById('notif-sub-div').innerHTML += '\
                             <div>\
-                            <h4 class="font-bold text-lg">' + type_counts + '</h4>\
+                                <h4 class="font-bold text-lg">' + type_counts + '</h4>\
                                 <h4 class="font-bold text-lg">' + type_var + '</h4>\
                             </div>\
                         ';
@@ -277,7 +284,7 @@ $(document).ready(function(){
         let final_date = year + "/" + month + "/" + day + " " + hours + ":" + minutes + ":" + seconds
 
         $.ajax({
-            url: './php/save_process_time.php',
+            url: '../php/save_process_time.php',
             data : {
                 what: 'save',
                 date : final_date,
@@ -343,7 +350,12 @@ $(document).ready(function(){
 
     $('#interdept-sub-div-id').on('click' , function(event){
         event.preventDefault();
-        loadContent('../php_2/interdept_form.php')
+        // loadContent('../php_2/interdept_form.php')
+    })
+
+    $('#interdept-sub-div-id').on('click' , function(event){
+        event.preventDefault();
+        loadContent('../php_2/bucas_queue.php')
     })
     
 
@@ -363,7 +375,6 @@ $(document).ready(function(){
 
     $('#navbar-icon').on('click' , function(event){
         let  width = ((($("#side-bar-div").width() / $("#side-bar-div").parent().width()) * 100).toFixed(1)) + "%";
-        console.log('asdf')
 
         if(width === "13.5%"){
             $('#side-bar-div').css("width", "0")

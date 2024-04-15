@@ -5,7 +5,6 @@
     $timer_running = false;
     $post_value_reload = '';
 
-
     $sql = "SELECT * FROM incoming_referrals WHERE progress_timer IS NOT NULL AND refer_to = '" . $_SESSION["hospital_name"] . "'";
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
@@ -21,7 +20,6 @@
     $stmt->execute();
     $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // echo '<pre>'; print_r($data); echo '</pre>';
 
     $logout_data = json_encode($data);
     // $login_data = $_SESSION['login_time'];
@@ -65,9 +63,9 @@
     // $stmt->execute();
     // $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // refresh value of the data in database 
+    //*************************************************************************** */ refresh value of the data in database 
     
-    $sql = "UPDATE incoming_referrals SET status_interdept=NULL, final_progressed_timer=NULL, sent_interdept_time=NULL, last_update=NULL, status='Pending', approved_time=NULL WHERE hpercode='BGHMC-0049' ";
+    $sql = "UPDATE incoming_referrals SET status_interdept=NULL, reception_time=NULL, final_progressed_timer=NULL, sent_interdept_time=NULL, last_update=NULL, status='Pending', approved_time=NULL, progress_timer=NULL, logout_date=NULL WHERE hpercode='BGHMC-0049' ";
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
 
@@ -75,7 +73,7 @@
     $stmt = $pdo->prepare($sql);
     $stmt->execute(); 
 
-    $sql = "UPDATE incoming_referrals SET status_interdept=NULL, final_progressed_timer=NULL, sent_interdept_time=NULL, last_update=NULL, status='Pending', approved_time=NULL WHERE hpercode='BGHMC-0050' ";
+    $sql = "UPDATE incoming_referrals SET status_interdept=NULL, reception_time=NULL, final_progressed_timer=NULL, sent_interdept_time=NULL, last_update=NULL, status='Pending', approved_time=NULL, progress_timer=NULL, logout_date=NULL WHERE hpercode='BGHMC-0050' ";
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
 
@@ -86,6 +84,14 @@
     $sql = "UPDATE incoming_referrals SET status_interdept=NULL, final_progressed_timer=NULL, sent_interdept_time=NULL, last_update=NULL, status='Pending', approved_time=NULL WHERE hpercode='BGHMC-0051' ";
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
+
+    //************************************************************************ */
+
+    // $sql = "SELECT * FROM incoming_referrals WHERE hpercode='BGHMC-0049'";
+    // $stmt = $pdo->prepare($sql);
+    // $stmt->execute();
+    // $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // echo '<pre>'; print_r($data); echo '</pre>';
 
     //*************************************************************************
 
@@ -107,6 +113,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home Page</title>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous"> -->
@@ -115,7 +122,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     
 
     <link rel="stylesheet" href="../css/incoming_form.css">

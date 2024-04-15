@@ -138,36 +138,38 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="../output.css">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- <link rel="stylesheet" href="../output.css"> -->
+    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+    
+    <link rel="stylesheet" href="../css/dashboard_incoming.css">
 </head>
 <body class="h-screen overflow-hidden">
 
     <input type="hidden" id="total-processed-refer-inp" value=<?php echo $data['COUNT(*)'] ?>>
     <input type="hidden" id="total-processed-refer-inp" value=<?php echo $data['COUNT(*)'] ?>>
     
-    <header class="header-div w-full h-[50px] flex flex-row justify-between items-center bg-[#1f292e]">
-        <div class="w-[30%] h-full flex flex-row justify-start items-center">
-            <div id="side-bar-mobile-btn" class="side-bar-mobile-btn w-[10%] h-full flex flex-row justify-center items-center cursor-pointer">
-                <i class="fa-solid fa-bars text-white text-4xl"></i>
+    <header class="header-div">
+        <div class="header-sub-div-1">
+            <div id="side-bar-mobile-btn" class="side-bar-mobile-btn">
+                <i class="fa-solid fa-bars"></i>
             </div>
-            <h1 id="sdn-title-h1" class="text-white text-xl ml-2 cursor-pointer"> Service Delivery Network</h1>
+            <h1 id="sdn-title-h1"> Service Delivery Network</h1>
         </div>
-        <div class="account-header-div w-[35%] h-full flex flex-row justify-end items-center mr-2">
+        <div class="account-header-div">
 
-            <div class="w-auto h-5/6 flex flex-row justify-end items-center mr-2">
+            <div class="notification-sub-div">
                 <!-- <div class="w-[33.3%] h-full   flex flex-row justify-end items-center -mr-1">
                     <h1 class="text-center w-full rounded-full p-1 bg-yellow-500 font-bold">6</h1>
                 </div> -->
                 
-                    <div id="notif-div" class="w-[20px] h-full flex flex-col justify-center items-center cursor-pointer relative">
-                        <h1 id="notif-circle" class="absolute top-2 text-center w-[17px] h-[17px] rounded-full bg-red-600 ml-5 text-white text-xs "><span id="notif-span" class="z-30"></span></h1>
-                        <i class="fa-solid fa-bell text-white text-xl"></i>
+                    <div id="notif-div">
+                        <h1 id="notif-circle"><span id="notif-span" >33</span></h1>
+                        <i class="fa-solid fa-bell"></i>
                         <audio id="notif-sound" preload='auto' muted loop>
                             <source src="../assets/sound/water_droplet.mp3" type="audio/mpeg">
                         </audio>
 
-                        <div id="notif-sub-div" class="hidden absolute top-[85%] w-[200px] h-[90px] bg-[#1f292e] border-4 border-[#7694a2] rounded-sm overflow-y-scroll scrollbar-hidden flex flex-col justify-start items-center">
+                        <div id="notif-sub-div">
                             <!-- <div class="h-[30px] w-full border border-black flex flex-row justify-evenly items-center">
                                 <h4 class="font-bold text-lg">3</h4>
                                 <h4 class="font-bold text-lg">OB</h4>
@@ -175,105 +177,61 @@
                             <!-- b3b3b3 -->
                         </div>
                     </div>
-
-                    <div class="w-[20px] h-full flex flex-col justify-center items-center">
-                        <i class="fa-solid fa-caret-down text-white text-xs mt-2"></i>
-                    </div>
-                
             </div>
 
-            <div id="nav-account-div" class="header-username-div w-auto h-5/6 flex flex-row justify-end items-center mr-2">
-                <div class="w-[15%] h-full flex flex-row justify-end items-center mr-1">
-                    <i class="fa-solid fa-user text-white text-xl"></i>
+            <div id="nav-account-div" class="header-username-div">
+                <div class="user-icon-div">
+                    <i class="fa-solid fa-user"></i>
                 </div>
-                <div id="" class="w-auto h-full whitespace-nowrap flex flex-col justify-center items-center cursor-pointer">
-                    <!-- <h1 class="text-white text-lg hidden sm:block">John Marvin Nepomuceno</h1> -->
+                <div id="" class="user-name-div">
+                    <!-- <h1 class="text-white text-lg hidden sm:block">John Marvin Nepomuceno</h1> --> 
                     <?php 
                         if($_SESSION['last_name'] === 'Administrator'){
-                            echo '<h1 class="text-white text-base hidden sm:block">' . $user_name . ' | ' . $_SESSION["last_name"] . '</h1>';
+                            echo '<h1>' . $user_name . ' | ' . $_SESSION["last_name"] . '</h1>';
                         }else{
-                            echo '<h1 class="text-white text-base hidden sm:block">' . $user_name . ' | ' . $_SESSION["last_name"] . ', ' . $_SESSION['first_name'] . ' ' . $_SESSION['middle_name'] . '</h1>';;
-
+                            echo '<h1>' . $user_name . ' | ' . $_SESSION["last_name"] . ', ' . $_SESSION['first_name'] . ' ' . $_SESSION['middle_name'] . '</h1>';;
                         }
                     ?>
-                    
                 </div>
-                <div class="w-[5%] h-full flex flex-col justify-center items-center sm:m-1">
-                    <i class="fa-solid fa-caret-down text-white text-xs"></i>
+                <div class="caret-div">
+                    <i class="fa-solid fa-caret-down"></i>
                 </div>
             </div>
         </div>
     </header>  
 
-    <div id="nav-mobile-account-div" class="sm:hidden flex flex-col justify-start items-center bg-[#1f292e] text-white fixed w-64 h-full overflow-y-auto transition-transform duration-300 transform translate-x-96 z-10">
-        <div id="close-nav-mobile-btn" class="w-full h-[50px] mt-2 flex flex-row justify-start items-center">
-            <i class="fa-solid fa-x ml-2 text-2xl"></i>
+    <div id="nav-drop-account-div">
+        <?php if($_SESSION["user_name"] == "admin") {?>
+            <div id="admin-module-div-id" class="w-2/3 h-[50px] border-b-2 border-[#29363d] flex flex-row justify-center items-center cursor-pointer opacity-30 hover:opacity-100 duration-150">
+                <h2 id="admin-module-id" class="">Admin</h2>
+            </div>
+        <?php } ?>
+        <div id="dashboard-incoming-btn" class="w-2/3 h-[50px] border-b-2 border-[#29363d] flex flex-row justify-center items-center cursor-pointer opacity-30 hover:opacity-100 duration-150">
+            <h2 class="">Dashboard (Incoming)</h2>
         </div>
-        <div class="w-full h-[350px] flex flex-col justify-around items-center">
-            <div class="w-2/3 h-[50px] border-b-2 border-[#29363d] flex flex-row justify-center items-center">
-                <h2 class="" >Dashboard (Incoming)</h2>
-            </div>
 
-            <div class="w-2/3 h-[50px] border-b-2 border-[#29363d] flex flex-row justify-center items-center">
-                <h2 class="">Dashboard (Outgoing)</h2>
-            </div>
-
-            <div class="w-2/3 h-[50px] border-b-2 border-[#29363d] flex flex-row justify-center items-center">
-                <h2 class="">Dashboard (ER/OPD)</h2>
-            </div>
-
-            <div class="w-2/3 h-[50px] border-b-2 border-[#29363d] flex flex-row justify-center items-center">
-                <h2 class="">History Log</h2>
-            </div>
-
-            <div class="w-2/3 h-[50px] border-b-2 border-[#29363d] flex flex-row justify-center items-center">
-                <h2 class="">Settings</h2>
-            </div>
-
-            <div class="w-2/3 h-[50px] border-b-2 border-[#29363d] flex flex-row justify-center items-center">
-                <h2 class="">Help</h2>
-            </div>
-
-            <div class="w-2/3 h-[50px] border-b-2 border-[#29363d] flex flex-row justify-center items-center">
-                <h2 class="">Logout</h2>
-            </div>
+        <div id="dashboard-outgoing-btn" class="w-2/3 h-[50px] border-b-2 border-[#29363d] flex flex-row justify-center items-center cursor-pointer opacity-30 hover:opacity-100 duration-150">
+            <h2 class="">Dashboard (Outgoing)</h2>
         </div>
-    </div>
 
-    <div id="nav-drop-account-div" class="hidden z-10 absolute right-0 top-[45px] flex flex-col justify-start items-center bg-[#1f292e] text-white fixed w-[15%] h-[400px]">
-        <div class="w-full h-[350px] flex flex-col justify-around items-center">
-            <?php if($_SESSION["user_name"] == "admin") {?>
-                <div class="w-2/3 h-[50px] border-b-2 border-[#29363d] flex flex-row justify-center items-center cursor-pointer opacity-30 hover:opacity-100 duration-150">
-                    <h2 id="admin-module-id" class="">Admin</h2>
-                </div>
-            <?php } ?>
-            <div id="dashboard-incoming-btn" class="w-2/3 h-[50px] border-b-2 border-[#29363d] flex flex-row justify-center items-center cursor-pointer opacity-30 hover:opacity-100 duration-150">
-                <h2 class="">Dashboard (Incoming)</h2>
-            </div>
+        <div class="w-2/3 h-[50px] border-b-2 border-[#29363d] flex flex-row justify-center items-center cursor-pointer opacity-30 hover:opacity-100 duration-150">
+            <h2 class="">Dashboard (ER/OPD)</h2>
+        </div>
 
-            <div id="dashboard-outgoing-btn" class="w-2/3 h-[50px] border-b-2 border-[#29363d] flex flex-row justify-center items-center cursor-pointer opacity-30 hover:opacity-100 duration-150">
-                <h2 class="">Dashboard (Outgoing)</h2>
-            </div>
+        <div id="history-log-btn" class="w-2/3 h-[50px] border-b-2 border-[#29363d] flex flex-row justify-center items-center cursor-pointer opacity-30 hover:opacity-100 duration-150">
+            <h2 class="">History Log</h2>
+        </div>
 
-            <div class="w-2/3 h-[50px] border-b-2 border-[#29363d] flex flex-row justify-center items-center cursor-pointer opacity-30 hover:opacity-100 duration-150">
-                <h2 class="">Dashboard (ER/OPD)</h2>
-            </div>
+        <div class="w-2/3 h-[50px] border-b-2 border-[#29363d] flex flex-row justify-center items-center cursor-pointer opacity-30 hover:opacity-100 duration-150">
+            <h2 class="">Settings</h2>
+        </div>
 
-            <div id="history-log-btn" class="w-2/3 h-[50px] border-b-2 border-[#29363d] flex flex-row justify-center items-center cursor-pointer opacity-30 hover:opacity-100 duration-150">
-                <h2 class="">History Log</h2>
-            </div>
+        <div class="w-2/3 h-[50px] border-b-2 border-[#29363d] flex flex-row justify-center items-center cursor-pointer opacity-30 hover:opacity-100 duration-150">
+            <h2 class="">Help</h2>
+        </div>
 
-            <div class="w-2/3 h-[50px] border-b-2 border-[#29363d] flex flex-row justify-center items-center cursor-pointer opacity-30 hover:opacity-100 duration-150">
-                <h2 class="">Settings</h2>
-            </div>
-
-            <div class="w-2/3 h-[50px] border-b-2 border-[#29363d] flex flex-row justify-center items-center cursor-pointer opacity-30 hover:opacity-100 duration-150">
-                <h2 class="">Help</h2>
-            </div>
-
-            <div class="w-2/3 h-[50px] border-b-2 border-[#29363d] flex flex-row justify-center items-center cursor-pointer opacity-30 hover:opacity-100 duration-150">
-                <h2 id='logout-btn' class="">Logout</h2>
-            </div>
+        <div class="w-2/3 h-[50px] border-b-2 border-[#29363d] flex flex-row justify-center items-center cursor-pointer opacity-30 hover:opacity-100 duration-150">
+            <h2 id='logout-btn' class="">Logout</h2>
         </div>
     </div>
 

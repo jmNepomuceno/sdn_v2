@@ -59,7 +59,7 @@ $(document).ready(function(){
                 pe_findings_input : $('#pe-findings-input').val(),
 
                 // pre-empt data
-                
+
                 // refer_to : $('#refer-to-select').val(),
                 // sensitive_case : 'true',
                 // parent_guardian : "N/A",
@@ -131,7 +131,6 @@ $(document).ready(function(){
                     //     document.getElementById("notif-sound").play()
                     // }else{
                     //     //labas ng modal
-
                     // }
 
                     $('#modal-title').text('Successed')

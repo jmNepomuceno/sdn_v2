@@ -542,11 +542,11 @@ $(document).ready(function(){
   }
 
   $('#notif-div').on('click' , function(event){
-    if ($('#notif-sub-div').hasClass('hidden')) {
-      $('#notif-sub-div').removeClass('hidden');
-  } else {
-      $('#notif-sub-div').addClass('hidden');
-  }
+  //   if ($('#notif-sub-div').hasClass('hidden')) {
+  //     $('#notif-sub-div').removeClass('hidden');
+  // } else {
+  //     $('#notif-sub-div').addClass('hidden');
+  // }
 })
 
 $('#notif-sub-div').on('click' , function(event){
