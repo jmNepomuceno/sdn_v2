@@ -12,10 +12,10 @@
                         JSON_UNQUOTE(JSON_EXTRACT(sdn_data, '$.CivilStatus')) AS civilStatus,
                         JSON_UNQUOTE(JSON_EXTRACT(sdn_data, '$.Age')) AS age, 
                         JSON_UNQUOTE(JSON_EXTRACT(sdn_data, '$.ServiceType')) AS ServiceType,
-                        status AS statusReferral
+                        status, received_by, received_at
                     FROM 
                         bghmc.bucas_referral
-                    WHERE status = 'pending'";
+                    WHERE status = 'accepted' OR status = 'deferred';";
 
     $stmt = $pdo->prepare($query_bucas);
     $stmt->execute();
@@ -31,25 +31,23 @@
 <div class="bucas-container">
     <form id="bucas-list-form" method="POST">
         <div>
-            <h1 class="page-title">BUCAS INCOMING REFERRAL</h1>
+            <h1 class="page-title">BUCAS REFERRAL HISTORY</h1>
         </div>
         <div>
             <h5 class="page-title">As of <?php echo $currentDate ?></h5>
         </div>    
         <div class="row">
-            <table id="tbl-bucas" class="table table-bordered custom-search-modal" style="width: 100%; border-spacing: -1px;">
+            <table id="tbl-history" class="table table-bordered custom-search-modal" style="width: 100%; border-spacing: -1px;">
                 <thead>
                     <tr>
                         <th class="th-bg" style="width: 140px; text-align: center;">Patient ID</th>
-                        <th class="th-bg" style="width: 90px; text-align: center;">Case Number</th>
-                        <th class="th-bg" style="width: 100px; text-align: center;">Last Name</th>
-                        <th class="th-bg" style="width: 100px; text-align: center;">First Name</th>
-                        <th class="th-bg" style="width: 100px; text-align: center;">Middle Name</th>
-                        <th class="th-bg" style="width: 80px; text-align: center;">Ext. Name</th>
+                        <th class="th-bg" style="width: 80px; text-align: center;">Case Number</th>
+                        <th class="th-bg" style="width: 200px; text-align: center;">Patient Name</th>
                         <th class="th-bg" style="width: 100px; text-align: center;">Service Type</th>
-                        <th class="th-bg" style="width: 220px; text-align: center;">Agency</th>
-                        <th class="th-bg" style="width: 80px; text-align: center;">Status</th>
-                        <th class="th-bg" style="width: 80px; text-align: center;">Action</th>
+                        <th class="th-bg" style="width: 180px; text-align: center;">Agency</th>
+                        <th class="th-bg" style="width: 70px; text-align: center;">Status</th>
+                        <th class="th-bg" style="width: 130px; text-align: center;">Date Processed</th>
+                        <th class="th-bg" style="width: 80px; text-align: center;">Process By</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -57,18 +55,14 @@
                         $agency = 'Bagac Community Medicare Hospital';
                         foreach ($data as $row) {
                             echo "<tr>";
-                            echo "<td>" . htmlspecialchars($row['bucasID']) . "</td>";
-                            echo "<td>" . htmlspecialchars($row['caseNo']) . "</td>";
-                            echo "<td>" . htmlspecialchars($row['pxLast']) . "</td>";
-                            echo "<td>" . htmlspecialchars($row['pxFirst']) . "</td>";
-                            echo "<td>" . htmlspecialchars($row['pxMiddle']) . "</td>";
-                            echo "<td>" . htmlspecialchars($row['pxExtension']) . "</td>";
-                            echo "<td>" . htmlspecialchars($row['ServiceType']) . "</td>";         
-                            echo "<td>" . htmlspecialchars($agency) . "</td>";
-                            echo "<td>" . htmlspecialchars($row['statusReferral']) . "</td>";
-                            echo '<td style="text-align: center;">';
-                            echo '<a href="javascript:void(0);" class="view-link" data-bs-toggle="modal" data-bs-target="#bucasBackdrop" data-bucas-id="' . htmlspecialchars($row['bucasID']) . '">VIEW</a>';
-                            echo '</td>';
+                            echo "<td>" . $row['bucasID'] . "</td>";
+                            echo "<td>" . $row['caseNo'] . "</td>";
+                            echo "<td>" . $row['pxFirst'] ." ".$row['pxMiddle']." ".$row['pxLast'] ." ".$row['pxExtension']."</td>";
+                            echo "<td>" . $row['ServiceType'] . "</td>";         
+                            echo "<td>" . $agency . "</td>";
+                            echo "<td>" . $row['status'] . "</td>";
+                            echo "<td>" . date('m/d/Y h:i A', strtotime($row['received_at'])) . "</td>";
+                            echo "<td>" . $row['received_by'] . "</td>";
                             echo "</tr>";
                         }
                     ?>    
@@ -81,14 +75,14 @@
 <!-- <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script> -->
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="../js_2/bucas.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js">
+// <script src="../js_2/bucas.js"></script>
 <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
 
 
 <script>
     $(document).ready(function() {
-        $('#tbl-bucas').DataTable({
+        $('#tbl-history').DataTable({
             paging: true,
             ordering: false,
             pageLength: 10,

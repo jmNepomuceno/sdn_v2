@@ -5,10 +5,23 @@
 
     $timer = $_POST['timer'];
     $currentDateTime = date('Y-m-d H:i:s');
+    // global_single_hpercode: BGHMC-0050 <br>timer: 00:00:04 <br>approve_details:  <br>case_category:  <br>action: Approve <br>
+    // echo json_encode($_SESSION['approval_details_arr']);
+    // echo '<pre>'; print_r($_SESSION['approval_details_arr']); echo '</pre>';
 
-    $pat_class = $_POST['case_category'];
+    foreach ($_SESSION['approval_details_arr'] as $index => $element) {
+        if ($element['hpercode'] == $_POST['global_single_hpercode']) {
+            // Found the matching element
+            $index;
+            break; // Stop looping once found
+        }
+    }
+
+    $pat_class = $_SESSION['approval_details_arr'][$index]['category'];
     $global_single_hpercode = filter_input(INPUT_POST, 'global_single_hpercode');
-    if($_POST['action'] === "Approve"){
+    $approve_details = $_SESSION['approval_details_arr'][$index]['approve_details'];
+
+    if($_POST['action'] === "Approve"){  
         $sql = "UPDATE incoming_referrals SET status='Approved', pat_class=:pat_class WHERE hpercode=:hpercode AND refer_to = '" . $_SESSION["hospital_name"] . "'";
         $stmt = $pdo->prepare($sql);
         $stmt->bindParam(':hpercode', $global_single_hpercode, PDO::PARAM_STR);
@@ -30,7 +43,6 @@
     $stmt_b->execute();
 
     // update the approved_details and set the time of approval on the database
-    $approve_details = filter_input(INPUT_POST, 'approve_details');
     if($_POST['action'] === "Approve"){
         $sql = "UPDATE incoming_referrals SET approval_details=:approve_details, approved_time=:approved_time, progress_timer=NULL, refer_to_code=NULL WHERE hpercode=:hpercode AND refer_to = '" . $_SESSION["hospital_name"] . "'";
         $stmt = $pdo->prepare($sql);
@@ -102,10 +114,14 @@
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
     $data = $stmt->fetchAll(PDO::FETCH_ASSOC);  
+    // echo '<pre>'; print_r($data); echo '</pre>';
 
     $index = 0;
     $previous = 0;
     $loop = 0;
+    $i = 0;
+    $prev_status_interdept = "";
+
     // Loop through the data and generate table rows
     foreach ($data as $row) {
         $type_color;
@@ -133,6 +149,23 @@
         if($loop != 0 &&  $row['status'] === 'Pending'){
             $style_tr = 'opacity:0.5; pointer-events:none;';
         }
+
+        $sql = "SELECT department FROM incoming_interdept WHERE hpercode=:hpercode";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(":hpercode", $row['hpercode'], PDO::PARAM_STR);
+        $stmt->execute();
+        $dept = $stmt->fetch(PDO::FETCH_ASSOC);  
+
+        if($row['status_interdept'] == 'Approved'){
+            $row['status'] = "Approved - " . $dept['department'];
+        }
+
+        if($i > 0){
+            if($prev_status_interdept == 'Approved'){
+                $style_tr = 'opacity:1; pointer-events:auto;';
+            }
+        }
+        
 
         // $waiting_time = "--:--:--";
         $date1 = new DateTime($row['date_time']);
@@ -188,7 +221,7 @@
                 <td id="dt-status">
                     <div> 
                         
-                        <label class="pat-status-incoming">'. $row['status'].'</label>
+                        <label class="pat-status-incoming">'. $row['status'] .'</label>
                         <i class="pencil-btn fa-solid fa-pencil"></i>
                         <input class="hpercode" type="hidden" name="hpercode" value= ' . $row['hpercode'] . '>
 
@@ -196,11 +229,24 @@
                 </td>
             </tr>';
 
+
         
-            $previous = $row['reference_num'];
+        $prev_status_interdept = $row['status_interdept'];
+        $previous = $row['reference_num'];
         $loop += 1;
+        $i += 1;
     }
+
+
+    foreach ($_SESSION['approval_details_arr'] as $index => $element) {
+        if ($element['hpercode'] == $_POST['global_single_hpercode']) {
+            // Found the matching element, delete it
+            unset($_SESSION['approval_details_arr'][$index]);
+            break; // Stop looping once found
+        }
+    }
+
+    $_SESSION['approval_details_arr'] = array_values($_SESSION['approval_details_arr']);
+    $response = json_encode($_SESSION['approval_details_arr']);
+    // // echo $response;
 ?>
-
-
-

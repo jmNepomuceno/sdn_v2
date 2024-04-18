@@ -108,8 +108,8 @@
                     <div class="select-wrapper">
                         <select name="sdnStatus" id="sdnStatus" class="form-control" onchange="updateTextarea()" required autocomplete="off">
                             <option value="">Select</option>
-                            <option value="accept">Accepted</option>
-                            <option value="defer">Deferred</option>
+                            <option value="accepted">Accepted</option>
+                            <option value="deferred">Deferred</option>
                         </select>
                     </div>
                 </td>

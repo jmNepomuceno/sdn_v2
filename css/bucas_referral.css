@@ -84,3 +84,22 @@ body {
     overflow-y: auto;
     font-size: 14px !important;
 }
+
+.modal-header {
+    background-color: #B0BEC5 !important;
+    color: #000;
+}
+
+.modal-footer {
+    background-color: #B0BEC5 !important;
+    color: #000;
+}
+
+.logout-modal {
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    font-weight: 500 !important;
+}

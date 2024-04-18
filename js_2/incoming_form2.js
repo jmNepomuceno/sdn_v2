@@ -104,13 +104,14 @@ $(document).ready(function(){
                     }
                 }
                 else if(response[0]['status_interdept'] === "Approved"){
+                    console.log('107')
                     $('#v2-update-stat').text(`Last update: ${response[1]['final_progress_date']}`)
 
                     // <label for="" id="v2-stat"> <span id="span-dept">Surgery</span> - <span id="span-status">Pending</span> - <span id="span-time">00:00:00</span></span></label>
                     $('#span-dept').text(response[1].department.charAt(0).toUpperCase() + response[1].department.slice(1) + " | ") 
                     $('#span-status').text(response[0].status_interdept + " | ") 
                     $('#span-time').text(response[1]['final_progress_time'])
-                    console.log(response[0]['sent_interdept_time'] ,  response[1]['final_progress_time'])
+                    // console.log(response[0]['sent_interdept_time'] ,  response[1]['final_progress_time'])
                     
                     const [hours1, minutes1, seconds1] = response[0]['sent_interdept_time'].split(':').map(Number);
                     const [hours2, minutes2, seconds2] = response[1]['final_progress_time'].split(':').map(Number);
@@ -127,7 +128,7 @@ $(document).ready(function(){
                     // Format the result in UTC time "HH:mm:ss"
                     const result = `${String(newDate.getUTCHours()).padStart(2, '0')}:${String(newDate.getUTCMinutes()).padStart(2, '0')}:${String(newDate.getUTCSeconds()).padStart(2, '0')}`;
                     
-                    console.log(result);
+                    // console.log(result);
                     final_time_total = result
                     $('#final-approve-btn').css('display','block')
                 }
@@ -500,8 +501,6 @@ $(document).ready(function(){
                 agency : $('#incoming-agency-select').val(),
                 status : $('#incoming-status-select').val()
             }
-
-
             console.log(data)
             $.ajax({
                 url: '../php/incoming_search.php',
@@ -626,7 +625,9 @@ $(document).ready(function(){
         let data = {
             dept : $('#inter-depts-select').val(),
             hpercode : document.querySelectorAll('.hpercode')[global_index].value,
-            pause_time : global_timer
+            pause_time : global_timer,
+            approve_details : $('#eraa').val(),
+            case_category : $('#approve-classification-select').val(),
         }
         console.log(data)
 
@@ -679,6 +680,7 @@ $(document).ready(function(){
             method: "POST",   
             data : data,
             success: function(response){
+
                 clearInterval(running_timer_interval)
                 document.querySelectorAll('.pat-status-incoming')[global_index].textContent = 'Approved';
                 myModal.hide()
@@ -703,7 +705,6 @@ $(document).ready(function(){
                     expand_elements.forEach(function(element, index) {
                     element.addEventListener('click', function() {
                         console.log(index)
-
                         global_breakdown_index = index;
                     });
                 });
@@ -827,8 +828,6 @@ $(document).ready(function(){
                 // response = JSON.parse(response);    
                 // console.log(response)
 
-
-                
                 document.querySelectorAll('.pat-status-incoming')[global_index].textContent = 'Approved';
                 myModal.hide()
                 

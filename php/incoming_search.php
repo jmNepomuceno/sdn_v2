@@ -234,7 +234,7 @@
     
 
     foreach ($data as $row) {
-        if(in_array($row['hpercode'], $_SESSION['fifo_hpercode'])){
+        if(in_array($row['hpercode'], $_SESSION['fifo_hpercode']) && $row['status'] != 'Approved'){
             continue;
         }
 

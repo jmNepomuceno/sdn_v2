@@ -15,6 +15,7 @@ $(document).ready(function(){
     // loadContent('php/opd_referral_form.php?type=OB&code=BGHMC-0001')
     loadContent('../php_2/incoming_form2.php')
     // loadContent('../php_2/bucas_queue.php')
+    // loadContent('../php_2/bucas_history.php')
     // loadContent('../php_2/outgoing_form2.php')
     // loadContent('php/outgoing_form.php')
     // loadContent('../php_2/interdept_form.php')
@@ -159,6 +160,7 @@ $(document).ready(function(){
         $('#yes-modal-btn-main').text('Yes');
         $("#yes-modal-btn-main").css("display", "flex")
 
+        // console.log('here')
     })
 
     $('#yes-modal-btn-main').on('click' , function(event){
@@ -353,9 +355,14 @@ $(document).ready(function(){
         // loadContent('../php_2/interdept_form.php')
     })
 
-    $('#interdept-sub-div-id').on('click' , function(event){
+    $('#bucasPending-sub-div-id').on('click' , function(event){
         event.preventDefault();
         loadContent('../php_2/bucas_queue.php')
+    })
+
+    $('#bucasHistory-sub-div-id').on('click' , function(event){
+        event.preventDefault();
+        loadContent('../php_2/bucas_history.php')
     })
     
 

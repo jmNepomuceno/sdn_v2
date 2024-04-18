@@ -28,12 +28,10 @@
     $fastest_response_final  = "00:00:00";
     $slowest_response_final  = "00:00:00";
     
-    // echo $data['COUNT(*)'];
-
     if($data['COUNT(*)'] > 0){
         $currentDateTime = date('Y-m-d');
         // echo $currentDateTime;
-        $sql = "SELECT reception_time, date_time, final_progressed_timer FROM incoming_referrals WHERE refer_to = :hospital_name AND reception_time LIKE :current_date";
+        $sql = "SELECT hpercode, reception_time, date_time, final_progressed_timer FROM incoming_referrals WHERE refer_to = :hospital_name AND reception_time LIKE :current_date";
         // $sql = "SELECT reception_time, date_time, final_progressed_timer FROM incoming_referrals WHERE refer_to = :hospital_name AND reception_time LIKE '%2024-02-08%'";
         $stmt = $pdo->prepare($sql);
         $stmt->bindParam(':hospital_name', $_SESSION['hospital_name']); 
@@ -41,7 +39,7 @@
         $stmt->bindParam(':current_date', $currentDateTime_param, PDO::PARAM_STR); 
         $stmt->execute();
         $dataRecep = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                
+        // echo '<pre>'; print_r($dataRecep); echo '</pre>';
 
         $recep_arr = array();
         for($i = 0; $i < count($dataRecep); $i++){
@@ -64,6 +62,7 @@
         }
 
         // print_r($recep_arr);
+        // echo '<pre>'; print_r($recep_arr); echo '</pre>';
 
         $fastest_recep_secs = array();
         // Function to convert duration to seconds
@@ -143,9 +142,8 @@
     
     <link rel="stylesheet" href="../css/dashboard_incoming.css">
 </head>
-<body class="h-screen overflow-hidden">
+<body class="h-screen">
 
-    <input type="hidden" id="total-processed-refer-inp" value=<?php echo $data['COUNT(*)'] ?>>
     <input type="hidden" id="total-processed-refer-inp" value=<?php echo $data['COUNT(*)'] ?>>
     
     <header class="header-div">
@@ -202,173 +200,166 @@
 
     <div id="nav-drop-account-div">
         <?php if($_SESSION["user_name"] == "admin") {?>
-            <div id="admin-module-div-id" class="w-2/3 h-[50px] border-b-2 border-[#29363d] flex flex-row justify-center items-center cursor-pointer opacity-30 hover:opacity-100 duration-150">
+            <div id="admin-module-div-id">
                 <h2 id="admin-module-id" class="">Admin</h2>
             </div>
         <?php } ?>
-        <div id="dashboard-incoming-btn" class="w-2/3 h-[50px] border-b-2 border-[#29363d] flex flex-row justify-center items-center cursor-pointer opacity-30 hover:opacity-100 duration-150">
+        <div id="dashboard-incoming-btn">
             <h2 class="">Dashboard (Incoming)</h2>
         </div>
 
-        <div id="dashboard-outgoing-btn" class="w-2/3 h-[50px] border-b-2 border-[#29363d] flex flex-row justify-center items-center cursor-pointer opacity-30 hover:opacity-100 duration-150">
+        <div id="dashboard-outgoing-btn">
             <h2 class="">Dashboard (Outgoing)</h2>
         </div>
 
-        <div class="w-2/3 h-[50px] border-b-2 border-[#29363d] flex flex-row justify-center items-center cursor-pointer opacity-30 hover:opacity-100 duration-150">
+        <div>
             <h2 class="">Dashboard (ER/OPD)</h2>
         </div>
 
-        <div id="history-log-btn" class="w-2/3 h-[50px] border-b-2 border-[#29363d] flex flex-row justify-center items-center cursor-pointer opacity-30 hover:opacity-100 duration-150">
+        <div id="history-log-btn">
             <h2 class="">History Log</h2>
         </div>
 
-        <div class="w-2/3 h-[50px] border-b-2 border-[#29363d] flex flex-row justify-center items-center cursor-pointer opacity-30 hover:opacity-100 duration-150">
+        <div>
             <h2 class="">Settings</h2>
         </div>
 
-        <div class="w-2/3 h-[50px] border-b-2 border-[#29363d] flex flex-row justify-center items-center cursor-pointer opacity-30 hover:opacity-100 duration-150">
+        <div>
             <h2 class="">Help</h2>
         </div>
 
-        <div class="w-2/3 h-[50px] border-b-2 border-[#29363d] flex flex-row justify-center items-center cursor-pointer opacity-30 hover:opacity-100 duration-150">
+        <div>
             <h2 id='logout-btn' class="">Logout</h2>
         </div>
     </div>
 
-    <div class="flex flex-row justify-start items-center w-full h-full"> 
+    <div class="main-div"> 
+        <div class="main-title-div">
+            <label>Dashboard For Incoming Referrals</label>
+            <div> 
+                <label id="month">OCTOBER 2023</label>
+                <label id="date"">as of October 20, 2023 - 10:09AM</label>
+            </div>
+        </div>
 
-        <div class="w-full h-full flex flex-col justify-start items-start">
-            <div class="w-full h-[15%] flex flex-row justify-between items-center border-t-0 rounded-md">
-                <label class="text-5xl font-serif text-[#333333] ml-14">Dashboard For Incoming Referrals</label>
-                <div class="flex flex-col mr-14"> 
-                    <label id="month" class="text-3xl font-semibold">OCTOBER 2023</label>
-                    <label id="date" class="font-semibold">as of October 20, 2023 - 10:09AM</label>
-                </div>
+        <div class="main-filter-div">
+            <button id="filter-date-btn">Filter</button>
+            <div>
+                <label>from <input type="date" id='from-date-inp'> to <input type="date" id='to-date-inp'></label>
+            </div>
+        </div>
+
+        <div class="main-turnaround-div">
+            <div>
+                <label id="total-processed-refer">18</label>
+                <label>Total Processed Referrals</label>
+            </div>
+            <div>
+                <label id="average-reception-id" class="average-reception-lbl"><?php echo $averageDuration_reception ?></label>
+                <label>Average Reception Time</label>
             </div>
 
-            <div class="w-[40%] h-[15%] ml-[3%] flex flex-col justify-start items-start">
-                <label class="text-xl mt-2 mb-4">Filter</label>
-
-                <div class="flex flex-row">
-                    <label>From <input type="date" class="w-[200px] border border-slate-700 rounded-md" id='from-date-inp'> to <input type="date" class=" w-[200px] border border-slate-700 rounded-md" id='to-date-inp'></label>
-                    <button id="filter-date-btn" class="w-[50px] h-[25px] bg-green-600 rounded-md ml-[10px] mt-[1px]">Go</button>
-                </div>
+            <div>
+                <label id="average-approve-id"><?php echo $averageDuration_approval ?></label>
+                <label>Average Approval Time</label>
             </div>
 
-            <div class="flex flex-row justify-evenly items-center  w-[93%] h-[15%] ml-[3%]">
+            <div>
+                <label id="average-total-id"><?php echo $averageDuration_total ?></label>
+                <label>Average Total Time</label>
+            </div>
 
-                <div class=" w-[12%] h-full flex flex-col justify-center items-center ml-[2%] bg-[#1f292e] text-white rounded-lg">
-                    <label class="font-semibold text-3xl" id="total-processed-refer">18</label>
-                    <label>Total Processed Referrals</label>
-                </div>
-                <div class=" w-[12%] h-full flex flex-col justify-center items-center ml-[2%] bg-[#1f292e] text-white rounded-lg">
-                    <label id="average-reception-id" class="average-reception-lbl font-semibold text-3xl"><?php echo $averageDuration_reception ?></label>
-                    <label>Average Reception Time</label>
-                </div>
+            <div>
+                <label id="fastest-id"><?php echo $fastest_response_final ?></label>
+                <label>Fastest Response Time</label>
+            </div>
 
-                <div class=" w-[12%] h-full flex flex-col justify-center items-center ml-[2%] bg-[#1f292e] text-white rounded-lg">
-                    <label id="average-approve-id" class="font-semibold text-3xl"><?php echo $averageDuration_approval ?></label>
-                    <label>Average Approval Time</label>
-                </div>
+            <div>
+                <label id="slowest-id"><?php echo $slowest_response_final ?></label>
+                <label>Slowest Response Time</label>
+            </div>
+        </div>
 
-                <div class=" w-[12%] h-full flex flex-col justify-center items-center ml-[2%] bg-[#1f292e] text-white rounded-lg">
-                    <label id="average-total-id" class="font-semibold text-3xl"><?php echo $averageDuration_total ?></label>
-                    <label>Average Total Time</label>
-                </div>
-
-                <div class=" w-[12%] h-full flex flex-col justify-center items-center ml-[2%] bg-[#1f292e] text-white rounded-lg">
-                    <label id="fastest-id" class="font-semibold text-3xl"><?php echo $fastest_response_final ?></label>
-                    <label>Fastest Response Time</label>
-                </div>
-
-                <div class=" w-[12%] h-full flex flex-col justify-center items-center ml-[2%] bg-[#1f292e] text-white rounded-lg">
-                    <label id="slowest-id" class="font-semibold text-3xl"><?php echo $slowest_response_final ?></label>
-                    <label>Slowest Response Time</label>
-                </div>
+        <div class="main-graph-div">
+        
+            <div>
+                <label class="font-semibold text-xl ">Case Category</label>
+                <canvas id="myPieChart"></canvas>
                 
-
             </div>
 
-            <div class="flex flex-row justify-between items-center w-[93%] h-[20%]  ml-[3%] mt-[4%]">
-            
-                <div class="w-[20%] h-full flex flex-col justify-center items-center">
-                    <label class="font-semibold text-xl ">Case Category</label>
-                    <canvas id="myPieChart"></canvas>
-                    
-                </div>
-
-                <div class="w-[20%] h-full flex flex-col justify-center items-center">
-                    <label class="font-semibold text-xl">Case Type</label>
-                    <canvas id="myPieChart2"></canvas>
-                </div>
-
-
-                <div class="w-[20%] h-full flex flex-col justify-center items-center">
-                    <label class="font-semibold text-xl">Referring Health Facility</label>
-                    <canvas id="myPieChart3"></canvas>
-                </div>
+            <div>
+                <label class="font-semibold text-xl">Case Type</label>
+                <canvas id="myPieChart2"></canvas>
             </div>
 
-            <div class="w-full h-auto mt-4">
-            <table id="tablet" class="border-2 border-slate-700 w-full border-collapse text-center">
+
+            <div>
+                <label class="font-semibold text-xl">Referring Health Facility</label>
+                <canvas id="myPieChart3"></canvas>
+            </div>
+        </div>
+
+        <div class="main-data-div">
+            <table id="tablet">
                 <thead class="w-full">
                     <tr>
-                        <th class="border-2 border-slate-700" rowspan="3">
+                        <th rowspan="3" class="pat-class" >
                             <label>Referring Health Facility</label>
                         </th>
 
-                        <th class="border-2 border-slate-700" colspan="3">
+                        <th class="pat-class" colspan="3">
                             <label>ER</label>
                         </th>
 
-                        <th class="border-2 border-slate-700" colspan="3">
+                        <th class="pat-class" colspan="3">
                             <label>OB</label>
                         </th>
 
-                        <th class="border-2 border-slate-700" colspan="3">
+                        <th class="pat-class" colspan="3">
                             <label>OPD</label>
                         </th>
 
-                        <th class="border-2 border-slate-700" rowspan="2">
+                        <th rowspan="2" class="pat-class" >
                             <label>Total</label>
                         </th>
                     </tr>   
 
                     <tr>
-                        <th class="border-2 border-slate-700">
+                        <th>
                             <label>Primary</label>
                         </th>
 
 
-                        <th class="border-2 border-slate-700">
+                        <th>
                             <label>Secondary</label>
                         </th>
 
-                        <th class="border-2 border-slate-700">
+                        <th>
                             <label>Tertiary</label>
                         </th>
 
-                        <th class="border-2 border-slate-700">
+                        <th>
                             <label>Primary</label>
                         </th>
 
-                        <th class="border-2 border-slate-700">
+                        <th>
                             <label>Secondary</label>
                         </th>
 
-                        <th class="border-2 border-slate-700">
+                        <th>
                             <label>Tertiary</label>
                         </th>
 
-                        <th class="border-2 border-slate-700">
+                        <th>
                             <label>Primary</label>
                         </th>
 
-                        <th class="border-2 border-slate-700">
+                        <th>
                             <label>Secondary</label>
                         </th>
 
-                        <th class="border-2 border-slate-700">
+                        <th>
                             <label>Tertiary</label>
                         </th>
                     </tr> 
@@ -506,11 +497,8 @@
                         }   
                     ?>
                 </tbody>
-                </table>
-            </div>
-   
+            </table>
         </div>
-        <!-- ADMIN MODULE -->
     </div>
 
         <!-- Modal -->

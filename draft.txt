@@ -573,3 +573,25 @@ reset the value of the Case Category Select, and eraa
 
 
 main2.php = 116
+
+041624
+interdept fetch updated table after the Approval //
+automatic on process for some reason
+dashboard incoming
+
+error in searching //
+add toxicology sa dashboard table
+
+on-process status, pag ka final approved sa pang unang referral. check the On-Process
+nawawala sa datatable yung na approved na referral after galing sa interdept.
+incoming_form 237
+
+Referred: 2024-02-20 15:00:02
+Reception: 2024-04-15 10:41:16
+SDN Processed: 00:00:00
+Interdept Processed: 00:00:40 
+Total Processed: 00:00:00 
+Approval: 0000-00-00 00:00:00 
+Deferral: 0000-00-00 00:00:00
+
+https://onlinetools.com/time/calculate-average-clock-time

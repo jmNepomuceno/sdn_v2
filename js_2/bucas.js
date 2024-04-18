@@ -17,9 +17,9 @@ $(document).ready(function() {
         });
     });
 
-    $('#searchBtn').click(function() {
-        $('#sdnDataBackdrop').modal('hide');
-    });
+    // $('#searchBtn').click(function() {
+    //     $('#bucasBackdrop').modal('hide');
+    // });
     
 });
 
@@ -31,12 +31,10 @@ document.getElementById('submit-referral-btn').addEventListener("click", functio
     var statusDefer = document.getElementById("statusDefer").value;    
     var sdnUserLog = document.getElementById("sdnUserID").value;
 
-    console.log(sdnPatientID);
-    console.log(sdnCaseNo);
-    console.log(sdnStatusInput);
-    console.log(sdnProcessDT);
-    console.log(statusDefer);
-    console.log(sdnUserLog);
+    if (sdnStatusInput.trim() === "") {
+        alert("Please enter a value for the Response Status.");
+        return;
+    }
 
     var formData = {
         sdnPatientID: sdnPatientID,
@@ -55,7 +53,14 @@ document.getElementById('submit-referral-btn').addEventListener("click", functio
             var _response = JSON.parse(response);
             if (_response.success == true) {
                 alert(_response.message);
-                $('#sdnDataBackdrop').modal('hide');
+                // close the modal progmatically
+                document.getElementById('bucasBackdrop').style.display = "none";
+                var modalBackdrops = document.querySelectorAll('.modal-backdrop');
+                modalBackdrops.forEach(function(backdrop) {
+                    backdrop.remove();
+                });
+                document.body.classList.remove('modal-open');
+                window.location.reload();
             } else {
                 alert(_response.message);
             }
@@ -64,5 +69,4 @@ document.getElementById('submit-referral-btn').addEventListener("click", functio
             console.error('Error inserting data:', error);
         }
     });
-
-});    
+}); 

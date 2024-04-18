@@ -29,6 +29,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SDN</title>
+    <link rel="icon" href="../assets/main_imgs/favicon/favicon.ico" type="image/x-icon"/>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.css" />
@@ -39,10 +40,8 @@
 
     <link rel="stylesheet" href="../css/main_style.css" />
     <style>
-         .scrollbar-hidden {
-            /* Hide scrollbar for Firefox */
-            scrollbar-width: none;
-            /* Hide scrollbar for WebKit/Blink */
+        .scrollbar-hidden {        
+            scrollbar-width: none;            
             -webkit-scrollbar {
             display: none;
             }
@@ -190,9 +189,15 @@
                         </div>
                         
                         <!-- bucas referral -->
-                        <div id="interdept-sub-div-id">
+                        <div id="bucasPending-sub-div-id">
                             <i class="fa-solid fa-inbox"></i>
                             <h3>BUCAS (Incoming)</h3>
+                        </div>
+
+                        <!-- bucas referral -->
+                        <div id="bucasHistory-sub-div-id">
+                            <i class="fa-solid fa-inbox"></i>
+                            <h3>BUCAS (History)</h3>
                         </div>
                     </div>
                 </div>
@@ -210,7 +215,8 @@
 
     <!-- Modal -->
     <div class="modal fade" id="myModal-main" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
+        <!-- <div class="modal-dialog" role="document"> -->
+        <div class="modal-dialog">
             <div class="modal-content">
             <div class="modal-header">
                 <div class="modal-title-div">
@@ -218,12 +224,13 @@
                     <i id="modal-icon" class="fa-solid fa-triangle-exclamation"></i>
                     <!-- <i class="fa-solid fa-circle-check"></i> -->
                 </div>
-                <button id="x-btn" type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <!-- <button id="x-btn" type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
-                </button>
+                </button> -->
             </div>
-            <div id="modal-body-main" class="modal-body-main">
-                Are you sure you want to logout?
+            <!-- <div id="modal-body-main" class="modal-body-main"> -->
+            <div id="modal-body" class="logout-modal">
+                    Are you sure you want to logout?
             </div>
             <div class="modal-footer">
                 <button id="ok-modal-btn-main" type="button" data-bs-dismiss="modal">OK</button>
@@ -233,10 +240,31 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    
-    <script type="text/javascript"  charset="utf8" src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
+    <!-- bucas referral modal -->
+    <div class="modal fade" id="bucasBackdrop" data-bs-backdrop="static" data-bs-keyboard="false"
+    tabindex="-1" aria-labelledby="bucasBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="bucasBackdropLabel">BUCAS MEDICAL RECORD SUMMARY</h1>
+                </div>
+                <div class="modal-body" style="max-height: 700px; font-size: 14px !important; overflow-y: auto;">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="submit-referral-btn" class="btn btn-danger" onclick="">SUBMIT</button>
+                    <button type="button" id="searchBtn" class="btn btn-secondary searchBtn" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> -->
+    <!-- <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script> -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>    
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
 
 
     <script src="../js_2/main_style.js?v=<?php echo time(); ?>"></script>

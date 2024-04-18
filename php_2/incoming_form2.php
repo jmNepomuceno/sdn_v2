@@ -1,7 +1,7 @@
 <?php
     session_start();
     include('../database/connection2.php');
-    
+
     $timer_running = false;
     $post_value_reload = '';
 
@@ -14,6 +14,7 @@
         $_SESSION['post_value_reload'] = 'true';
         $post_value_reload = $_SESSION['post_value_reload'];
     }
+
 
     $sql = "SELECT * FROM incoming_referrals WHERE logout_date!='null' AND refer_to = '" . $_SESSION["hospital_name"] . "' ";
     $stmt = $pdo->prepare($sql);
@@ -52,11 +53,12 @@
 
     // *******************************************************************************
     // database showcase
+
     // $sql = "SELECT * FROM incoming_referrals WHERE refer_to='Bataan General Hospital and Medical Center' AND hpercode='BGHMC-0049'";
     // $stmt = $pdo->prepare($sql);
     // $stmt->execute();
     // $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    // // echo '<pre>'; print_r($data); echo '</pre>';
+    // echo '<pre>'; print_r($data); echo '</pre>';
 
     // $sql = "SELECT * FROM incoming_referrals WHERE hpercode='BGHMC-0049'";
     // $stmt = $pdo->prepare($sql);
@@ -65,25 +67,26 @@
 
     //*************************************************************************** */ refresh value of the data in database 
     
-    $sql = "UPDATE incoming_referrals SET status_interdept=NULL, reception_time=NULL, final_progressed_timer=NULL, sent_interdept_time=NULL, last_update=NULL, status='Pending', approved_time=NULL, progress_timer=NULL, logout_date=NULL WHERE hpercode='BGHMC-0049' ";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute();
+    
+    // $sql = "UPDATE incoming_referrals SET pat_class=NULL, status_interdept=NULL, reception_time=NULL, final_progressed_timer=NULL, sent_interdept_time=NULL, last_update=NULL, status='Pending', approved_time=NULL, progress_timer=NULL, logout_date=NULL WHERE hpercode='BGHMC-0049' ";
+    // $stmt = $pdo->prepare($sql);
+    // $stmt->execute();
 
-    $sql = "DELETE FROM incoming_interdept";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute(); 
+    // $sql = "DELETE FROM incoming_interdept";
+    // $stmt = $pdo->prepare($sql);
+    // $stmt->execute(); 
 
-    $sql = "UPDATE incoming_referrals SET status_interdept=NULL, reception_time=NULL, final_progressed_timer=NULL, sent_interdept_time=NULL, last_update=NULL, status='Pending', approved_time=NULL, progress_timer=NULL, logout_date=NULL WHERE hpercode='BGHMC-0050' ";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute();
+    // $sql = "UPDATE incoming_referrals SET pat_class=NULL, status_interdept=NULL, reception_time=NULL, final_progressed_timer=NULL, sent_interdept_time=NULL, last_update=NULL, status='Pending', approved_time=NULL, progress_timer=NULL, logout_date=NULL WHERE hpercode='BGHMC-0050' ";
+    // $stmt = $pdo->prepare($sql);
+    // $stmt->execute();
 
-    $sql = "UPDATE incoming_referrals SET status_interdept=NULL, final_progressed_timer=NULL, sent_interdept_time=NULL, last_update=NULL, status='Pending', approved_time=NULL WHERE hpercode='BGHMC-0048' ";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute();
+    // $sql = "UPDATE incoming_referrals SET status_interdept=NULL, final_progressed_timer=NULL, sent_interdept_time=NULL, last_update=NULL, status='Pending', approved_time=NULL WHERE hpercode='BGHMC-0048' ";
+    // $stmt = $pdo->prepare($sql);
+    // $stmt->execute();
 
-    $sql = "UPDATE incoming_referrals SET status_interdept=NULL, final_progressed_timer=NULL, sent_interdept_time=NULL, last_update=NULL, status='Pending', approved_time=NULL WHERE hpercode='BGHMC-0051' ";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute();
+    // $sql = "UPDATE incoming_referrals SET status_interdept=NULL, final_progressed_timer=NULL, sent_interdept_time=NULL, last_update=NULL, status='Pending', approved_time=NULL WHERE hpercode='BGHMC-0051' ";
+    // $stmt = $pdo->prepare($sql);
+    // $stmt->execute();
 
     //************************************************************************ */
 
@@ -443,7 +446,7 @@
                     <div id='approval-form'>
                         <label id="approval-title-div">Approval Form</label>
                             
-                        <div class="approval-main-content">
+                        <div class="approval-main-content"> 
 
                             <label id="case-cate-title">Case Category</label>
                             <select id="approve-classification-select">
