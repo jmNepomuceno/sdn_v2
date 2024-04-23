@@ -595,3 +595,9 @@ Approval: 0000-00-00 00:00:00
 Deferral: 0000-00-00 00:00:00
 
 https://onlinetools.com/time/calculate-average-clock-time
+
+for($i = 0; $i < count($class_code); $i++){
+    echo '
+        <td class="add border-2 border-slate-700">'. $class_code['ER_primary'] .'</td>
+    ';
+}

@@ -13,9 +13,9 @@ $(document).ready(function(){
     // loadContent('../php_2/default_view2.php')
     // loadContent('../php_2/patient_register_form2.php')
     // loadContent('php/opd_referral_form.php?type=OB&code=BGHMC-0001')
-    loadContent('../php_2/incoming_form2.php')
-    // loadContent('../php_2/bucas_queue.php')
-    // loadContent('../php_2/bucas_history.php')
+    // loadContent('../php_2/incoming_form2.php')
+    loadContent('../php_2/bucas_queue.php')
+    loadContent('../php_2/bucas_history.php')
     // loadContent('../php_2/outgoing_form2.php')
     // loadContent('php/outgoing_form.php')
     // loadContent('../php_2/interdept_form.php')
@@ -359,6 +359,7 @@ $(document).ready(function(){
         event.preventDefault();
         loadContent('../php_2/bucas_queue.php')
     })
+
 
     $('#bucasHistory-sub-div-id').on('click' , function(event){
         event.preventDefault();

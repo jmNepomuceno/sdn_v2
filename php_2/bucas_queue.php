@@ -1,5 +1,13 @@
 <?php
     include('../database/connection2.php');
+    $count_pending = 0;
+
+    //Query to fetch the count of pending referrals
+    $query_count = "SELECT COUNT(*) AS pendingCount FROM bghmc.bucas_referral WHERE status = 'pending'";
+    $stmt_count = $pdo->prepare($query_count);
+    $stmt_count->execute();
+    $count_result = $stmt_count->fetch(PDO::FETCH_ASSOC);
+    $count_pending = $count_result['pendingCount'];
 
     $query_bucas = "SELECT 
                         JSON_UNQUOTE(JSON_EXTRACT(sdn_data, '$.PatientID')) AS bucasID,
@@ -15,11 +23,15 @@
                         status AS statusReferral
                     FROM 
                         bghmc.bucas_referral
-                    WHERE status = 'pending'";
+                    WHERE 
+                        status = 'pending'";
 
     $stmt = $pdo->prepare($query_bucas);
     $stmt->execute();
     $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    session_start();
+    $_SESSION['count_pending'] = $count_pending;
 
     $currentDate = date('m/d/Y');
 ?>

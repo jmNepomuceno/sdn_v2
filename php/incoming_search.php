@@ -90,6 +90,7 @@
     $index = 0;
     $previous = 0;
     $loop = 0;
+    $accord_index = 0;
     // Loop through the data and generate table rows`
 
     if(isset($_POST['hpercode_arr'])){
@@ -234,8 +235,11 @@
     
 
     foreach ($data as $row) {
-        if(in_array($row['hpercode'], $_SESSION['fifo_hpercode']) && $row['status'] != 'Approved'){
-            continue;
+    
+        if(isset($_POST['hpercode_arr'])){
+            if(in_array($row['hpercode'], $_SESSION['fifo_hpercode']) && $row['status'] != 'Approved'){
+                continue;
+            }
         }
 
         $type_color;
@@ -286,14 +290,15 @@
             $row['reception_time'] = "00:00:00";
         }
 
-        if($row['status_interdept'] != "" && $row['status_interdept'] != null){
-            $sql = "SELECT department FROM incoming_interdept WHERE hpercode='". $row['hpercode'] ."'";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute();
-            $data = $stmt->fetch(PDO::FETCH_ASSOC);
+        // if($row['status_interdept'] != "" && $row['status_interdept'] != null){
+        //     $sql = "SELECT department FROM incoming_interdept WHERE hpercode='". $row['hpercode'] ."'";
+        //     $stmt = $pdo->prepare($sql);
+        //     $stmt->execute();
+        //     $data = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            $row['status'] = $row['status_interdept'] . " - " . strtoupper($data['department']);
-        }
+        //     $row['status'] = $row['status_interdept'] . " - " . strtoupper($data['department']);
+        // }
+        
         // processed time = progress time ng admin + progress time ng dept
         // maiiwan yung timer na naka print, once na send na sa interdept
         
@@ -358,7 +363,7 @@
                     <label> Mobile: ' . $row['mobile_no'] . ' </label>
                 </td>
                 <td id="dt-turnaround"> 
-                    <i class="accordion-btn fa-solid fa-plus"></i>
+                    <i id="accordion-id- '.$accord_index.'" class="accordion-btn fa-solid fa-plus"></i>
 
                     <label class="referred-time-lbl"> Referred: ' . $row['date_time'] . ' </label>
                     <label class="reception-time-lbl"> Reception: '. $row['reception_time'] .'</label>
@@ -397,6 +402,7 @@
 
         $previous = $row['reference_num'];
         $loop += 1;
+        $accord_index += 1;
     }
 
 ?>

@@ -9,18 +9,12 @@
     } else {
         if ($_SESSION['user_name'] === 'admin'){
             $user_name = 'Bataan General Hospital and Medical Center';
+            $count_pending = isset($_SESSION['count_pending']) ? $_SESSION['count_pending'] : 0;
         }else{
             $user_name = $_SESSION['hospital_name'];
         }
     }
-
-    // if ($_SESSION['user_name'] === 'admin'){
-    //     $user_name = 'Bataan General Hospital and Medical Center';
-    // }else{
-    //     $user_name = $_SESSION['hospital_name'];
-    // }
-
-
+    
 ?>
 
 <!DOCTYPE html>
@@ -50,8 +44,7 @@
 </head>
 <body>
     <input id="current-page-input" type="hidden" name="current-page-input" value="" />
-    <input id="clicked-logout-input" type="hidden" name="clicked-logout-input" value="" />
-    
+    <input id="clicked-logout-input" type="hidden" name="clicked-logout-input" value="" />    
 
     <div id="main-div">
         <header class="header-div">
@@ -189,9 +182,19 @@
                         </div>
                         
                         <!-- bucas referral -->
-                        <div id="bucasPending-sub-div-id">
+                        <!-- <div id="bucasPending-sub-div-id">
                             <i class="fa-solid fa-inbox"></i>
                             <h3>BUCAS (Incoming)</h3>
+                        </div> -->
+
+                        <!-- bucas referral with badge -->
+                        <div id="bucasPending-sub-div-id" class="position-relative">
+                            <i class="fa-solid fa-inbox"></i>
+                            <h3>BUCAS (Incoming)</h3>
+                            <span id="badge" class="position-absolute top-80 start-80 translate-middle badge rounded-pill bg-danger">
+                            <span style="font-size: 10px !important;"><?php echo $count_pending; ?></span>
+                                <span class="visually-hidden">unread messages</span>
+                            </span>
                         </div>
 
                         <!-- bucas referral -->
@@ -212,6 +215,9 @@
         </div>
         
     </div>
+
+    <!-- Include the count pending script for bucas referral-->
+    <!-- <?php include('../php_2/count_pending.php'); ?> -->
 
     <!-- Modal -->
     <div class="modal fade" id="myModal-main" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -269,6 +275,34 @@
 
     <script src="../js_2/main_style.js?v=<?php echo time(); ?>"></script>
     <script src="../js/location.js?v=<?php echo time(); ?>"></script>
+
+    <script>
+        // bucas referral badge count pending
+        $(document).ready(function() {
+            function updateCountPending() {
+                $.ajax({
+                    url: 'count_pending.php',
+                    method: 'GET',
+                    success: function(response) {
+                        var _json = JSON.parse(response);
+                        // console.log(_json);
+                        $('#badge').text(_json.count_pending);
+                    },
+                    error: function(xhr, status, error) {
+                        console.log('Error fetching count pending:', error);
+                    }
+                });
+            }
+
+            updateCountPending();
+
+            setInterval(function() {
+                updateCountPending();
+            }, 60000);
+        });
+    </script>
+
+
 
     <!-- <script src="../js_2/patient_register_form2.js?v=<?php echo time(); ?>"></script>
     <script src="../js/search_name_2.js?v=<?php echo time(); ?>"></script>     -->

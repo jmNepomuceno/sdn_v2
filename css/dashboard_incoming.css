@@ -373,7 +373,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     height: 15%;
     margin-left: 3%;
     margin-top: 2%;
-    border:1px solid red;
+    /* border:1px solid red; */
 }
 
 .main-div .main-turnaround-div div{

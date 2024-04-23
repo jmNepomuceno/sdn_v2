@@ -123,7 +123,20 @@
         // echo $slowest_response_final;
     }
 
-    
+    // populate table header by the patient classifications.
+    $class_code = array();
+    $sql = "SELECT class_code FROM classifications";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    $pat_class_data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // echo '<pre>'; print_r($pat_class_data); echo '</pre>';
+    for($i = 0; $i < count($pat_class_data); $i++){
+        $class_code[$pat_class_data[$i]['class_code'] . "_primary"] = 0;
+        $class_code[$pat_class_data[$i]['class_code'] . "_secondary"] = 0;
+        $class_code[$pat_class_data[$i]['class_code'] . "_tertiary"] = 0;
+    }   
+    // echo '<pre>'; print_r($class_code); echo '</pre>';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -284,19 +297,19 @@
         
             <div>
                 <label class="font-semibold text-xl ">Case Category</label>
-                <canvas id="myPieChart"></canvas>
+                <!-- <canvas id="myPieChart"></canvas> -->
                 
             </div>
 
             <div>
                 <label class="font-semibold text-xl">Case Type</label>
-                <canvas id="myPieChart2"></canvas>
+                <!-- <canvas id="myPieChart2"></canvas> -->
             </div>
 
 
             <div>
                 <label class="font-semibold text-xl">Referring Health Facility</label>
-                <canvas id="myPieChart3"></canvas>
+                <!-- <canvas id="myPieChart3"></canvas> -->
             </div>
         </div>
 
@@ -308,17 +321,15 @@
                             <label>Referring Health Facility</label>
                         </th>
 
-                        <th class="pat-class" colspan="3">
-                            <label>ER</label>
-                        </th>
-
-                        <th class="pat-class" colspan="3">
-                            <label>OB</label>
-                        </th>
-
-                        <th class="pat-class" colspan="3">
-                            <label>OPD</label>
-                        </th>
+                        <?php 
+                            // echo '<pre>'; print_r($pat_class_data); echo '</pre>';
+                            foreach ($pat_class_data as $class) {
+                                echo "<th class=\"pat-class\" colspan=\"3\">";
+                                echo "<label>{$class['class_code']}</label>";
+                                echo "</th>";
+                                echo "\n"; // Add a newline for readability
+                            }
+                        ?>
 
                         <th rowspan="2" class="pat-class" >
                             <label>Total</label>
@@ -326,42 +337,26 @@
                     </tr>   
 
                     <tr>
-                        <th>
-                            <label>Primary</label>
-                        </th>
-
-
-                        <th>
-                            <label>Secondary</label>
-                        </th>
-
-                        <th>
-                            <label>Tertiary</label>
-                        </th>
-
-                        <th>
-                            <label>Primary</label>
-                        </th>
-
-                        <th>
-                            <label>Secondary</label>
-                        </th>
-
-                        <th>
-                            <label>Tertiary</label>
-                        </th>
-
-                        <th>
-                            <label>Primary</label>
-                        </th>
-
-                        <th>
-                            <label>Secondary</label>
-                        </th>
-
-                        <th>
-                            <label>Tertiary</label>
-                        </th>
+                        
+                        <?php 
+                            for($i = 0; $i < count($pat_class_data); $i++){
+                                echo '
+                                <th>
+                                    <label>Primary</label>
+                                </th>
+        
+        
+                                <th>
+                                    <label>Secondary</label>
+                                </th>
+        
+                                <th>
+                                    <label>Tertiary</label>
+                                </th>
+    
+                                ';
+                            }
+                        ?>
                     </tr> 
                 </thead> 
 
@@ -385,19 +380,6 @@
 
 
                     <?php 
-                        $ER_primary  = 0;
-                        $ER_secondary  = 0;
-                        $ER_tertiary  = 0;
-
-                        $OB_primary  = 0;
-                        $OB_secondary  = 0;
-                        $OB_tertiary  = 0;
-                        
-                        $OPD_primary  = 0;
-                        $OPD_secondary  = 0;
-                        $OPD_tertiary  = 0; 
-
-
                         $dateTime = new DateTime();
                         // Format the DateTime object to get the year, month, and day
                         $formattedDate = $dateTime->format('Y-m-d') . '%';
@@ -423,77 +405,35 @@
                             }   
                         }
 
+                        // echo '<pre>'; print_r($class_code); echo '</pre>';
+                        $loop_index = 0;
                         for($i = 0; $i < count($in_table); $i++){
                             foreach ($tr_data as $row){
                                 if($in_table[$i] === $row['referred_by']){
                                     $referred_by = $row['referred_by'];
 
-                                    if($row['type'] === 'ER'){
-                                        if($row['pat_class'] === 'Tertiary'){
-                                            $ER_tertiary += 1;
-                                        }else if($row['pat_class'] === 'Secondary'){
-                                            $ER_secondary += 1;
-                                        }else if($row['pat_class'] === 'Primary'){
-                                            $ER_primary += 1;
-                                        }
-                                    }
-
-                                    else if($row['type'] === 'OB'){
-                                        if($row['pat_class'] === 'Tertiary'){
-                                            $OB_tertiary += 1;
-                                        }else if($row['pat_class'] === 'Secondary'){
-                                            $OB_secondary += 1;
-                                        }else if($row['pat_class'] === 'Primary'){
-                                            $OB_primary += 1;
-                                        }
-                                    }
-
-                                    else if($row['type'] === 'OPD'){
-                                        if($row['pat_class'] === 'Tertiary'){
-                                            $OPD_tertiary += 1;
-                                        }else if($row['pat_class'] === 'Secondary'){
-                                            $OPD_secondary += 1;
-                                        }else if($row['pat_class'] === 'Primary'){
-                                            $OPD_primary += 1;
-                                        }
-                                    }  
+                                    // new logic for dynamic rendering of the classication of the patients case to be put on the table
+                                    $lowercase_string = strtolower($row['pat_class']);
+                                    $class_code[$row['type']."_".$lowercase_string] += 1;
                                 }        
                             }
+
 
                             echo '
                             <tr class="tr-div text-center"> 
                                 <td class="border-2 border-slate-700 col-span-3">'.$referred_by.'</td>
-                                <!-- ER -->
-                                <td class="add border-2 border-slate-700">'. $ER_primary .'</td>
-                                <td class="add border-2 border-slate-700">'. $ER_secondary .'</td>
-                                <td class="add border-2 border-slate-700">'. $ER_tertiary .'</td>
-
-                                <!-- OB -->
-                                <td class="add border-2 border-slate-700">'. $OB_primary .'</td>
-                                <td class="add border-2 border-slate-700">'. $OB_secondary .'</td>
-                                <td class="add border-2 border-slate-700">'. $OB_tertiary .'</td>
-
-                                <!-- OPD -->
-                                <td class="add border-2 border-slate-700">'. $OPD_primary .'</td>
-                                <td class="add border-2 border-slate-700">'. $OPD_secondary .'</td>
-                                <td class="add border-2 border-slate-700">'. $OPD_tertiary .'</td>
-
-                                <td class="sumCell border-2 border-slate-700">'. $row['referred_by'] .'</td>
+                            ';
+                            foreach ($class_code as $key => $value) {
+                                echo '
+                                    <td class="add border-2 border-slate-700">'. $value .'</td>
+                                ';
+                            }
+                            echo '
+                                <td class="sumCell border-2 border-slate-700">'. array_sum($class_code) .'</td>
                             </tr>
+                            ';
 
-                        ';
-                        
-                            $ER_primary  = 0;
-                            $ER_secondary  = 0;
-                            $ER_tertiary  = 0;
-
-                            $OB_primary  = 0;
-                            $OB_secondary  = 0;
-                            $OB_tertiary  = 0;
-                            
-                            $OPD_primary  = 0;
-                            $OPD_secondary  = 0;
-                            $OPD_tertiary  = 0;
+                            $class_code = array_fill_keys(array_keys($class_code), 0);
                         }   
                     ?>
                 </tbody>

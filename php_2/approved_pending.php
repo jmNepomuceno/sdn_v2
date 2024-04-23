@@ -59,6 +59,7 @@
         $stmt->execute();
     }
 
+    // echo $global_single_hpercode . "---" . $_POST['action'] . "---";
 
     // update also the status of the patient on the hperson table
     $sql = "SELECT type FROM incoming_referrals WHERE hpercode=:hpercode AND refer_to = '" . $_SESSION["hospital_name"] . "'";
@@ -66,6 +67,8 @@
     $stmt->bindParam(':hpercode', $global_single_hpercode, PDO::PARAM_STR);
     $stmt->execute();
     $data = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    // echo '<pre>'; print_r($data); echo '</pre>';
 
     if($_POST['action'] === "Approve"){
         $sql = "UPDATE hperson SET status='Approved', type='". $data['type'] ."' WHERE hpercode=:hpercode ";
@@ -248,5 +251,5 @@
 
     $_SESSION['approval_details_arr'] = array_values($_SESSION['approval_details_arr']);
     $response = json_encode($_SESSION['approval_details_arr']);
-    // // echo $response;
+    // echo $response;
 ?>
