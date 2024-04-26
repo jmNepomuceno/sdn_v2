@@ -187,6 +187,7 @@
                             <h3>BUCAS (Incoming)</h3>
                         </div> -->
 
+                        <?php if($_SESSION['user_name'] === 'admin'){?>
                         <!-- bucas referral with badge -->
                         <div id="bucasPending-sub-div-id" class="position-relative">
                             <i class="fa-solid fa-inbox"></i>
@@ -196,12 +197,13 @@
                                 <span class="visually-hidden">unread messages</span>
                             </span>
                         </div>
-
+                        
                         <!-- bucas referral -->
                         <div id="bucasHistory-sub-div-id">
                             <i class="fa-solid fa-inbox"></i>
                             <h3>BUCAS (History)</h3>
                         </div>
+                        <?php } ?>
                     </div>
                 </div>
             </aside>

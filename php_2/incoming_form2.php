@@ -84,7 +84,11 @@
     // $stmt = $pdo->prepare($sql);
     // $stmt->execute();
 
-    // $sql = "UPDATE incoming_referrals SET status_interdept=NULL, final_progressed_timer=NULL, sent_interdept_time=NULL, last_update=NULL, status='Pending', approved_time=NULL WHERE hpercode='BGHMC-0051' ";
+    // $sql = "UPDATE incoming_referrals SET pat_class=NULL, status_interdept=NULL, reception_time=NULL, final_progressed_timer=NULL, sent_interdept_time=NULL, last_update=NULL, status='Pending', approved_time=NULL, progress_timer=NULL, logout_date=NULL WHERE hpercode='BGHMC-0051' ";
+    // $stmt = $pdo->prepare($sql);
+    // $stmt->execute();
+
+    // $sql = "UPDATE incoming_referrals SET pat_class=NULL, status_interdept=NULL, reception_time=NULL, final_progressed_timer=NULL, sent_interdept_time=NULL, last_update=NULL, status='Pending', approved_time=NULL, progress_timer=NULL, logout_date=NULL WHERE hpercode='BGHMC-0062' ";
     // $stmt = $pdo->prepare($sql);
     // $stmt->execute();
 
@@ -311,11 +315,12 @@
                                 // processed time = progress time ng admin + progress time ng dept
                                 // maiiwan yung timer na naka print, once na send na sa interdept
                                 
-                                $sql = "SELECT final_progress_time FROM incoming_interdept WHERE hpercode='BGHMC-0049'";
+                                $sql = "SELECT final_progress_time FROM incoming_interdept WHERE hpercode=:hpercode";
                                 $stmt = $pdo->prepare($sql);
+                                $stmt->bindParam(':hpercode', $row['hpercode'], PDO::PARAM_STR);
                                 $stmt->execute();
                                 $interdept_time = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                                
+
                                 $total_time = "00:00:00";
                                 if($interdept_time){
                                     if($interdept_time[0]['final_progress_time'] != "" && $row['sent_interdept_time'] != ""){

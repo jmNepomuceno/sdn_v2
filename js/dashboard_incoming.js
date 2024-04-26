@@ -2,21 +2,78 @@
 //  ME ME ME ME ME ME ME
 $(document).ready(function(){
   $('#total-processed-refer').text($('#total-processed-refer-inp').val())
-  console.log($('#total-processed-refer-inp').val())
+
   const playAudio = () =>{
     let audio = document.getElementById("notif-sound")
     audio.muted = false;
     audio.play().catch(function(error){
         'Error playing audio: ' , error
-    })
+    }) 
   }
 
-  $('#notif-div').on('click' , function(event){
-  //   if ($('#notif-sub-div').hasClass('hidden')) {
-  //     $('#notif-sub-div').removeClass('hidden');
-  // } else {
-  //     $('#notif-sub-div').addClass('hidden');
-  // }
+function renderPieChart(chart, dataArray){
+  let xValues = []
+  for(let i=0; i < dataArray.length; i++){
+    switch(chart){
+      case "case_type" : xValues.push(dataArray[i]['type']); break;
+      case "rhu" : xValues.push(dataArray[i]['referred_by']); break;
+      case "case_category" : xValues.push(dataArray[i]['pat_class']); break;
+    }
+    
+  }
+  xValues.sort()
+  console.log(xValues)
+
+  var counts = {};
+
+  xValues.forEach(function(item) {
+      counts[item] = (counts[item] || 0) + 1;
+  });
+
+  var uniqueArray = Object.keys(counts);
+
+  var duplicatesCount = uniqueArray.map(function(item) {
+      return counts[item];
+  });
+
+  xValues = uniqueArray
+  const yValues = duplicatesCount
+  const barColors = [
+    "#b91d47",
+    "#00aba9",
+    "#2b5797",
+    "#e8c3b9",
+    "#1e7145"
+  ];
+  
+  let what_chart = ""
+  switch(chart){
+    case "case_type" : what_chart = "myChart-2"; break;
+    case "rhu" : what_chart = "myChart-3"; break;
+    case "case_category" : what_chart = "myChart-1"; break;
+  }
+  new Chart(what_chart, {
+    type: "pie",
+    data: {
+      labels: xValues,
+      datasets: [{
+        backgroundColor: barColors,
+        data: yValues
+      }]
+    }
+  });
+}
+
+renderPieChart("rhu" , dataReferFrom)
+renderPieChart("case_type" , dataPatType)
+renderPieChart("case_category" , dataPatClass)
+
+$('#notif-div').on('click' , function(event){
+//   if ($('#notif-sub-div').hasClass('hidden')) {
+//     $('#notif-sub-div').removeClass('hidden');
+// } else {
+//     $('#notif-sub-div').addClass('hidden');
+// }
 })
 
 $('#notif-sub-div').on('click' , function(event){
@@ -255,7 +312,7 @@ $('#notif-sub-div').on('click' , function(event){
   // Get the timer element
   let recep_time = document.getElementById('average-reception-id').textContent
   let approve_time = document.getElementById('average-approve-id').textContent
-  let total_time = document.getElementById('average-total-id').textContent
+  // let total_time = document.getElementById('average-total-id').textContent
   let fastest_time = document.getElementById('fastest-id').textContent
   let slowest_time = document.getElementById('slowest-id').textContent
 
@@ -292,7 +349,7 @@ $('#notif-sub-div').on('click' , function(event){
       switch(elem){
         case 'reception': real_time = getTimeInSeconds(recep_time); break;
         case 'approve': real_time = getTimeInSeconds(approve_time); break; 
-        case 'total': real_time = getTimeInSeconds(total_time); break;
+        // case 'total': real_time = getTimeInSeconds(total_time); break;
         case 'fastest': real_time = getTimeInSeconds(fastest_time); break;
         case 'slowest': real_time = getTimeInSeconds(slowest_time); break;
       }

@@ -149,8 +149,7 @@ $(document).ready(function(){
                 } 
             }
         }
-
-        if(next_referral_index_table >= 0){
+        if(next_referral_index_table >= 0 && next_referral_index_table + 1 < document.querySelectorAll('.tr-incoming').length){
             document.querySelectorAll('.tr-incoming')[next_referral_index_table + 1].style.opacity = "1"
             document.querySelectorAll('.tr-incoming')[next_referral_index_table + 1].style.pointerEvents = "auto"
         }
@@ -244,7 +243,7 @@ $(document).ready(function(){
             hpercode: document.querySelectorAll('.hpercode')[index].value,
             from:'incoming'
         }
-        // console.log(data)
+        console.log(data)
         $.ajax({
             url: '../php/process_pending.php',
             method: "POST", 
@@ -714,56 +713,28 @@ $(document).ready(function(){
      })
 
      $(document).on('click' , '.accordion-btn' , function(event){
-        console.log(global_breakdown_index)
-        console.log(event.target.id)
-        console.log(toggle_accordion_obj)
-        
+        var accordion_index = $('.accordion-btn').index(this);
+        console.log(accordion_index)
+
         var idString = event.target.id;
-
         // Use regular expression to extract the number
-        var number = idString.match(/\d+/);
 
-        // If a number is found, convert it to an integer
-        if (number !== null) {
-            var numberValue = parseInt(number[0]);
-            console.log(document.querySelectorAll('.tr-incoming #dt-turnaround'))
-            console.log(numberValue)
+        if(toggle_accordion_obj[accordion_index]){
+            console.log('up')
+            document.querySelectorAll('.tr-incoming #dt-turnaround')[accordion_index].style.height = "300px"
+            document.querySelectorAll('.tr-incoming #dt-turnaround')[accordion_index].style.overflow = "auto"
+            toggle_accordion_obj[accordion_index] = false
 
-            if(toggle_accordion_obj[numberValue  - 1]){
-                console.log('up')
-                document.querySelectorAll('.tr-incoming #dt-turnaround')[numberValue - 1].style.height = "300px"
-                document.querySelectorAll('.tr-incoming #dt-turnaround')[numberValue - 1].style.overflow = "auto"
-                toggle_accordion_obj[numberValue - 1] = false
-    
-                // fa-solid fa-plus
-                $('.accordion-btn').eq(numberValue - 1).removeClass('fa-plus')
-                $('.accordion-btn').eq(numberValue - 1).addClass('fa-minus')
-            }else{
-                console.log('down')
-                document.querySelectorAll('.tr-incoming #dt-turnaround')[numberValue - 1].style.height = "61px"
-                document.querySelectorAll('.tr-incoming #dt-turnaround')[numberValue - 1].style.overflow = "hidden"
-                toggle_accordion_obj[numberValue - 1] = true
-    
-                $('.accordion-btn').eq(numberValue - 1).addClass('fa-plus')
-                $('.accordion-btn').eq(numberValue - 1).removeClass('fa-minus')
-            }
-        } else {
-            if(toggle_accordion_obj[global_breakdown_index]){
-                document.querySelectorAll('.tr-incoming #dt-turnaround')[global_breakdown_index].style.height = "300px"
-                document.querySelectorAll('.tr-incoming #dt-turnaround')[global_breakdown_index].style.overflow = "auto"
-                toggle_accordion_obj[global_breakdown_index] = false
-    
-                // fa-solid fa-plus
-                $('.accordion-btn').eq(global_breakdown_index).removeClass('fa-plus')
-                $('.accordion-btn').eq(global_breakdown_index).addClass('fa-minus')
-            }else{
-                document.querySelectorAll('.tr-incoming #dt-turnaround')[global_breakdown_index].style.height = "61px"
-                document.querySelectorAll('.tr-incoming #dt-turnaround')[global_breakdown_index].style.overflow = "hidden"
-                toggle_accordion_obj[global_breakdown_index] = true
-    
-                $('.accordion-btn').eq(global_breakdown_index).addClass('fa-plus')
-                $('.accordion-btn').eq(global_breakdown_index).removeClass('fa-minus')
-            }
+            // fa-solid fa-plus
+            $('.accordion-btn').eq(accordion_index).removeClass('fa-plus')
+            $('.accordion-btn').eq(accordion_index).addClass('fa-minus')
+        }else{
+            document.querySelectorAll('.tr-incoming #dt-turnaround')[accordion_index].style.height = "61px"
+            document.querySelectorAll('.tr-incoming #dt-turnaround')[accordion_index].style.overflow = "hidden"
+            toggle_accordion_obj[accordion_index] = true
+
+            $('.accordion-btn').eq(accordion_index).addClass('fa-plus')
+            $('.accordion-btn').eq(accordion_index).removeClass('fa-minus')
         }
 
         
