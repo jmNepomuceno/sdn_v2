@@ -12,6 +12,7 @@ $(document).ready(function(){
   }
 
 function renderPieChart(chart, dataArray){
+  console.log(dataArray)
   let xValues = []
   for(let i=0; i < dataArray.length; i++){
     switch(chart){
@@ -186,7 +187,7 @@ $('#notif-sub-div').on('click' , function(event){
     $('#yes-modal-btn-main').text('Yes');
     $('#yes-modal-btn-main').removeClass('hidden')
 
-    $('#myModal-main').modal('show');
+    $('#myModal-dashboardIncoming').modal('show');
   })
 
   $('#yes-modal-btn-main').on('click' , function(event){
@@ -223,7 +224,11 @@ $('#notif-sub-div').on('click' , function(event){
 
   $('#nav-account-div').on('click' , function(event){
     event.preventDefault();
-    document.querySelector('#nav-drop-account-div').classList.toggle('hidden');
+    if($("#nav-drop-account-div").css("display") === "none"){
+      $("#nav-drop-account-div").css("display", "flex")
+    }else{
+        $("#nav-drop-account-div").css("display", "none")
+    }
   })
 
   $('#dashboard-incoming-btn').on('click' , function(event){
@@ -238,7 +243,7 @@ $('#notif-sub-div').on('click' , function(event){
 
   $('#sdn-title-h1').on('click' , function(event){
     event.preventDefault();
-    window.location.href = "../main.php";
+    window.location.href = "../php_2/main2.php";
   })
 
   $('#incoming-sub-div-id').on('click' , function(event){
@@ -282,28 +287,48 @@ $('#notif-sub-div').on('click' , function(event){
       method: "POST",
       data : data,
       success: function(response) {
-        console.log(response)
+        // console.log(response)
         document.getElementById('tbody-class').innerHTML = response
+      }
+    });
 
-        let chart1 = Chart.getChart('myPieChart');
-        if (chart1) {
-            chart1.destroy();
+    $.ajax({
+      url: '../php/filter_chart_incoming.php',
+      method: "POST",
+      data : data,
+      success: function(response) {
+        response = JSON.parse(response);
+        console.log(response)
+
+        const referredByObj = [];
+        const patClassObj = [];
+        const typeObj = [];
+
+        response.forEach(item => {
+          // Check each item for its key and push an object containing both the key and value into the corresponding array
+          if ('referred_by' in item) {
+            referredByObj.push({ referred_by: item.referred_by });
+          } else if ('pat_class' in item) {
+            patClassObj.push({ pat_class: item.pat_class });
+          } else if ('type' in item) {
+            typeObj.push({ type: item.type });
+          }
+        });
+
+        for(let i = 1; i <= 3; i++){
+          document.getElementById('main-graph-sub-div-' + i).removeChild(document.getElementById('myChart-'+ i))
+          let canva = document.createElement('canvas')
+          canva.id = 'myChart-'+ i
+          document.getElementById('main-graph-sub-div-'+ i).appendChild(canva)
         }
 
-        // Destroy chart with ID 'myPieChart2' if it exists
-        let chart2 = Chart.getChart('myPieChart2');
-        if (chart2) {
-            chart2.destroy();
+        for(let i = 0; i < 3 ; i++){
+
         }
 
-        // Destroy chart with ID 'myPieChart3' if it exists
-        let chart3 = Chart.getChart('myPieChart3');
-        if (chart3) {
-            chart3.destroy();
-        }
-
-        initialPieChartLoad();
-
+        renderPieChart("rhu" , referredByObj)
+        renderPieChart("case_type" , typeObj)
+        renderPieChart("case_category" , patClassObj)
       }
     });
 

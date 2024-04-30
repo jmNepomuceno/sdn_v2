@@ -204,7 +204,6 @@ $(document).ready(function(){
         }else{
             $("#nav-drop-account-div").css("display", "none")
         }
-
     })
 
     //welcome modal

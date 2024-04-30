@@ -2,128 +2,76 @@
     session_start();
     include("../database/connection2.php");
 
-     $ER_primary  = 0;
-     $ER_secondary  = 0;
-     $ER_tertiary  = 0;
+    // populate table header by the patient classifications.
+    $class_code = array();
+    $sql = "SELECT class_code FROM classifications";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    $pat_class_data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-     $OB_primary  = 0;
-     $OB_secondary  = 0;
-     $OB_tertiary  = 0;
-     
-     $OPD_primary  = 0;
-     $OPD_secondary  = 0;
-     $OPD_tertiary  = 0;
+    // echo '<pre>'; print_r($pat_class_data); echo '</pre>';
+    for($i = 0; $i < count($pat_class_data); $i++){
+        $class_code[$pat_class_data[$i]['class_code'] . "_primary"] = 0;
+        $class_code[$pat_class_data[$i]['class_code'] . "_secondary"] = 0;
+        $class_code[$pat_class_data[$i]['class_code'] . "_tertiary"] = 0;
+    }  
 
-    // $from_date = new DateTime('2024-02-01');
-    // $to_date = new DateTime('2024-02-18');
+    $dateTime = new DateTime();
+    $formattedDate = $dateTime->format('Y-m-d') . '%';
 
-    $from_date = new DateTime($_POST['from_date']);
-    $to_date = new DateTime($_POST['to_date']);
+    $start_date = $_POST['from_date'];
+    $end_date = $_POST['to_date'];
+    $end_date_adjusted = date('Y-m-d', strtotime($end_date . ' +1 day'));
+    // echo $formattedDate;
 
-    $formattedFromDate = $from_date->format('Y-m-d') . '%';
-    $formattedToDate = $to_date->format('Y-m-d') . '%';
+    $sql = "SELECT pat_class, type, referred_by FROM incoming_referrals WHERE status='Approved' AND refer_to = '" . $_SESSION["hospital_name"] . "' AND date_time >= '$start_date' AND date_time < '$end_date_adjusted' ";
+    // $sql = "SELECT pat_class, type, referred_by FROM incoming_referrals WHERE (status='Approved' OR status='Checked' OR status='Arrived') AND refer_to = '" . $_SESSION["hospital_name"] . "'";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    $tr_data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    $sql = "";
-    if($_POST['where'] === 'incoming'){
-        $sql = "SELECT pat_class, type, referred_by FROM incoming_referrals WHERE status='Approved' AND approved_time BETWEEN :start_date AND :end_date AND refer_to = '" . $_SESSION["hospital_name"] . "'";
+    // echo '<pre>'; print_r($tr_data); echo '</pre>';
 
-    }else{
-        $sql = "SELECT pat_class, type, refer_to FROM incoming_referrals WHERE status='Approved' AND approved_time BETWEEN :start_date AND :end_date AND referred_by = '" . $_SESSION["hospital_name"] . "'";
-
+    for($i = 0; $i < count($tr_data); $i++){
+        echo '<input type="hidden" class="referred-by-class" value="' . $tr_data[$i]["referred_by"] . '">';
     }
 
-    $sql = "SELECT pat_class, type, referred_by, hpercode FROM incoming_referrals WHERE status='Approved' AND approved_time BETWEEN :start_date AND :end_date AND referred_by = '" . $_SESSION["hospital_name"] . "'";
-     $stmt = $pdo->prepare($sql);
-     $stmt->bindParam(':start_date', $formattedFromDate, PDO::PARAM_STR);
-     $stmt->bindParam(':end_date', $formattedToDate, PDO::PARAM_STR);
-     $stmt->execute();
-     $tr_data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    //  echo '<pre>'; print_r($tr_data); echo '</pre>';
+    $in_table = [];
+    
+    foreach ($tr_data as $row){
+        if (!in_array($row['referred_by'], $in_table)) {
+            $in_table[] = $row['referred_by'];
+        }   
+    }
 
-     $refer_destination = "";     
-     
-     for($i = 0; $i < count($tr_data); $i++){
-         echo '<input type="hidden" class="referred-by-class" value="' . $tr_data[$i]["referred_by"] . '">';
-     }
+    // echo '<pre>'; print_r($class_code); echo '</pre>';
+    $loop_index = 0;
+    for($i = 0; $i < count($in_table); $i++){
+        foreach ($tr_data as $row){
+            if($in_table[$i] === $row['referred_by']){
+                $referred_by = $row['referred_by'];
 
-     $in_table = [];
-     
-     foreach ($tr_data as $row){
-         if (!in_array($row['referred_by'], $in_table)) {
-             $in_table[] = $row['referred_by'];
-         }   
-     }
+                // new logic for dynamic rendering of the classication of the patients case to be put on the table
+                $lowercase_string = strtolower($row['pat_class']);
+                $class_code[$row['type']."_".$lowercase_string] += 1;
+            }        
+        }
 
-     for($i = 0; $i < count($in_table); $i++){
-         foreach ($tr_data as $row){
-             if($in_table[$i] === $row['referred_by']){
-                 $referred_by = $row['referred_by'];
 
-                 if($row['type'] === 'ER'){
-                     if($row['pat_class'] === 'Tertiary'){
-                         $ER_tertiary += 1;
-                     }else if($row['pat_class'] === 'Secondary'){
-                         $ER_secondary += 1;
-                     }else if($row['pat_class'] === 'Primary'){
-                         $ER_primary += 1;
-                     }
-                 }
+        echo '
+        <tr class="tr-div text-center"> 
+            <td class="border-2 border-slate-700 col-span-3">'.$referred_by.'</td>
+        ';
+        foreach ($class_code as $key => $value) {
+            echo '
+                <td class="add border-2 border-slate-700">'. $value .'</td>
+            ';
+        }
+        echo '
+            <td class="sumCell border-2 border-slate-700">'. array_sum($class_code) .'</td>
+        </tr>
+        ';
 
-                 else if($row['type'] === 'OB'){
-                     if($row['pat_class'] === 'Tertiary'){
-                         $OB_tertiary += 1;
-                     }else if($row['pat_class'] === 'Secondary'){
-                         $OB_secondary += 1;
-                     }else if($row['pat_class'] === 'Primary'){
-                         $OB_primary += 1;
-                     }
-                 }
-
-                 else if($row['type'] === 'OPD'){
-                     if($row['pat_class'] === 'Tertiary'){
-                         $OPD_tertiary += 1;
-                     }else if($row['pat_class'] === 'Secondary'){
-                         $OPD_secondary += 1;
-                     }else if($row['pat_class'] === 'Primary'){
-                         $OPD_primary += 1;
-                     }
-                 }  
-             }        
-         }
-
-         echo '
-         <tr class="tr-div text-center"> 
-             <td class="border-2 border-slate-700 col-span-3">'.$referred_by.'</td>
-             <!-- ER -->
-             <td class="add border-2 border-slate-700">'. $ER_primary .'</td>
-             <td class="add border-2 border-slate-700">'. $ER_secondary .'</td>
-             <td class="add border-2 border-slate-700">'. $ER_tertiary .'</td>
-
-             <!-- OB -->
-             <td class="add border-2 border-slate-700">'. $OB_primary .'</td>
-             <td class="add border-2 border-slate-700">'. $OB_secondary .'</td>
-             <td class="add border-2 border-slate-700">'. $OB_tertiary .'</td>
-
-             <!-- OPD -->
-             <td class="add border-2 border-slate-700">'. $OPD_primary .'</td>
-             <td class="add border-2 border-slate-700">'. $OPD_secondary .'</td>
-             <td class="add border-2 border-slate-700">'. $OPD_tertiary .'</td>
-
-             <td class="sumCell border-2 border-slate-700">'. $row['referred_by'] .'</td>
-         </tr>
-
-     ';
-     
-         $ER_primary  = 0;
-         $ER_secondary  = 0;
-         $ER_tertiary  = 0;
-
-         $OB_primary  = 0;
-         $OB_secondary  = 0;
-         $OB_tertiary  = 0;
-         
-         $OPD_primary  = 0;
-         $OPD_secondary  = 0;
-         $OPD_tertiary  = 0;
-     }   
+        $class_code = array_fill_keys(array_keys($class_code), 0);
+    }   
 ?>

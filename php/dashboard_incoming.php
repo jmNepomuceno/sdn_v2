@@ -51,8 +51,8 @@
         $dataRecep_interdept = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
-        echo '<pre>'; print_r($dataRecep); echo '</pre>';
-        echo '<pre>'; print_r($dataRecep_interdept); echo '</pre>';
+        // echo '<pre>'; print_r($dataRecep); echo '</pre>';
+        // echo '<pre>'; print_r($dataRecep_interdept); echo '</pre>';
 
         $recep_arr = array();
         for($i = 0; $i < count($dataRecep); $i++){
@@ -97,7 +97,7 @@
         // Optionally, convert the average back to hh:mm:ss format
         $averageTime_interdept = gmdate("H:i:s", $averageSeconds_interdept);
 
-        echo "Average final_progress_time: $averageTime_interdept";
+        // echo "Average final_progress_time: $averageTime_interdept";
 
         // SDN REFERRAL AVERAGE
         $sum_sdn_average = 0;
@@ -110,7 +110,6 @@
         $average_sdn_average = $sum_sdn_average / $count_sdn_average;
         $average_seconds_sdn_average = (int)$average_sdn_average;
         $formatted_average_sdn_average = gmdate("H:i:s", $average_seconds_sdn_average);
-        echo "Average sent_interdept_time: $formatted_average_sdn_average";
 
         // print_r($recep_arr);
         // echo '<pre>'; print_r($recep_arr); echo '</pre>';
@@ -157,7 +156,7 @@
         }
 
         
-        echo '<pre>'; print_r($fastest_recep_secs); echo '</pre>';
+        // echo '<pre>'; print_r($fastest_recep_secs); echo '</pre>';
 
         $averageSeconds_reception = (int) round($averageSeconds_reception / $data['COUNT(*)']);
         $averageDuration_reception = secondsToDuration($averageSeconds_reception);  
@@ -241,7 +240,7 @@
     <header class="header-div">
         <div class="header-sub-div-1">
             <div id="side-bar-mobile-btn" class="side-bar-mobile-btn">
-                <i class="fa-solid fa-bars"></i>
+                <i class="fa-solid fa-bars"></i> 
             </div>
             <h1 id="sdn-title-h1"> Service Delivery Network</h1>
         </div>
@@ -379,18 +378,18 @@
         </div>
 
         <div class="main-graph-div">
-            <div>
+            <div id="main-graph-sub-div-1">
                 <label class="font-semibold text-xl ">Case Category</label>
                 <canvas id="myChart-1"></canvas>
             </div>
 
-            <div>
+            <div id="main-graph-sub-div-2">
                 <label class="font-semibold text-xl">Case Type</label>
                 <canvas id="myChart-2"></canvas>
             </div>
 
 
-            <div>
+            <div id="main-graph-sub-div-3">
                 <label class="font-semibold text-xl">Referring Health Facility</label>
                 <canvas id="myChart-3"></canvas>
             </div>
@@ -524,30 +523,32 @@
         </div>
     </div>
 
-        <!-- Modal -->
-        <div class="modal fade" id="myModal-main" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                <div class="modal-header flex flex-row justify-between items-center">
-                    <div class="flex flex-row justify-between items-center">
+    <!-- Modal -->
+    <div class="modal fade" id="myModal-dashboardIncoming" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <!-- <div class="modal-dialog" role="document"> -->
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-title-div">
                         <h5 id="modal-title-main" class="modal-title-main" id="exampleModalLabel">Warning</h5>
-                        <i id="modal-icon" class="fa-solid fa-triangle-exclamation ml-2"></i>
+                        <i id="modal-icon" class="fa-solid fa-triangle-exclamation"></i>
                         <!-- <i class="fa-solid fa-circle-check"></i> -->
                     </div>
-                    <button type="button" class="close text-3xl" data-bs-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                    </button>
+                    <!-- <button id="x-btn" type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button> -->
                 </div>
-                <div id="modal-body-main" class="modal-body-main ml-7">
-                    Are you sure you want to logout?
+                <!-- <div id="modal-body-main" class="modal-body-main"> -->
+                <div id="modal-body" class="logout-modal">
+                        Are you sure you want to logout?
                 </div>
                 <div class="modal-footer">
-                    <button id="ok-modal-btn-main" type="button" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2" data-bs-dismiss="modal">OK</button>
-                    <button id="yes-modal-btn-main" type="button" class="hidden bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2" data-bs-dismiss="modal">Yes</button>
-                </div>
+                    <button id="ok-modal-btn-main" type="button" data-bs-dismiss="modal">OK</button>
+                    <button id="yes-modal-btn-main" type="button" data-bs-dismiss="modal">Yes</button>
                 </div>
             </div>
         </div>
+    </div>
     
     <script>
         var dataReferFrom = <?php echo $dataReferFrom_json; ?>;

@@ -239,7 +239,6 @@ $(document).ready(function(){
     $('#nav-account-div').on('click' , function(event){
         event.preventDefault();
         document.querySelector('#nav-drop-account-div').classList.toggle('hidden');
-
     })
 
     // const loadContent = (url) => {

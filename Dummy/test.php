@@ -20,8 +20,12 @@
     // $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
     // echo '<pre>'; print_r($data); echo '</pre>';
 
-    $sql = "SELECT * FROM incoming_referrals WHERE refer_to = 'Bataan General Hospital and Medical Center' AND date_time LIKE '%2024-04-24%'";
-    // $sql = "SELECT reception_time, date_time, final_progressed_timer FROM incoming_referrals WHERE refer_to = :hospital_name AND reception_time LIKE '%2024-02-08%'";
+    $start_date = '2024-04-20';
+    $end_date = '2024-04-26';
+    $end_date_adjusted = date('Y-m-d', strtotime($end_date . ' +1 day'));
+
+    $sql = "SELECT  * FROM incoming_referrals WHERE refer_to = 'Bataan General Hospital and Medical Center' AND date_time >= '$start_date' AND date_time < '$end_date_adjusted'";
+    // $sql = "SELECT hpercode, final_progress_time FROM incoming_interdept WHERE final_progress_date >= '$start_date' AND final_progress_date < '$end_date_adjusted'";
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
     $pat_class_data = $stmt->fetchAll(PDO::FETCH_ASSOC);

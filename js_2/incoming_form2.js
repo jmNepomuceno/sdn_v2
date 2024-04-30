@@ -208,15 +208,18 @@ $(document).ready(function(){
                 // clearInterval(running_timer_interval_update)
                 // console.log(document.querySelectorAll('.pat-status-incoming')[global_index].textContent)
 
-                const myString = document.querySelectorAll('.pat-status-incoming')[global_index].textContent;
-                const substring = "Approve";
-
-                if (myString.toLowerCase().includes(substring.toLowerCase())) {
-                    clearInterval(running_timer_interval_update)
-                    $('#span-status').text("Approved | ") 
-                    $('#final-approve-btn').css('display',  'block')
-
+                if(document.querySelectorAll('.pat-status-incoming').length > 0){
+                    const myString = document.querySelectorAll('.pat-status-incoming')[global_index].textContent;
+                    const substring = "Approve";
+    
+                    if (myString.toLowerCase().includes(substring.toLowerCase())) {
+                        clearInterval(running_timer_interval_update)
+                        $('#span-status').text("Approved | ") 
+                        $('#final-approve-btn').css('display',  'block')
+    
+                    }
                 }
+               
             }
         });
     }
