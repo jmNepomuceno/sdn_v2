@@ -17,11 +17,9 @@ $(document).ready(function(){
     // loadContent('../php_2/bucas_queue.php')
     // loadContent('../php_2/bucas_history.php')
     // loadContent('../php_2/outgoing_form2.php')
-    // loadContent('php/outgoing_form.php')
     // loadContent('../php_2/interdept_form.php')
 
-
-    // Function to parse query parameters from URL
+    // Function to parse query parameters from URL  
     function getQueryVariable(variable) {
         var query = window.location.search.substring(1);
         var vars = query.split("&");
@@ -65,7 +63,7 @@ $(document).ready(function(){
 
     function fetchMySQLData() {
         $.ajax({
-            url: '../php/fetch_interval.php',
+            url: '../php_2/fetch_interval.php',
             method: "POST",
             data : {
                 from_where : 'bell'
@@ -128,7 +126,7 @@ $(document).ready(function(){
                     stopSound()
                 }
                 
-                fetch_timer = setTimeout(fetchMySQLData, 10000);
+                fetch_timer = setTimeout(fetchMySQLData, 5000);
             }
         });
     }   
@@ -148,7 +146,6 @@ $(document).ready(function(){
             $('#sdn-title-h1').removeClass('hidden')
             side_bar_btn_counter = 0;
         }
-        
     })
 
     
@@ -188,7 +185,8 @@ $(document).ready(function(){
             success: function(response) {
                 // response = JSON.parse(response);
                 console.log(response , " here")
-                window.location.href = "http://192.168.42.222:8035/index.php" 
+                // window.location.href = "http://192.168.42.222:8035/index.php" 
+                window.location.href = "http://10.10.90.14:8079/index.php" 
             }
         });
     })
@@ -232,12 +230,12 @@ $(document).ready(function(){
 
     $('#dashboard-incoming-btn').on('click' , function(event){
         event.preventDefault();
-        window.location.href = "../php/dashboard_incoming.php";
+        window.location.href = "../php_2/dashboard_incoming.php";
     })
 
     $('#dashboard-outgoing-btn').on('click' , function(event){
         event.preventDefault();
-        window.location.href = "../php/dashboard_outgoing.php";
+        window.location.href = "../php_2/dashboard_outgoing.php";
     })
 
     $('#history-log-btn').on('click' , function(event){
@@ -256,7 +254,7 @@ $(document).ready(function(){
         let final_date = year + "/" + month + "/" + day + " " + hours + ":" + minutes + ":" + seconds
         // console.log('here')
         $.ajax({
-            url: '../php/save_process_time.php',
+            url: '../php_2/save_process_time.php',
             data : {
                 what: 'save',
                 date : final_date,
@@ -264,7 +262,7 @@ $(document).ready(function(){
             },
             method: "POST",
             success: function(response) {
-                window.location.href = "../php/history_log.php";
+                window.location.href = "../php_2/history_log.php";
             }
         });
     })
@@ -285,7 +283,7 @@ $(document).ready(function(){
         let final_date = year + "/" + month + "/" + day + " " + hours + ":" + minutes + ":" + seconds
 
         $.ajax({
-            url: '../php/save_process_time.php',
+            url: '../php_2/save_process_time.php',
             data : {
                 what: 'save',
                 date : final_date,
@@ -293,7 +291,7 @@ $(document).ready(function(){
             },
             method: "POST",
             success: function(response) {
-                window.location.href = "../php/admin.php";
+                window.location.href = "../php_2/admin.php";
             }
         });
     })
@@ -312,15 +310,14 @@ $(document).ready(function(){
     })
 
     $('#notif-sub-div').on('click' , function(event){
+        console.log('rofl')
         if(parseInt($('#notif-span').text() === 0)){
-            console.log('here')
             $('#notif-circle').addClass('hidden')
             document.getElementById("notif-sound").pause();
             document.getElementById("notif-sound").currentTime = 0;
         }else{
-            console.log('asdf')
             $('#notif-sub-div').addClass('hidden')
-            loadContent('php/incoming_form.php')
+            loadContent('../php_2/incoming_form2.php')
             current_page = "incoming_page"
             $('#current-page-input').val(current_page)
         }

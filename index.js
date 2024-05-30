@@ -1,4 +1,22 @@
 $(document).ready(function(){
+    function validateElement(element) { 
+        var isValid = true;
+
+        if (!element.val()) {
+            isValid = false;
+            element.addClass('is-invalid').removeClass('is-valid');
+        } else {
+            element.removeClass('is-invalid').addClass('is-valid');
+        }
+    
+        // if (element.is(':radio')) {
+        //     var radioName = element.attr('name');
+        //     var siblingRadios = $('input[name="' + radioName + '"]');
+            
+        //     siblingRadios.removeClass('is-invalid').addClass('is-valid'); 
+        // }
+    }
+
     $("#myModal").on('shown.bs.modal', function () {
         $(".modal-dialog").draggable({
           handle: ".modal-header"
@@ -100,7 +118,7 @@ $(document).ready(function(){
         var inputValue = document.querySelector('#otp-input-2').value
         document.querySelector('#otp-input-3').focus()
     
-        console.log(event.keyCode, event.charCode) 
+        // console.log(event.keyCode, event.charCode) 
     
         if (inputValue.length > maxLength) {
             document.querySelector('#otp-input-2').value = inputValue.slice(0, maxLength);
@@ -180,5 +198,108 @@ $(document).ready(function(){
     })
 
     // $('#myModal').modal('show');
+    function validateEmail(input) {
+        var email = input.val();
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!regex.test(email)) {
+            input.removeClass('is-valid').addClass('is-invalid');
+            $(input).val('');
+        } else {
+            input.removeClass('is-invalid').addClass('is-valid');
+        }
+    }
+    
+    $('#sdn-email-address').blur(function() {
+        validateEmail($(this));
+    });
 
+    $('#sdn-hospital-name').blur(function() {
+        validateElement($(this));
+    });
+
+    $('#sdn-hospital-code').blur(function() {
+        validateElement($(this));
+    });
+
+    $('#sdn-region-select').blur(function() {
+        validateElement($(this));
+    });
+
+    $('#sdn-province-select').blur(function() {
+        validateElement($(this));
+    });
+
+    $('#sdn-city-select').blur(function() {
+        validateElement($(this));
+    });
+
+    $('#sdn-brgy-select').blur(function() {
+        validateElement($(this));
+    });
+
+    $('#sdn-zip-code').blur(function() {
+        validateElement($(this));
+    });
+
+    $('#sdn-landline-no').blur(function() {
+        validateElement($(this));
+    });
+
+    $('#sdn-hospital-mobile-no').blur(function() {
+        validateElement($(this));
+    });
+
+    $('#sdn-hospital-director').blur(function() {
+        validateElement($(this));
+    });
+
+    $('#sdn-hospital-director-mobile-no').blur(function() {
+        validateElement($(this));
+    });
+
+    $('#sdn-point-person').blur(function() {
+        validateElement($(this));
+    });
+
+    $('#sdn-point-person-mobile-no').blur(function() {
+        validateElement($(this));
+    });
+
+    // **************************************
+
+    $('#sdn-autho-hospital-code-id').blur(function() {
+        validateElement($(this));
+    });
+
+    $('#sdn-autho-cipher-key-id').blur(function() {
+        validateElement($(this));
+    });
+
+    $('#sdn-autho-last-name-id').blur(function() {
+        validateElement($(this));
+    });
+
+    $('#sdn-autho-first-name-id').blur(function() {
+        validateElement($(this));
+    });
+
+    $('#sdn-autho-middle-name-id').blur(function() {
+        validateElement($(this));
+    });
+
+    $('#sdn-autho-ext-name-id').blur(function() {
+        validateElement($(this));
+    });
+
+    $('#sdn-autho-password').blur(function() {
+        validateElement($(this));
+    });
+
+    // $('#sdn-autho-confirm-password').blur(function() {
+    //     validateElement($(this));
+    // });
+
+    // $('#authorization-confirm-btn').blur(function() {
+    //     validateElement($(this));
+    // });
 })

@@ -14,7 +14,11 @@
             $user_name = $_SESSION['hospital_name'];
         }
     }
-    
+
+    $sql = "SELECT COUNT(*) FROM incoming_referrals WHERE status='Pending' AND refer_to='". $_SESSION['hospital_name'] ."'";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    $incoming_num = $stmt->fetch(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -61,7 +65,13 @@
                     </div> -->
                                         
                         <div id="notif-div">
-                            <h1 id="notif-circle"><span id="notif-span"></span></h1>
+                            <?php 
+                                if($incoming_num['COUNT(*)'] > 0){
+                                    echo '<h1 id="notif-circle" style="display:block;"><span id="notif-span"></span></h1>';
+                                }else{
+                                    echo '<h1 id="notif-circle" style="display:none;"><span id="notif-span"></span></h1>';
+                                }
+                            ?>
                             <i class="fa-solid fa-bell"></i> 
                             <audio id="notif-sound" preload='auto' muted loop>
                                 <source src="../assets/sound/water_droplet.mp3" type="audio/mpeg">
@@ -189,7 +199,7 @@
 
                         <?php if($_SESSION['user_name'] === 'admin'){?>
                         <!-- bucas referral with badge -->
-                        <div id="bucasPending-sub-div-id" class="position-relative">
+                        <div id="bucasPending-sub-div-id">
                             <i class="fa-solid fa-inbox"></i>
                             <h3>BUCAS (Incoming)</h3>
                             <span id="badge" class="position-absolute top-80 start-80 translate-middle badge rounded-pill bg-danger">
@@ -276,7 +286,7 @@
 
 
     <script src="../js_2/main_style.js?v=<?php echo time(); ?>"></script>
-    <script src="../js/location.js?v=<?php echo time(); ?>"></script>
+    <script src="../js_2/location.js?v=<?php echo time(); ?>"></script>
 
     <script>
         // bucas referral badge count pending
@@ -307,7 +317,6 @@
 
 
     <!-- <script src="../js_2/patient_register_form2.js?v=<?php echo time(); ?>"></script>
-    <script src="../js/search_name_2.js?v=<?php echo time(); ?>"></script>     -->
     
     <!-- <script src="./js/incoming_form_2.js?v=<?php echo time(); ?>"></script> -->
     <!-- <script src="./js/fetch_interval.js?v=<?php echo time(); ?>"></script> -->

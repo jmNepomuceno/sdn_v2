@@ -76,19 +76,7 @@
     // $stmt = $pdo->prepare($sql);
     // $stmt->execute(); 
 
-    // $sql = "UPDATE incoming_referrals SET pat_class=NULL, status_interdept=NULL, reception_time=NULL, final_progressed_timer=NULL, sent_interdept_time=NULL, last_update=NULL, status='Pending', approved_time=NULL, progress_timer=NULL, logout_date=NULL WHERE hpercode='BGHMC-0050' ";
-    // $stmt = $pdo->prepare($sql);
-    // $stmt->execute();
-
-    // $sql = "UPDATE incoming_referrals SET pat_class=NULL, status_interdept=NULL, reception_time=NULL, final_progressed_timer=NULL, sent_interdept_time=NULL, last_update=NULL, status='Pending', approved_time=NULL, progress_timer=NULL, logout_date=NULL WHERE hpercode='BGHMC-0048' ";
-    // $stmt = $pdo->prepare($sql);
-    // $stmt->execute();
-
-    // $sql = "UPDATE incoming_referrals SET pat_class=NULL, status_interdept=NULL, reception_time=NULL, final_progressed_timer=NULL, sent_interdept_time=NULL, last_update=NULL, status='Pending', approved_time=NULL, progress_timer=NULL, logout_date=NULL WHERE hpercode='BGHMC-0051' ";
-    // $stmt = $pdo->prepare($sql);
-    // $stmt->execute();
-
-    // $sql = "UPDATE incoming_referrals SET pat_class=NULL, status_interdept=NULL, reception_time=NULL, final_progressed_timer=NULL, sent_interdept_time=NULL, last_update=NULL, status='Pending', approved_time=NULL, progress_timer=NULL, logout_date=NULL WHERE hpercode='BGHMC-0062' ";
+    // $sql = "UPDATE incoming_referrals SET pat_class=NULL, status_interdept=NULL, reception_time=NULL, final_progressed_timer=NULL, sent_interdept_time=NULL, last_update=NULL, status='Pending', approved_time=NULL, progress_timer=NULL, logout_date=NULL WHERE hpercode='BGHMC-0061' ";
     // $stmt = $pdo->prepare($sql);
     // $stmt->execute();
 
@@ -111,8 +99,15 @@
     // $sql = "UPDATE incoming_interdept SET unRead=1, referring_seenTime=null, referring_seenBy=null";
     // $stmt = $pdo->prepare($sql);
     // $stmt->execute();
-?>
 
+    $sql = "SELECT classifications FROM classifications";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    $data_classifications = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // echo '<pre>'; print_r($data_classifications); echo '</pre>';
+    // echo count($data_classifications);
+?>
+ 
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -174,11 +169,15 @@
             <div class="caseType-search-div">
                 <label>Case Type</label>
                 <select id='incoming-type-select'>
-                    <option value=""> None</option>
-                    <option value="ER"> ER</option>
-                    <option value="OB"> OB</option>
-                    <option value="OPD"> OPD</option>
-                    <option value="PCR"> PCR</option>
+                    <?php 
+                        $stmt = $pdo->prepare('SELECT classifications FROM classifications');
+                        $stmt->execute();
+
+                        echo '<option value=""> None </option>';
+                        while($data = $stmt->fetch(PDO::FETCH_ASSOC)){
+                            echo '<option value="' , $data['classifications'] , '">' , $data['classifications'] , '</option>';
+                        } 
+                    ?>
                 </select>
             </div>
 
@@ -240,8 +239,19 @@
                 </thead>
                 <tbody id="incoming-tbody">
                     <?php
+                        // get the classification names
+                        $sql = "SELECT classifications FROM classifications";
+                        $stmt = $pdo->prepare($sql);
+                        $stmt->execute();
+                        $data_classifications = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                        $color = ["#d77707" , "#22c45e" , "#0368a1" , "#cf3136" , "#919122" , "#999966" , "#6666ff"];
+                        $dynamic_classification = [];
+                        for($i = 0; $i < count($data_classifications); $i++){
+                            $dynamic_classification[$data_classifications[$i]['classifications']] = $color[$i];
+                        }
+
                         // SQL query to fetch data from your table
-                        // echo  "here";
                         try{
                             $sql = "SELECT * FROM incoming_referrals WHERE (status='Pending' OR status='On-Process') AND refer_to='". $_SESSION["hospital_name"] ."' ORDER BY date_time ASC";
                             $stmt = $pdo->prepare($sql);
@@ -256,17 +266,8 @@
                             $loop = 0;
                             // Loop through the data and generate table rows
                             foreach ($data as $row) {
-                                $type_color;
-                                if($row['type'] == 'OPD'){
-                                    $type_color = '#d77707';
-                                }else if($row['type'] == 'OB'){
-                                    $type_color = '#22c45e';
-                                }else if($row['type'] == 'ER'){
-                                    $type_color = '#0368a1';
-                                }else if($row['type'] == 'PCR' || $row['type'] == 'Toxicology'){
-                                    $type_color = '#cf3136';
-                                }
-
+                                $type_color = $dynamic_classification[$row['type']];
+// cscKEKW-28
                                 if($previous == 0){
                                     $index += 1;
                                 }else{
@@ -367,9 +368,17 @@
                                     $stopwatch  = $row['sent_interdept_time'];
                                 }
 
+                                // for sensitive case
+                                $pat_full_name = "";
+                                if($row['sensitive_case'] === 'true'){
+                                    $pat_full_name = "<button id='sensitive-case-btn'> Sensitive Case </button>";
+                                }else{
+                                    $pat_full_name = $row['patlast'] . ", " . $row['patfirst'] . " " . $row['patmiddle'];
+                                }
+
                                 echo '<tr class="tr-incoming" style="'. $style_tr .'">
                                         <td id="dt-refer-no"> ' . $row['reference_num'] . ' - '.$index.' </td>
-                                        <td id="dt-patname">' . $row['patlast'] , ", " , $row['patfirst'] , " " , $row['patmiddle']  . '</td>
+                                        <td id="dt-patname">' . $pat_full_name . '</td>
                                         <td id="dt-type" style="background:' . $type_color . ' ">' . $row['type'] . '</td>
                                         <td id="dt-phone-no">
                                             <label> Referred: ' . $row['referred_by'] . '  </label>
@@ -405,7 +414,6 @@
                                         
                                         <td id="dt-status">
                                             <div> 
-                                                
                                                 <label class="pat-status-incoming">' . $row['status'] . '</label>
                                                 <i class="pencil-btn fa-solid fa-pencil"></i>
                                                 <input class="hpercode" type="hidden" name="hpercode" value= ' . $row['hpercode'] . '>
@@ -444,8 +452,25 @@
                 </div>
                 <div  class="modal-body-incoming">
                     <div class="status-form-div">
-                        <label id="status-bg-div">Status: </label>
-                        <label  id="pat-status-form">Pending</label>
+                        <div id="left">
+                            <label id="status-bg-div">Status: </label>
+                            <label  id="pat-status-form">Pending</label>
+                        </div>
+
+                        <div id="right">
+                            <button id="save-update">Update</button>
+                            <select id="update-stat-select" autocomplete="off" required>
+                                <option value="" disabled selected hidden>Update Status</option>
+                                <option class="custom-select" value="Cancelled"> Cancelled</option>
+                                <option class="custom-select" value="Arrived"> Arrived</option>
+                                <option class="custom-select" value="Checked"> Checked</option>
+                                <option class="custom-select" value="Admitted"> Admitted</option>
+                                <option class="custom-select" value="Discharged"> Discharged</option>
+                                <option class="custom-select" value="For follow"> For follow up</option>
+                                <option class="custom-select" value="Referred"> Referred Back</option>
+                            </select>
+                        </div>
+                        
                     </div>
                                 
                     <div id='approval-form'>
@@ -531,6 +556,21 @@
                         </div>
                     </div>
 
+                    <div id="approval-details">
+                        <div class="approval-main-content"> 
+                            <label id="case-cate-title">Case Category</label>
+                            <select id="approve-classification-select-details" style="pointer-events:none;">
+                                <option value="">Select</option>
+                                <option value="Primary">Primary</option>
+                                <option value="Secondary">Secondary</option>
+                                <option value="Tertiary">Tertiary</option>
+                            </select>
+
+                            <label id="admin-action-title">Emergency Room Administrator Action</label>
+                            <textarea id="eraa-details" style="pointer-events:none;"></textarea>
+                        </div> 
+                    </div>
+
                     <div class="referral-details">
                         <div id="inter-dept-stat-form-div" class="status-form-div">
                             <label id="status-bg-div">Referral Details </label>
@@ -586,7 +626,6 @@
                     </div>
                 </div>
 
-                
                 <div class="modal-footer">
                     <!-- <button id="ok-modal-btn-incoming" type="button" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2" data-bs-dismiss="modal">OK</button>
                     <button id="yes-modal-btn-incoming" type="button" class="hidden bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2" data-bs-dismiss="modal">Yes</button>
@@ -595,8 +634,6 @@
             </div>
         </div>
     </div>
-
-
 
     </div>
 
@@ -624,7 +661,6 @@
             </div>
         </div>
     </div>
-
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->

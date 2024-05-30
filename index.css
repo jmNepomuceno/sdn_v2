@@ -169,10 +169,13 @@
     margin-right:5%;
     font-size: 0.9rem;
     cursor: pointer;
+    color:white;
+    opacity: 0.7;
 }
 
 .container .main-content .glass-div .query-signin-div label:hover{
     text-decoration: underline;
+    opacity: 1;
 }
 
 .container .sub-content{
@@ -603,12 +606,14 @@
     display:none;
 }
 
+.is-invalid{
+    background-color: #d8a1a6 !important;
+}
 
-
-
-
-
-
+.is-valid{
+    background-color: white !important;
+    border:3px solid #4fe34f !important;
+}
 
 
 

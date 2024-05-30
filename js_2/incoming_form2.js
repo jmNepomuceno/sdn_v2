@@ -12,13 +12,14 @@ $(document).ready(function(){
 
     const myModal = new bootstrap.Modal(document.getElementById('pendingModal'));
     const defaultMyModal = new bootstrap.Modal(document.getElementById('myModal-incoming'));
-    // myModal.show()
+    myModal.show()
 
     let global_index = 0, global_paging = 1, global_timer = "", global_breakdown_index = 0;
     let final_time_total = "", update_seconds = 0;
     let next_referral_index_table;
     let length_curr_table = document.querySelectorAll('.hpercode').length;
     let toggle_accordion_obj = {}
+    let type_approval = true // true = immediate approval // false = interdepartamental approval
     for(let i = 0; i < length_curr_table; i++){
         toggle_accordion_obj[i] = true
     }
@@ -158,6 +159,13 @@ $(document).ready(function(){
 
     enabledNextReferral()
 
+    function changePatientModalContent(){
+        $('#pat-status-form').text('Approved')
+        $('#approval-form').css('display' , 'none')
+
+        $('#update-stat-select').css('display' , 'block')
+    }
+
     function handleUserActivity() {
         userIsActive = true;
         // console.log('active')
@@ -167,7 +175,7 @@ $(document).ready(function(){
         // console.log('inactive')
         userIsActive = false;
         $.ajax({
-            url: '../php/fetch_interval.php',
+            url: '../php_2/fetch_interval.php',
             method: "POST",
             data : {
                 from_where : 'incoming'
@@ -226,7 +234,7 @@ $(document).ready(function(){
 
     document.addEventListener('mousemove', handleUserActivity);
 
-    const inactivityInterval = 5000; 
+    const inactivityInterval = 115000; 
 
     function startInactivityTimer() {
         inactivityTimer = setInterval(() => {
@@ -248,13 +256,14 @@ $(document).ready(function(){
         }
         console.log(data)
         $.ajax({
-            url: '../php/process_pending.php',
+            url: '../php_2/process_pending.php',
             method: "POST", 
             data:data,
             success: function(response){
                 document.querySelector('.ul-div').innerHTML = ''
                 document.querySelector('.ul-div').innerHTML += response
                 if(document.querySelectorAll('.pat-status-incoming')[index].textContent == 'Pending'){
+                    console.log(259)
                     runTimer(index, 0, 0, 0) // secs, minutes, hours
                     let data = {
                         hpercode : document.querySelectorAll('.hpercode')[index].value,
@@ -265,50 +274,69 @@ $(document).ready(function(){
                         method: "POST", 
                         data:data
                     })
+                }else if(document.querySelectorAll('.pat-status-incoming')[index].textContent == 'Approved'){
+                    console.log('wopwopwop')
+                    let data = {
+                        hpercode : document.querySelectorAll('.hpercode')[index].value,
+                    }
+                    console.log(data)
+
+                    $.ajax({
+                        url: '../php_2/fetch_approve_details.php',
+                        method: "POST", 
+                        data:data,
+                        dataType: 'JSON',
+                        success: function(response){
+                            console.log(response)
+                            // response[0].pat_class
+                            $('#approve-classification-select-details').val(response[0].pat_class)
+                            $('#eraa-details').val(response[0].approval_details)
+                        }
+                    })
+
+                    changePatientModalContent()
                 }
 
+                
                 // checking if the patient is already referred interdepartamentally
                 // console.log(data)
 
-                $.ajax({
-                    url: '../php_2/check_interdept_refer.php',
-                    method: "POST", 
-                    data:data,
-                    success: function(response){
-                        response = JSON.parse(response);    
-                        // console.log(response)
-                        console.log(typeof response.status_interdept)
+                // $.ajax({
+                //     url: '../php_2/check_interdept_refer.php',
+                //     method: "POST", 
+                //     data:data,
+                //     success: function(response){
+                //         response = JSON.parse(response);    
+                //         // console.log(response)
+                //         console.log(typeof response.status_interdept)
 
-                        if(response.status_interdept){
-                            console.log(279)
-                            $('#approval-form').css('display','none')
-                            $('.interdept-div-v2').css('display','flex')
-                            $('#cancel-btn').css('display','block')
+                //         if(response.status_interdept){
+                //             $('#approval-form').css('display','none')
+                //             $('.interdept-div-v2').css('display','flex')
+                //             $('#cancel-btn').css('display','block')
                 
-                            updateInterdeptFunc()
-                        }else{
-                            console.log(286)
-                            $('#approval-form').css('display','flex')
-                            $('.approval-main-content').css('display','block')
-                            $('.interdept-div-v2').css('display','none')
-                            $('#cancel-btn').css('display','none')
-                        }
+                //             updateInterdeptFunc()
+                //         }else{
+                //             $('#approval-form').css('display','flex')
+                //             $('.approval-main-content').css('display','block')
+                //             $('.interdept-div-v2').css('display','none')
+                //             $('#cancel-btn').css('display','none')
+                //         }
 
-                        $('#seen-by-lbl span').text(response.referring_seenBy)
-                        $('#seen-date-lbl span').text(response.referring_seenTime)
+                //         $('#seen-by-lbl span').text(response.referring_seenBy)
+                //         $('#seen-date-lbl span').text(response.referring_seenTime)
                         
-                        if (document.querySelectorAll('.pat-status-incoming')[global_index].textContent.includes("Approve")) {
-                            $('#final-approve-btn').css('display','block')
-                        } 
-                    }
-                })
+                //         if (document.querySelectorAll('.pat-status-incoming')[global_index].textContent.includes("Approve")) {
+                //             $('#final-approve-btn').css('display','block')
+                //         } 
+                //     }
+                // })
 
                 myModal.show();
 
             }
         })
     }
-
     const pencil_elements = document.querySelectorAll('.pencil-btn');
         pencil_elements.forEach(function(element, index) {
         element.addEventListener('click', function() {
@@ -381,7 +409,6 @@ $(document).ready(function(){
             }
             runTimer(parseInt($('#running-index').val()), seconds, minutes, hours)
         }
-
     }
 
     function runTimer(index, sec, min, hrs){
@@ -436,7 +463,7 @@ $(document).ready(function(){
         }
         console.log(curr_index)
         $.ajax({
-            url: '../php/fetch_onProcess.php',
+            url: '../php_2/fetch_onProcess.php',
             method: "POST", 
             data:{
                 timer: document.querySelectorAll('.stopwatch')[curr_index].textContent,
@@ -489,6 +516,10 @@ $(document).ready(function(){
                 if(pat_stat[i].textContent === 'On-Process'){
                     hpercode_arr.push(document.querySelectorAll('.hpercode')[i].value)
                 }
+
+                if(pat_stat[i].textContent === 'Pending'){
+                    hpercode_arr.push(document.querySelectorAll('.hpercode')[i].value)
+                }
             }
 
 
@@ -500,14 +531,16 @@ $(document).ready(function(){
                 middle_name : $('#incoming-middle-name-search').val(),
                 case_type : $('#incoming-type-select').val(),
                 agency : $('#incoming-agency-select').val(),
-                status : $('#incoming-status-select').val()
+                status : $('#incoming-status-select').val(),
+                where : 'search'
             }
             console.log(data)
 
             $.ajax({
-                url: '../php/incoming_search.php',
+                url: '../php_2/incoming_search.php',
                 method: "POST", 
                 data:data,
+                // dataType:'JSON',
                 success: function(response){
                     // console.log(response)
 
@@ -526,12 +559,50 @@ $(document).ready(function(){
                             global_breakdown_index = index;
                         });
                     });
+
+                    const pencil_elements = document.querySelectorAll('.pencil-btn');
+                    pencil_elements.forEach(function(element, index) {
+                        element.addEventListener('click', function() {
+                            console.log('den')
+                            ajax_method(index)
+                        });
+                    });
+
                 }
             }) 
         }else{
             defaultMyModal.show()
         }
 
+    })
+
+    $('#incoming-clear-search-btn').on('click' , () =>{
+        $.ajax({
+            url: '../php_2/incoming_search.php',
+            method: "POST", 
+            data:{
+                'where' : "clear"
+            },
+            success: function(response){
+                // console.log(response)
+
+                dataTable.clear();
+                dataTable.rows.add($(response)).draw();
+
+                length_curr_table = $('.tr-incoming').length
+                for(let i = 0; i < length_curr_table; i++){
+                    toggle_accordion_obj[i] = true
+                }
+
+                const expand_elements = document.querySelectorAll('.accordion-btn');
+                expand_elements.forEach(function(element, index) {
+                    element.addEventListener('click', function() {
+                        console.log(index)
+                        global_breakdown_index = index;
+                    });
+                });
+            }
+        }) 
     })
 
     dataTable.on('page.dt', function () {
@@ -553,11 +624,11 @@ $(document).ready(function(){
 
     if($('#post-value-reload-input').val() === 'true'){
         $.ajax({
-            url: '../php/save_process_time.php',
+            url: '../php_2/save_process_time.php',
             method: "POST",
             data : {what: 'continue'},
             success: function(response){
-                response = JSON.parse(response);  
+                // response = JSON.parse(response);  
                 // console.log(response)
 
                 if(response.length > 0){
@@ -663,6 +734,7 @@ $(document).ready(function(){
        $('#modal-title-incoming').text('Confimation')
        $('#ok-modal-btn-incoming').text('No')
        $('#yes-modal-btn-incoming').css('display', 'block')
+       type_approval = true
     })
 
     $('#yes-modal-btn-incoming').on('click' , function(event){
@@ -672,7 +744,8 @@ $(document).ready(function(){
             timer : global_timer,
             approve_details : $('#eraa').val(),
             case_category : $('#approve-classification-select').val(),
-            action : 'Approve' // approve or deferr
+            action : 'Approve', // approve or deferr
+            type_approval : type_approval
         }
 
         console.log(data);
@@ -681,7 +754,9 @@ $(document).ready(function(){
             url: '../php_2/approved_pending.php',
             method: "POST",   
             data : data,
+            // dataType:'JSON',
             success: function(response){
+                // console.log(response)
 
                 clearInterval(running_timer_interval)
                 document.querySelectorAll('.pat-status-incoming')[global_index].textContent = 'Approved';
@@ -694,7 +769,20 @@ $(document).ready(function(){
                 for(let i = 0; i < length_curr_table; i++){
                     toggle_accordion_obj[i] = true
                 }
-                
+
+                // reset the prev value of the eraa and the select element
+                const selectElement = document.getElementById('approve-classification-select');
+                selectElement.value = '';
+                selectElement.value = selectElement.options[0].value;
+                $('#eraa').val("")
+
+                //disabled again the interdepartamental buttons and immediate referral button
+                $('#imme-approval-btn').css('opacity' , '0.6')
+                $('#imme-approval-btn').css('pointer-events' , 'none')
+
+                $('#inter-dept-referral-btn').css('opacity' , '0.6')
+                $('#inter-dept-referral-btn').css('pointer-events' , 'none')
+
                 const pencil_elements = document.querySelectorAll('.pencil-btn');
                     pencil_elements.forEach(function(element, index) {
                     element.addEventListener('click', function() {
@@ -712,7 +800,7 @@ $(document).ready(function(){
                 });
 
             }
-         })
+        })
      })
 
      $(document).on('click' , '.accordion-btn' , function(event){
@@ -828,6 +916,72 @@ $(document).ready(function(){
         }
 
         console.log(data);
+
+        $.ajax({
+            url: '../php_2/approved_pending.php',
+            method: "POST",
+            data : data,
+            success: function(response){
+                // response = JSON.parse(response);    
+                // console.log(response)
+
+                document.querySelectorAll('.pat-status-incoming')[global_index].textContent = 'Approved';
+                myModal.hide()
+                
+                dataTable.clear();
+                dataTable.rows.add($(response)).draw();
+                
+                length_curr_table = $('.tr-incoming').length
+                for(let i = 0; i < length_curr_table; i++){
+                    toggle_accordion_obj[i] = true
+                }
+                
+                const pencil_elements = document.querySelectorAll('.pencil-btn');
+                pencil_elements.forEach(function(element, index) {
+                    element.addEventListener('click', function() {
+                        console.log('den')
+                        ajax_method(index)
+                    });
+                });
+            }
+         })
+    });
+
+    // sensitive case
+    $('#sensitive-case-btn').on('click',()=>{
+        console.log('869')
+
+        $('#modal-title-incoming').text('Verification')
+
+        // <input id="sensitive-pw" type="password" placeholder="Input Password">
+        $('#modal-body-incoming').text('')
+        let sensitive_btn = document.createElement('input')
+        sensitive_btn.id = 'sensitive-pw'
+        sensitive_btn.type = 'password'
+        sensitive_btn.placeholder = 'Input Password'
+
+        $('#modal-body-incoming').append(sensitive_btn)
+
+        defaultMyModal.show()
+    })
+
+    $('#update-stat-select').on('change', function() {
+        var selectedValue = $(this).val();
+        
+        if (selectedValue) {
+            $('#save-update').show(); 
+        } else {
+            $('#save-update').hide(); 
+        }
+    });
+
+    $('#submit-button').on('click', function() {
+        var selectedValue = $('#update-stat-select').val();
+        if (selectedValue) {
+            alert('Selected value: ' + selectedValue);
+        } else {
+            alert('Please select an option.');
+        }
 
         $.ajax({
             url: '../php_2/approved_pending.php',

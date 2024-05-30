@@ -2,39 +2,45 @@
     session_start();
     include('../database/connection2.php');
 
-    // $sql = "SELECT * FROM incoming_referrals WHERE refer_to='Bataan General Hospital and Medical Center' AND hpercode='BGHMC-0049'";
-    // $stmt = $pdo->prepare($sql);
+    // $hpercode = "PAT000005";
+    // $referral_id = "REF000001";
+
+    // $sql2 = "UPDATE hperson SET referral_id = IFNULL(referral_id, JSON_ARRAY()) WHERE hpercode=:hpercode";
+    // $stmt = $pdo->prepare($sql2);
+    // $stmt->bindParam(':hpercode', $hpercode, PDO::PARAM_STR);
     // $stmt->execute();
-    // $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    // echo '<pre>'; print_r($data); echo '</pre>';
 
-    // $sql = "SELECT department FROM incoming_interdept WHERE hpercode='BGHMC-0049'";
-    // $stmt = $pdo->prepare($sql);
+    // $sql2 = "UPDATE hperson SET referral_id = JSON_ARRAY_APPEND(referral_id, '$', :referral_id) WHERE hpercode=:hpercode";
+    // $stmt = $pdo->prepare($sql2);
+    // $stmt->bindParam(':hpercode', $code, PDO::PARAM_STR);
+    // $stmt->bindParam(':referral_id', $referral_id, PDO::PARAM_STR);
     // $stmt->execute();
-    // $data = $stmt->fetch(PDO::FETCH_ASSOC);
-    // echo '<pre>'; print_r($data); echo '</pre>';
 
-    // $sql = "SELECT * FROM incoming_referrals WHERE refer_to='Bataan General Hospital and Medical Center' AND hpercode='BGHMC-0050'";
-    // $stmt = $pdo->prepare($sql);
-    // $stmt->execute();
-    // $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    // echo '<pre>'; print_r($data); echo '</pre>';
 
-    $start_date = '2024-04-20';
-    $end_date = '2024-04-26';
-    $end_date_adjusted = date('Y-m-d', strtotime($end_date . ' +1 day'));
+    $hpercode = "PAT000005";
+    $referral_id = "REF000001";
 
-    $sql = "SELECT  * FROM incoming_referrals WHERE refer_to = 'Bataan General Hospital and Medical Center' AND date_time >= '$start_date' AND date_time < '$end_date_adjusted'";
-    // $sql = "SELECT hpercode, final_progress_time FROM incoming_interdept WHERE final_progress_date >= '$start_date' AND final_progress_date < '$end_date_adjusted'";
+    $sql2 = "UPDATE hperson SET referral_id = IFNULL(referral_id, JSON_ARRAY()) WHERE hpercode=:hpercode";
+    $stmt = $pdo->prepare($sql2);
+    $stmt->bindParam(':hpercode', $hpercode, PDO::PARAM_STR);
+    $stmt->execute();
+
+    $sql2 = "UPDATE hperson SET referral_id = JSON_ARRAY_APPEND(referral_id, '$', :referral_id) WHERE hpercode=:hpercode";
+    $stmt = $pdo->prepare($sql2);
+    $stmt->bindParam(':hpercode', $hpercode, PDO::PARAM_STR);
+    $stmt->bindParam(':referral_id', $referral_id, PDO::PARAM_STR);
+    $stmt->execute();
+
+    $sql = "SELECT referral_id FROM hperson";
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
-    $pat_class_data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    echo '<pre>'; print_r($pat_class_data); echo '</pre>';
+    $data_classifications = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    echo '<pre>'; print_r($data_classifications); echo '</pre>'
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
+<head>s
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Timer Example</title>

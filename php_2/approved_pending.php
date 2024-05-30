@@ -9,17 +9,29 @@
     // echo json_encode($_SESSION['approval_details_arr']);
     // echo '<pre>'; print_r($_SESSION['approval_details_arr']); echo '</pre>';
 
-    foreach ($_SESSION['approval_details_arr'] as $index => $element) {
-        if ($element['hpercode'] == $_POST['global_single_hpercode']) {
-            // Found the matching element
-            $index;
-            break; // Stop looping once found
-        }
-    }
+    
 
-    $pat_class = $_SESSION['approval_details_arr'][$index]['category'];
-    $global_single_hpercode = filter_input(INPUT_POST, 'global_single_hpercode');
-    $approve_details = $_SESSION['approval_details_arr'][$index]['approve_details'];
+    if($_POST['type_approval'] === 'true'){
+        $pat_class = $_POST['case_category'];
+        $global_single_hpercode = filter_input(INPUT_POST, 'global_single_hpercode');
+        $approve_details = filter_input(INPUT_POST, 'approve_details');
+
+    }else{
+        foreach ($_SESSION['approval_details_arr'] as $index => $element) {
+            if ($element['hpercode'] == $_POST['global_single_hpercode']) {
+                // Found the matching element
+                $index;
+                break; // Stop looping once found
+            }
+        }
+        // C:\Users\ACER\Documents\dumps
+    
+        $_SESSION['approval_details_arr'][] = array(
+            'hpercode' => $_POST['global_single_hpercode'],
+            'category' => $_POST['case_category'] , 
+            'approve_details' => $_POST['approve_details']
+        );
+    }
 
     if($_POST['action'] === "Approve"){  
         $sql = "UPDATE incoming_referrals SET status='Approved', pat_class=:pat_class WHERE hpercode=:hpercode AND refer_to = '" . $_SESSION["hospital_name"] . "'";
@@ -68,14 +80,13 @@
     $stmt->execute();
     $data = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // echo '<pre>'; print_r($data); echo '</pre>';
-
     if($_POST['action'] === "Approve"){
         $sql = "UPDATE hperson SET status='Approved', type='". $data['type'] ."' WHERE hpercode=:hpercode ";
         $stmt = $pdo->prepare($sql);
         $stmt->bindParam(':hpercode', $global_single_hpercode, PDO::PARAM_STR);
         $stmt->execute();
-    }else{
+    }
+    else{
         $sql = "UPDATE hperson SET status='Deferred', type='". $data['type'] ."' WHERE hpercode=:hpercode ";
         $stmt = $pdo->prepare($sql);
         $stmt->bindParam(':hpercode', $global_single_hpercode, PDO::PARAM_STR);
@@ -134,8 +145,10 @@
             $type_color = '#22c45e';
         }else if($row['type'] == 'ER'){
             $type_color = '#0368a1';
-        }else if($row['type'] == 'PCR' || $row['type'] == 'Toxicology'){
+        }else if($row['type'] == 'PCR'){
             $type_color = '#cf3136';
+        }else if($row['type'] == 'Toxicology'){
+            $type_color = '#919122';
         }
 
         if($previous == 0){
@@ -240,16 +253,20 @@
         $i += 1;
     }
 
-
-    foreach ($_SESSION['approval_details_arr'] as $index => $element) {
-        if ($element['hpercode'] == $_POST['global_single_hpercode']) {
-            // Found the matching element, delete it
-            unset($_SESSION['approval_details_arr'][$index]);
-            break; // Stop looping once found
-        }
+    if(count($data) === 0){
+        $_SESSION["running_timer"] = "";
     }
 
-    $_SESSION['approval_details_arr'] = array_values($_SESSION['approval_details_arr']);
-    $response = json_encode($_SESSION['approval_details_arr']);
-    // echo $response;
+    if($_POST['type_approval'] === 'false'){
+        foreach ($_SESSION['approval_details_arr'] as $index => $element) {
+            if ($element['hpercode'] == $_POST['global_single_hpercode']) {
+                // Found the matching element, delete it
+                unset($_SESSION['approval_details_arr'][$index]);
+                break; // Stop looping once found
+            }
+        }
+    
+        $_SESSION['approval_details_arr'] = array_values($_SESSION['approval_details_arr']);
+    }
+    
 ?>

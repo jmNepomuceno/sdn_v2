@@ -168,7 +168,7 @@ $(document).ready(function(){
 
             console.log(data)
             $.ajax({
-                url: '../php/outgoing_search.php',
+                url: '../php_2/outgoing_search.php',
                 method: "POST", 
                 data:data,
                 success: function(response){
