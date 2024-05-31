@@ -12,7 +12,7 @@ $(document).ready(function(){
     const patHistoryModal = new bootstrap.Modal(document.getElementById('patHistoryModal'));
     let patRegModal = new bootstrap.Modal(document.getElementById('myModal_pat_reg'));
     
-    patHistoryModal.show()
+    // patHistoryModal.show()
 
     // loadContent('php/opd_referral_form.php?type=' + $('#tertiary-case').val() + "&code=" + $('#hpercode-input').val())
     // loadContent('../php_2/referral_form.php?type="OB"&code="BGHMC-0058"')

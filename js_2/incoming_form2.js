@@ -12,7 +12,7 @@ $(document).ready(function(){
 
     const myModal = new bootstrap.Modal(document.getElementById('pendingModal'));
     const defaultMyModal = new bootstrap.Modal(document.getElementById('myModal-incoming'));
-    myModal.show()
+    // myModal.show()
 
     let global_index = 0, global_paging = 1, global_timer = "", global_breakdown_index = 0;
     let final_time_total = "", update_seconds = 0;
@@ -162,6 +162,7 @@ $(document).ready(function(){
     function changePatientModalContent(){
         $('#pat-status-form').text('Approved')
         $('#approval-form').css('display' , 'none')
+        $('#approval-details').css('display' , 'block')
 
         $('#update-stat-select').css('display' , 'block')
     }
@@ -274,6 +275,8 @@ $(document).ready(function(){
                         method: "POST", 
                         data:data
                     })
+                    $('#update-stat-select').css('display' , 'none')
+
                 }else if(document.querySelectorAll('.pat-status-incoming')[index].textContent == 'Approved'){
                     console.log('wopwopwop')
                     let data = {
@@ -291,6 +294,7 @@ $(document).ready(function(){
                             // response[0].pat_class
                             $('#approve-classification-select-details').val(response[0].pat_class)
                             $('#eraa-details').val(response[0].approval_details)
+                            
                         }
                     })
 
@@ -975,40 +979,24 @@ $(document).ready(function(){
         }
     });
 
-    $('#submit-button').on('click', function() {
-        var selectedValue = $('#update-stat-select').val();
-        if (selectedValue) {
-            alert('Selected value: ' + selectedValue);
-        } else {
-            alert('Please select an option.');
+    $('#save-update').on('click', function() {
+        const  selectedValue = $('#update-stat-select').val();
+        let data = {
+            hpercode : document.querySelectorAll('.hpercode')[global_index].value,
+            newStatus : selectedValue
         }
-
+        console.log(data)
         $.ajax({
-            url: '../php_2/approved_pending.php',
+            url: '../php_2/update_referral_status.php',
             method: "POST",
             data : data,
             success: function(response){
-                // response = JSON.parse(response);    
-                // console.log(response)
-
-                document.querySelectorAll('.pat-status-incoming')[global_index].textContent = 'Approved';
-                myModal.hide()
-                
-                dataTable.clear();
-                dataTable.rows.add($(response)).draw();
-                
-                length_curr_table = $('.tr-incoming').length
-                for(let i = 0; i < length_curr_table; i++){
-                    toggle_accordion_obj[i] = true
-                }
-                
-                const pencil_elements = document.querySelectorAll('.pencil-btn');
-                pencil_elements.forEach(function(element, index) {
-                    element.addEventListener('click', function() {
-                        console.log('den')
-                        ajax_method(index)
-                    });
-                });
+                console.log(response)
+                $('#pat-status-form').text(data.newStatus)
+                $('#modal-body-incoming').text('Successfully Updated')
+                defaultMyModal.show()
+                $('#save-update').hide(); 
+                $('#update-stat-select').prop('selectedIndex', 0);
             }
          })
     });

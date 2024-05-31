@@ -1,83 +1,83 @@
-<?php
-    session_start();
-    include('../database/connection2.php');
 
-    // $hpercode = "PAT000005";
-    // $referral_id = "REF000001";
-
-    // $sql2 = "UPDATE hperson SET referral_id = IFNULL(referral_id, JSON_ARRAY()) WHERE hpercode=:hpercode";
-    // $stmt = $pdo->prepare($sql2);
-    // $stmt->bindParam(':hpercode', $hpercode, PDO::PARAM_STR);
-    // $stmt->execute();
-
-    // $sql2 = "UPDATE hperson SET referral_id = JSON_ARRAY_APPEND(referral_id, '$', :referral_id) WHERE hpercode=:hpercode";
-    // $stmt = $pdo->prepare($sql2);
-    // $stmt->bindParam(':hpercode', $code, PDO::PARAM_STR);
-    // $stmt->bindParam(':referral_id', $referral_id, PDO::PARAM_STR);
-    // $stmt->execute();
-
-
-    $hpercode = "PAT000005";
-    $referral_id = "REF000001";
-
-    $sql2 = "UPDATE hperson SET referral_id = IFNULL(referral_id, JSON_ARRAY()) WHERE hpercode=:hpercode";
-    $stmt = $pdo->prepare($sql2);
-    $stmt->bindParam(':hpercode', $hpercode, PDO::PARAM_STR);
-    $stmt->execute();
-
-    $sql2 = "UPDATE hperson SET referral_id = JSON_ARRAY_APPEND(referral_id, '$', :referral_id) WHERE hpercode=:hpercode";
-    $stmt = $pdo->prepare($sql2);
-    $stmt->bindParam(':hpercode', $hpercode, PDO::PARAM_STR);
-    $stmt->bindParam(':referral_id', $referral_id, PDO::PARAM_STR);
-    $stmt->execute();
-
-    $sql = "SELECT referral_id FROM hperson";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute();
-    $data_classifications = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    echo '<pre>'; print_r($data_classifications); echo '</pre>'
-?>
 
 <!DOCTYPE html>
 <html lang="en">
-<head>s
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Timer Example</title>
-
-    <style>
-        body{
-            background: black;
-            color:white;
-            font-size: 1.3rem;
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
 </head>
 <body>
     
+    <table id="example" style="width: 100%; border:1px solid blue">
+        <thead>
+            <tr>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+    </table>
+    
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     <script>
-        var dataArray = ['Limay Medical Center', 'Limay Medical Center', 'Morong Bataan RHU', 'Morong Bataan RHU'];
+    $(document).ready(function() {
+        var data = [
+            // Your data array here
+        ];
 
-        // Object to store counts of each element
-        var counts = {};
-
-        // Iterate over the array to count occurrences
-        dataArray.forEach(function(item) {
-            // Count occurrences of each element
-            counts[item] = (counts[item] || 0) + 1;
-        });
-
-        // Array to store the unique elements
-        var uniqueArray = Object.keys(counts);
-
-        // Array to store the counts, matching length of uniqueArray
-        var duplicatesCount = uniqueArray.map(function(item) {
-            // Return count of each element
-            return counts[item];
-        });
-
-        console.log("Unique array:", uniqueArray);
-        console.log("Duplicates count:", duplicatesCount);
+        $.ajax({
+            url: "./select.php",
+            method: 'GET',
+            dataType: 'JSON',
+            success: function(data){
+                console.log(data)
+                $('#example').DataTable({
+                    data: data,
+                    columns: [
+                        {
+                            title: 'Reference No.',
+                            render: function(data, type, row) {
+                                return row.reference_num + '--' + row.index;
+                            }
+                        },
+                        { data: 'pat_full_name', title: "Patient's Name" },
+                        { data: 'type', title: 'Type' },
+                        { data: 'referred_by', title: 'Agency' },
+                        {
+                            title: 'Agency',
+                            render: function(data, type, row) {
+                                return (
+                                    'Referred by: ' + row.referred_by + '<br>' +
+                                    'Landline: ' + row.landline_no + '<br>' +
+                                    'Mobile: ' + row.mobile_no
+                                );
+                            }
+                        },
+                        { data: 'date_time', title: 'Date/Time' },
+                        { data: 'stopwatch', title: 'Response Time' },
+                        { data: 'status', title: 'Status' },
+                        
+                    ],
+                    pageLength: 5,
+                    responsive: true,
+                    processing: true,
+                    createdRow: function(row, data, dataIndex) {
+                        if (data.style_tr) {
+                            $(row).attr('style', data.style_tr);
+                        }
+                    }
+                });
+            }
+        })
+    });
     </script>
 </body>
 </html>

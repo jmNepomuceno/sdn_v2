@@ -1,258 +1,168 @@
-<?php 
+<?php
     session_start();
     include('../database/connection2.php');
 
-    $type = $_GET['type'];
-    $code = $_GET['code'];
-    if (isset($_POST['newValue'])) {
-        // Retrieve the new value from the AJAX request
-        $newValue = $_POST['newValue'];
-    
-        // Set the new value in the session
-        $_SESSION['prompt'] = $newValue;
-    
-        // You can send a response back to the client if needed
-        echo 'Value saved successfully.';
-    } else {
-        // Handle errors
-        // echo 'Error saving value.';
-    }
-
-    $sql = "SELECT hospital_name FROM sdn_hospital WHERE hospital_name != 'bgh' ORDER BY hospital_name ASC;";
+    $sql = "SELECT classifications FROM classifications";
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
-    $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $data_classifications = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $color = ["#d77707" , "#22c45e" , "#0368a1" , "#cf3136" , "#919122" , "#999966" , "#6666ff"];
+    $dynamic_classification = [];
+    for($i = 0; $i < count($data_classifications); $i++){
+        $dynamic_classification[$data_classifications[$i]['classifications']] = $color[$i];
+    }
+
     // echo '<pre>'; print_r($data); echo '</pre>';
 
-    // echo $data[0]['hospital_name']
-    $hospital_names = $data;
+    try{
+        $sql = "SELECT * FROM incoming_referrals WHERE (status='Pending' OR status='On-Process') AND refer_to='". $_SESSION["hospital_name"] ."' ORDER BY date_time ASC";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+        $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <div class="w-[95%] h-[90%] flex flex-col border-2 border-[#bfbfbf] px-12 py-12 rounded-lg">
-        
-        <input id="type-input" type="hidden" name="type-input" value=<?php echo $type; ?>>
-        <input id="code-input" type="hidden" name="code-input" value=<?php echo $code; ?>>
-        <input id="prompt" type="hidden" name="prompt" value=''>
-        <input id="hospital_code" type="hidden" name="hospital_code" value=<?php echo $_SESSION['hospital_code']; ?>>
+        $data_index = 0;
+        $index = 0;
+        $previous = 0;
+        $loop = 0;
 
-        <div class="w-full">
-            <label class="font-semibold text-2xl ml-[1%] ">
-                <?php echo $type; ?> Referral Form
-            </label>
-        </div>
+        foreach ($data as $row){
+            
+            $type_color = $dynamic_classification[$row['type']];
 
-        <div class="w-full h-full flex flex-col justify-center items-center">
-            <div class="w-full h-[15%] flex flex-row items-center justify-start">
+            if($previous == 0){
+                $index += 1;
+            }else{
+                if($row['reference_num'] == $previous){
+                    $index += 1;
+                }else{
+                    $index = 1;
+                }  
+            }
 
-                <div class="w-[70%] h-full flex flex-row justify-start items-center">
-                    <div class="w-[50%] h-full flex flex-col justify-center items-left ml-5">
-                        <label class="font-bold -ml-[1.7%]">Refer to <span class="text-red-600 font-bold text-xl">*</span></label>    
-                        <select id="refer-to-select" class="rounded-md w-full border-2 p-1 border-[#bfbfbf] -ml-[1.7%]">
-                            <!-- <option value="Disabled Selected">Select</option> -->
-                            <option value="Bataan General Hospital and Medical Center">Bataan General Hospital and Medical Center</option> -->
-                            <?php for($i = 0; $i < count($hospital_names); $i++) { ?>
-                                <?php echo "<option value='" . $hospital_names[$i]['hospital_name'] . "'" . ">" . $hospital_names[$i]['hospital_name'] . "</option>" ?>
-                            <?php } ?>
-                        </select>
-                    </div>
 
-                    <div class="w-[30%] h-full ml-[4%] flex flex-col justify-center items-left">
-                        <div class="ml-1 flex flex-row justify-start items-center font-bold mt-3">
-                            <h1>Sensitive Case <span class="text-red-600 font-bold text-xl">*</span> </h1>
-                            <button class="ml-1 w-4 h-4 rounded-full bg-blue-500 hover:bg-blue-700 focus:outline-none cursor-pointer text-black flex flex-row justify-center items-center">
-                                <h4 class="text-xs text-white">i</h4>
-                            </button>
-                        </div>
-                        <div class="w-full h-[40px]">
-                            <input type="radio" name="sensitive" class="ml-[5%]" value="true"> 
-                            <label class="mb-[0.3%] ml-[0.2%]">Yes</label>
-                            <input type="radio" name= "sensitive" class="ml-[2%]" value="false">
-                            <label class="mb-[0.3%] ml-[0.2%]">No</label>
-                        </div>
-                    </div>
-                </div>
+            $style_tr = '';
+            if($loop != 0 &&  $row['status'] === 'Pending'){
+                $style_tr = 'opacity:0.5; pointer-events:none;';
+            }
 
-                
-                <a href="#" class="text-blue-500 font-bold ml-[15%]">
-                    Check Bed Availability
-                </a>
-            </div>   
+            $date1 = new DateTime($row['date_time']);
+            $waiting_time_bd = "";
+            if($row['reception_time'] != null){
+                $date2 = new DateTime($row['reception_time']);
+                $waiting_time = $date1->diff($date2);
 
-            <div class="w-full h-[11%] flex flex-row justify-around items-start ">
-                <div class="w-[30%] flex flex-col">
-                    <label class="-ml-[2%] font-bold">Parent/Guardian(If minor)</label>
-                    <input id="parent-guard-input" type="textbox" class="rounded-md  w-[98%] border-2  border-[#bfbfbf] -ml-[2%] outline-none">
-                </div>
-                
-                <div class="ml-[2%] w-[15%]">
-                    <label class="ml-[0.5%] font-bold">PHIC Member? <span class="text-red-600 font-bold text-xl">*</span></label>
-                    <select id="phic-member-select" class="rounded-md ml-[0.5%] w-[100%] border-2  border-[#bfbfbf] outline-none">
-                        <option value="">Select</option>
-                        <option value="true"> Yes</option>
-                        <option value="false"> No </option>
-                    </select>
-                </div>
+                // if ($waiting_time->days > 0) {
+                //     $differenceString .= $waiting_time->days . ' days ';
+                // }
 
-                <div class="ml-[2%] w-[15%]">
-                    <label class="ml-[0.5%] font-bold">Mode of Transport <span class="text-red-600 font-bold text-xl">*</span></label>
-                    <select id="transport-select" class="rounded-md ml-[0.5%] w-[100%] border-2  border-[#bfbfbf] outline-none">
-                        <option value="">Select</option>
-                        <option value="Ambulance"> Ambulance </option>
-                        <option value="Private Car"> Private Car </option>
-                        <option value="Commute"> Commute </option>
-                    </select>
-                </div>
+                $waiting_time_bd .= sprintf('%02d:%02d:%02d', $waiting_time->h, $waiting_time->i, $waiting_time->s);
 
-                <div class="ml-[2%] w-[23%]">
-                    <label class="ml-[0.5%] font-bold">Date/Time Admitted <span class="text-red-600 font-bold text-xl">*</span></label>
-                    <input type="datetime" class="rounded-md ml-[%] w-[100%] border-2  border-[#bfbfbf] outline-none">
-                </div>   
+            }else{
+                $waiting_time_bd = "00:00:00";
+            }
 
-                
-            </div>
+            if($row['reception_time'] == ""){
+                $row['reception_time'] = "00:00:00";
+            }
 
-            <div class="w-full h-[74%] flex flex-row justify-center items-center">
+            if($row['status_interdept'] != "" && $row['status_interdept'] != null){
+                $sql = "SELECT department FROM incoming_interdept WHERE hpercode='". $row['hpercode'] ."'";
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute();
+                $data = $stmt->fetch(PDO::FETCH_ASSOC);
 
-                <div class="w-[50%] h-full flex flex-col justify-center items-center">
+                $row['status'] = $row['status_interdept'] . " - " . strtoupper($data['department']);
+            }
+            // processed time = progress time ng admin + progress time ng dept
+            // maiiwan yung timer na naka print, once na send na sa interdept
+            
+            $sql = "SELECT final_progress_time FROM incoming_interdept WHERE hpercode=:hpercode";
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(':hpercode', $row['hpercode'], PDO::PARAM_STR);
+            $stmt->execute();
+            $interdept_time = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            $total_time = "00:00:00";
+            if($interdept_time){
+                if($interdept_time[0]['final_progress_time'] != "" && $row['sent_interdept_time'] != ""){
+                    list($hours1, $minutes1, $seconds1) = array_map('intval', explode(':', $interdept_time[0]['final_progress_time']));
+                    list($hours2, $minutes2, $seconds2) = array_map('intval', explode(':', $row['sent_interdept_time']));
+
+                    // Create DateTime objects in UTC with the provided hours, minutes, and seconds
+                    $date1 = new DateTime('1970-01-01 ' . $hours1 . ':' . $minutes1 . ':' . $seconds1, new DateTimeZone('UTC'));
+                    $date2 = new DateTime('1970-01-01 ' . $hours2 . ':' . $minutes2 . ':' . $seconds2, new DateTimeZone('UTC'));
+
+                    // Calculate the total milliseconds
+                    $totalMilliseconds = $date1->getTimestamp() * 1000 + $date2->getTimestamp() * 1000;
+
+                    // Create a new DateTime object in UTC with the total milliseconds
+                    $newDate = new DateTime('@' . ($totalMilliseconds / 1000), new DateTimeZone('UTC'));
+
+                    // Format the result in UTC time "HH:mm:ss"
+                    $total_time = $newDate->format('H:i:s');
+
                     
-                    <div class="w-[97%] h-[12%] flex flex-col">
-                        <label class="font-bold">Referring Doctor <span class="text-red-600 font-bold text-xl">*</span></label>
-                        <!-- <select class="rounded-md w-[100%] border-2  border-[#bfbfbf] outline-none">
-                            <option value="Disabled Selected">Select</option>
-                            <option value="John Marvin Nepomuceno"> John Marvin Nepomuceno</option>
-                            <option value="John Marvin Nepomuceno"> John Marvin Nepomuceno</option>
-                            <option value="John Marvin Nepomuceno"> John Marvin Nepomuceno</option>
-                            <option value="John Marvin Nepomuceno"> John Marvin Nepomuceno</option>
-                            <option value="John Marvin Nepomuceno"> John Marvin Nepomuceno</option>
-                            <option value="John Marvin Nepomuceno"> John Marvin Nepomuceno</option>
-                            <option value="John Marvin Nepomuceno"> John Marvin Nepomuceno</option>
-                            <option value="John Marvin Nepomuceno"> John Marvin Nepomuceno</option>
-                            <option value="John Marvin Nepomuceno"> John Marvin Nepomuceno</option>
-                            <option value="John Marvin Nepomuceno"> John Marvin Nepomuceno</option>
-                        </select> -->
+                    $data[$data_index]['type_color'] = $type_color;
+                    $data[$data_index]['style_tr'] = $style_tr;
+                    $data[$data_index]['waiting_time_bd'] = $waiting_time_bd;
+                    $data[$data_index]['total_time'] = $total_time;
+                }
+            }else{
+                $interdept_time[0]['final_progress_time'] = "00:00:00";
+                $row['sent_interdept_time'] = "00:00:00";
 
-                        <input id="referring-doc-input" type="textbox" class="rounded-md  w-[98%] border-2  border-[#bfbfbf] outline-none">
-                    </div>
+                $data[$data_index]['type_color'] = $type_color;
+                $data[$data_index]['style_tr'] = $style_tr;
+                $data[$data_index]['waiting_time_bd'] = $waiting_time_bd;
+                $data[$data_index]['interdept_time'] = "00:00:00";
+            }
 
-                    <div class="w-[97%] h-[87%] flex flex-col justify-start items-left">
-                        <label class="w-full font-bold ">Chief Complaint and History <span class="text-red-600 font-bold text-xl">*</span></label>
-                        <textarea id="complaint-history-input" class="border-2  border-[#bfbfbf] w-full h-[33.3%] resize-none outline-none"></textarea>
 
-                        <label class="w-full font-bold  ">Reason for Referral <span class="text-red-600 font-bold text-xl">*</span></label>
-                        <textarea id="reason-referral-input" class="border-2  border-[#bfbfbf] w-full h-[33.3%] resize-none outline-none"></textarea>
+            if($row['approved_time'] == ""){
+                $row['approved_time'] = "0000-00-00 00:00:00";
+            }
 
-                        <label class="w-full font-bold  ">Impression / Diagnosis <span class="text-red-600 font-bold text-xl">*</span></label>
-                        <textarea id="diagnosis" class="border-2  border-[#bfbfbf] w-full h-[33.3%] resize-none outline-none"></textarea>
-                    </div>
-                </div>
+            if($interdept_time[0]['final_progress_time'] == ""){
+                $interdept_time[0]['final_progress_time'] = "00:00:00";
+            }
 
-                <div class="w-[50%] h-full flex flex-col justify-between items-left">
-                    <label class="w-full h-[20px] ml-3 font-bold">Physical Examination</label>
-                    <div class="w-[97%] h-[95%] border-2 border-[#bfbfbf] rounded-lg ml-[1.5%] flex flex-col justify-center items-center">
-                        <div class="flex flex-row w-[98%] h-[14%]  ml-[6px] mt-2 justify-center items-center">
-                            <div class="w-[20%]">
-                                <div class="ml-1 flex flex-row justify-start items-center font-bold mt-3">
-                                    <h1>BP <span class="text-red-600 font-bold text-xl">*</span></h1>
-                                    <button class="ml-1 w-4 h-4 rounded-full bg-blue-500 hover:bg-blue-700 focus:outline-none cursor-pointer text-black flex flex-row justify-center items-center">
-                                        <h4 class="text-xs text-white">i</h4>
-                                    </button>
-                                </div>
-                                <input id='bp-input' type="textbox" class="border-2  border-[#bfbfbf] w-[98%] outline-none">                      
-                            </div>
+            if($row['sent_interdept_time'] == ""){
+                $row['sent_interdept_time'] = "00:00:00";
+            }
 
-                            <div class="w-[20%]  ml-[3%]">
-                                <div class="ml-1 flex flex-row justify-start items-center font-bold mt-3">
-                                    <h1>HR <span class="text-red-600 font-bold text-xl">*</span></h1>
-                                    <button class="ml-1 w-4 h-4 rounded-full bg-blue-500 hover:bg-blue-700 focus:outline-none cursor-pointer text-black flex flex-row justify-center items-center">
-                                        <h4 class="text-xs text-white">i</h4>
-                                    </button>
-                                </div>
-                                <input id='hr-input' type="textbox" class="border-2  border-[#bfbfbf] w-[98%] outline-none">     
-                            </div>
+            $stopwatch = "00:00:00";
+            if($row['sent_interdept_time'] == "00:00:00"){
+                if($_SESSION['running_timer'] != "" && $row['status'] == 'On-Process'){
+                    $stopwatch  = $_SESSION['running_timer'];
+                }
+            }else{
+                $stopwatch  = $row['sent_interdept_time'];
+            }
 
-                            <div class="w-[20%]  ml-[3%]">
-                                <div class="ml-1 flex flex-row justify-start items-center font-bold mt-3">
-                                    <h1>RR <span class="text-red-600 font-bold text-xl">*</span></h1>
-                                    <button class="ml-1 w-4 h-4 rounded-full bg-blue-500 hover:bg-blue-700 focus:outline-none cursor-pointer text-black flex flex-row justify-center items-center">
-                                        <h4 class="text-xs text-white">i</h4>
-                                    </button>
-                                </div>
-                                <input id='rr-input' type="textbox" class="border-2  border-[#bfbfbf] w-[98%] outline-none">     
-                            </div>
+            $data[$data_index]['stopwatch'] = $stopwatch;
 
-                               
+            // for sensitive case
+            $pat_full_name = "";
+            if($row['sensitive_case'] === 'true'){
+                $pat_full_name = "<button id='sensitive-case-btn'> Sensitive Case </button>";
+            }else{
+                $pat_full_name = $row['patlast'] . ", " . $row['patfirst'] . " " . $row['patmiddle'];
+            }
 
-                            <div class="w-[20%]  ml-[3%]">
-                                <div class="ml-1 flex flex-row justify-start items-center font-bold mt-3">
-                                    <h1>Temp (°C) <span class="text-red-600 font-bold text-xl">*</span></h1>
-                                    <button class="ml-1 w-4 h-4 rounded-full bg-blue-500 hover:bg-blue-700 focus:outline-none cursor-pointer text-black flex flex-row justify-center items-center">
-                                        <h4 class="text-xs text-white">i</h4>
-                                    </button>
-                                </div>
-                                <input id='temp-input' type="textbox" class="border-2  border-[#bfbfbf] w-[98%] outline-none"> 
-                            </div>
-                        </div>
-                        <div class="flex flex-col w-[20%] h-[12%] mt-[10px] justify-center items-left ">
-                            <div class="ml-1 flex flex-row justify-start items-center font-bold mt-3">
-                                <h1>WT.(kg) <span class="text-red-600 font-bold text-xl">*</span></h1>
-                                <button class="ml-1 w-4 h-4 rounded-full bg-blue-500 hover:bg-blue-700 focus:outline-none cursor-pointer text-black flex flex-row justify-center items-center">
-                                    <h4 class="text-xs text-white">i</h4>
-                                </button>
-                            </div>
-                            <input id='weight-input' type="textbox" class="border-2  border-[#bfbfbf] w-[98%] outline-none"> 
-                        </div> 
+            $data[$data_index]['pat_full_name'] = $pat_full_name;
+            $data[$data_index]['index'] = $index;
 
-                        <div class="w-[90%] h-[70%]">
-                            <label class="ml-2 font-bold">Pertinent PE Findings <span class="text-red-600 font-bold text-xl">*</span>       </label>
-                            <textarea id="pe-findings-input" class="border-2 border-[#bfbfbf] w-[98%] outline-none h-[88%] ml-[1%] rounded-lg"></textarea>
-                        </div>
-                    </div>
-                </div>
+            $data_index += 1;
+            $previous = $row['reference_num'];
+            $loop += 1;
 
-                
-            </div>
+        }
 
-            <div class="w-[95%] flex flex-row justify-start items-center mr-2 mt-2">
-                <button id="submit-referral-btn-id" class="bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded mr-2">Submit</button>
-                <button id="cancel-referral-btn-id" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded h-[40px]">Cancel</button>
-            </div>
-        </div>
-    </div>
+        // echo '<pre>'; print_r($data); echo '</pre>';
+    }catch(PDOException $e){
+        echo "asdf";
+    }
 
-    <!-- Modal -->
-    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-            <div class="modal-header flex flex-row justify-between items-center">
-                <div class="flex flex-row justify-between items-center">
-                    <h5 id="modal-title" class="modal-title" id="exampleModalLabel">Warning</h5>
-                    <i id="modal-icon" class="fa-solid fa-triangle-exclamation ml-2"></i>
-                    <!-- <i class="fa-solid fa-circle-check"></i> -->
-                </div>
-                <button type="button" class="close text-3xl" data-bs-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div id="modal-body" class="modal-body">
-                Please fill out the required fields.
-            </div>
-            <div class="modal-footer">
-                <button id="ok-modal-btn" type="button" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2" data-bs-dismiss="modal">OK</button>
-                <button id="yes-modal-btn" type="button" class="hidden bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2" data-bs-dismiss="modal">Yes</button>
-            </div>
-            </div>
-        </div>
-    </div>
-
-    <script src="./test.js?v=<?php echo time(); ?>"></script>
-
-</body>
-</html>
+    echo json_encode($data);
+?>

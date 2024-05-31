@@ -267,7 +267,6 @@
                             // Loop through the data and generate table rows
                             foreach ($data as $row) {
                                 $type_color = $dynamic_classification[$row['type']];
-// cscKEKW-28
                                 if($previous == 0){
                                     $index += 1;
                                 }else{
@@ -454,7 +453,7 @@
                     <div class="status-form-div">
                         <div id="left">
                             <label id="status-bg-div">Status: </label>
-                            <label  id="pat-status-form">Pending</label>
+                            <label id="pat-status-form">Pending</label>
                         </div>
 
                         <div id="right">

@@ -43,7 +43,7 @@
 
 
     // fetch the needed information for patients referral information
-    $sql = "SELECT patlast, patfirst, patmiddle, patsuffix, type, pat_class, date_time, referred_by, refer_to, approved_time, approval_details, reason, status FROM incoming_referrals WHERE hpercode=?";
+    $sql = "SELECT patlast, patfirst, patmiddle, patsuffix, type, pat_class, date_time, referred_by, refer_to, approved_time, approval_details, reason, status, discharged_time FROM incoming_referrals WHERE hpercode=?";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$hpercode]);
     $incoming_data = $stmt->fetchAll(PDO::FETCH_ASSOC);

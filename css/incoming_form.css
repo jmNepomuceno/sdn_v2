@@ -406,7 +406,7 @@
     cursor: pointer;
     outline: none;
     margin-right:5px;
-    /* display:none; */
+    display:none;
 }
 
 #pendingModal .modal-content #update-stat-select .custom-select{
@@ -450,6 +450,10 @@
     text-align: left;
     line-height: 30px;
     padding-left: 10px; 
+}
+
+#pendingModal .modal-content #approval-details{
+    display:none;    
 }
 
 #pendingModal .modal-content #approval-form .approval-main-content,
