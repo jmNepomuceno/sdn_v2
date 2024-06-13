@@ -100,12 +100,24 @@
     // $stmt = $pdo->prepare($sql);
     // $stmt->execute();
 
-    $sql = "SELECT classifications FROM classifications";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute();
-    $data_classifications = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // $sql = "SELECT classifications FROM classifications";
+    // $stmt = $pdo->prepare($sql);
+    // $stmt->execute();
+    // $data_classifications = $stmt->fetchAll(PDO::FETCH_ASSOC);
     // echo '<pre>'; print_r($data_classifications); echo '</pre>';
     // echo count($data_classifications);
+
+    // $sql = "UPDATE incoming_referrals SET status='Pending', final_progressed_timer=null WHERE date_time='2024-06-11 11:57:27'";
+    // $stmt = $pdo->prepare($sql);
+    // $stmt->execute();
+
+    // $sql = "UPDATE incoming_referrals SET status='Discharged' WHERE date_time='2024-06-10 10:08:35'";
+    // $stmt = $pdo->prepare($sql);
+    // $stmt->execute();
+
+    // $sql = "UPDATE incoming_referrals SET status='Discharged' WHERE date_time='2024-06-07 13:27:11'";
+    // $stmt = $pdo->prepare($sql);
+    // $stmt->execute();
 ?>
  
 <!DOCTYPE html>
@@ -117,15 +129,7 @@
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous"> -->
-    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
-    
-
+     <?php require "../header_link.php" ?>
     <link rel="stylesheet" href="../css/incoming_form.css">
 </head>
 <body>

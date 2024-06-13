@@ -1108,3 +1108,5 @@ Array
     [Toxicology] => #919122
     [Cancer] => #999966
 )
+
+dataTableLength

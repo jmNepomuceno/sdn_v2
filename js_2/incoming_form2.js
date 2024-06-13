@@ -341,6 +341,7 @@ $(document).ready(function(){
             }
         })
     }
+    
     const pencil_elements = document.querySelectorAll('.pencil-btn');
         pencil_elements.forEach(function(element, index) {
         element.addEventListener('click', function() {
