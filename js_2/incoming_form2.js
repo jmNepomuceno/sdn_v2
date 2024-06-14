@@ -341,7 +341,7 @@ $(document).ready(function(){
             }
         })
     }
-    
+
     const pencil_elements = document.querySelectorAll('.pencil-btn');
         pencil_elements.forEach(function(element, index) {
         element.addEventListener('click', function() {
@@ -993,6 +993,8 @@ $(document).ready(function(){
             data : data,
             success: function(response){
                 console.log(response)
+                myModal.hide()
+                
                 $('#pat-status-form').text(data.newStatus)
                 $('#modal-body-incoming').text('Successfully Updated')
                 defaultMyModal.show()

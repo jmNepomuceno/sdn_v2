@@ -118,6 +118,14 @@
     // $sql = "UPDATE incoming_referrals SET status='Discharged' WHERE date_time='2024-06-07 13:27:11'";
     // $stmt = $pdo->prepare($sql);
     // $stmt->execute();
+
+    // $sql = "UPDATE incoming_referrals SET status='Pending', final_progressed_timer=null, pat_class=null, approval_details=null, approved_time=null, reception_time=null WHERE hpercode='PAT000017'";
+    // $stmt = $pdo->prepare($sql);
+    // $stmt->execute();
+
+    // $sql = "UPDATE hperson SET status='Pending' WHERE hpercode='PAT000017'";
+    // $stmt = $pdo->prepare($sql);
+    // $stmt->execute();
 ?>
  
 <!DOCTYPE html>
@@ -372,7 +380,7 @@
                                 }
 
                                 // for sensitive case
-                                $pat_full_name = "";
+                                $pat_full_name = ""; 
                                 if($row['sensitive_case'] === 'true'){
                                     $pat_full_name = "<button id='sensitive-case-btn'> Sensitive Case </button>";
                                 }else{
