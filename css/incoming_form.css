@@ -268,11 +268,11 @@
     align-items: center;
 }
 
-.incoming-container .incoming-table #incoming-tbody .tr-incoming #dt-status div i{
+.incoming-container .incoming-table #incoming-tbody .tr-incoming #dt-status div .pencil-btn{
     cursor: pointer;
 }
 
-.incoming-container .incoming-table #incoming-tbody .tr-incoming #dt-status div i:hover{
+.incoming-container .incoming-table #incoming-tbody .tr-incoming #dt-status div .pencil-btn:hover{
     color:white;
 }
 
@@ -756,6 +756,11 @@
     outline: none;
     border:none;
     padding: 5px;
+
+    display:flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
 }
 
 #sensitive-pw{

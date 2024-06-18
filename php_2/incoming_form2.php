@@ -2,6 +2,12 @@
     session_start();
     include('../database/connection2.php');
 
+    if($_SESSION['hospital_code'] === '1437'){
+        $mcc_passwords = json_encode($_SESSION['mcc_passwords']);
+    }else{
+        $mcc_passwords = json_encode("");
+    }
+
     $timer_running = false;
     $post_value_reload = '';
 
@@ -126,7 +132,16 @@
     // $sql = "UPDATE hperson SET status='Pending' WHERE hpercode='PAT000017'";
     // $stmt = $pdo->prepare($sql);
     // $stmt->execute();
+
+    $sql = "UPDATE hperson SET status='Pending' WHERE hpercode='PAT000021'";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+
+    $sql = "UPDATE incoming_referrals SET status='Pending' WHERE hpercode='PAT000021'";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
 ?>
+
  
 <!DOCTYPE html>
 <html lang="en">
@@ -382,7 +397,7 @@
                                 // for sensitive case
                                 $pat_full_name = ""; 
                                 if($row['sensitive_case'] === 'true'){
-                                    $pat_full_name = "<button id='sensitive-case-btn'> Sensitive Case </button>";
+                                    $pat_full_name = "<button id='sensitive-case-btn'> <i class='fa-solid fa-lock'></i> Sensitive Case </button>";
                                 }else{
                                     $pat_full_name = $row['patlast'] . ", " . $row['patfirst'] . " " . $row['patmiddle'];
                                 }
@@ -425,9 +440,15 @@
                                         
                                         <td id="dt-status">
                                             <div> 
-                                                <label class="pat-status-incoming">' . $row['status'] . '</label>
-                                                <i class="pencil-btn fa-solid fa-pencil"></i>
-                                                <input class="hpercode" type="hidden" name="hpercode" value= ' . $row['hpercode'] . '>
+                                                <label class="pat-status-incoming">' . $row['status'] . '</label>';
+                                                if ($row['sensitive_case'] === 'true') {
+                                                    echo '<i class="pencil-btn fa-solid fa-pencil" style="pointer-events:none"></i>
+                                                            <i class="sensitive-lock-icon fa-solid fa-lock"></i>';
+                                                }else{
+                                                    echo'<i class="pencil-btn fa-solid fa-pencil"></i>';
+                                                }
+                                                
+                                                echo '<input class="hpercode" type="hidden" name="hpercode" value= ' . $row['hpercode'] . '>
 
                                             </div>
                                         </td>
@@ -682,6 +703,8 @@
     <script src="../js_2/incoming_form2.js?v= <?php echo time(); ?>"></script>
 
     <script>
+        var mcc_passwords = <?php echo $mcc_passwords; ?>;
+
         var jsonData = <?php echo $jsonData; ?>;
         // var logout_data =  echo $logout_data; ?>;
         var login_data = "<?php echo $_SESSION['login_time']; ?>";

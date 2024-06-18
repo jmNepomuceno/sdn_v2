@@ -954,8 +954,6 @@ $(document).ready(function(){
 
     // sensitive case
     $('#sensitive-case-btn').on('click',()=>{
-        console.log('869')
-
         $('#modal-title-incoming').text('Verification')
 
         // <input id="sensitive-pw" type="password" placeholder="Input Password">
@@ -968,6 +966,28 @@ $(document).ready(function(){
         $('#modal-body-incoming').append(sensitive_btn)
 
         defaultMyModal.show()
+    })
+
+    $('#ok-modal-btn-incoming').on('click' , function(event){
+
+        let mcc_passwords_validity = false
+        let input_pw = $('#sensitive-pw').val().toString()
+        for (var key in mcc_passwords) {
+            if (mcc_passwords.hasOwnProperty(key)) {
+                if(mcc_passwords[key] === input_pw){
+                    mcc_passwords_validity = true;
+                }
+            }
+        }
+
+        if(mcc_passwords_validity){
+            // var index = $(".pencil").index(this);
+            $('.sensitive-lock-icon').eq(0).css('color' , 'lightgreen')
+            $('.sensitive-lock-icon').eq(0).removeClass('fa-solid fa-lock')
+            $('.sensitive-lock-icon').eq(0).addClass('fa-solid fa-lock-open')
+
+            $('.pencil-btn').eq(0).css('pointer-events', 'auto')
+        }
     })
 
     $('#update-stat-select').on('change', function() {
